@@ -70,6 +70,7 @@ async function main() {
 
 		console.log(`Insertando usuario inicial: ${adminUser}...`);
 		const hashedPassword = await bcrypt.hash(adminPass, 10);
+		const adminEmail = process.env.ADMIN_EMAIL || 'admin@ticketflow.com';
 		
 		await db
 			.insert(schema.usuarios)
@@ -78,6 +79,7 @@ async function main() {
                 id_sucursal: matrizSucursal.id_sucursal,
 				nombre: 'Administrador Sistema',
 				username: adminUser,
+				email: adminEmail,
 				password: hashedPassword, // Contraseña encriptada
 				estado: true
 			})
