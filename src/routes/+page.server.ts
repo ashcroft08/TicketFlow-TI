@@ -46,8 +46,12 @@ export const actions: Actions = {
         const codRol = result.user.cod_rol;
         if (codRol === 'ADMIN') throw redirect(303, '/admin');
         if (codRol === 'TECH') throw redirect(303, '/tecnico');
-        if (codRol === 'STORE_MANAGER') throw redirect(303, '/dashboard');
+        if (codRol === 'STORE_MANAGER') throw redirect(303, '/encargado/dashboard');
         
-        throw redirect(303, '/dashboard');
+        throw redirect(303, '/encargado/dashboard');
+    },
+    logout: async ({ cookies }) => {
+        cookies.delete(SESSION_COOKIE, { path: '/' });
+        throw redirect(303, '/');
     }
 };

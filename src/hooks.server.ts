@@ -18,14 +18,7 @@ export const handle: Handle = async ({ event, resolve }) => {
             const dbVersion = dbUser?.token_version ?? 1;
             const tokenVersion = decodedUser.token_version;
             
-            console.log('DEBUG SESIÓN:', {
-                dbVersion,
-                dbVersionType: typeof dbVersion,
-                tokenVersion,
-                tokenVersionType: typeof tokenVersion,
-                dbUserFound: !!dbUser,
-                dbEstado: dbUser?.estado
-            });
+
 
             const isVersionValid = dbUser && dbVersion === tokenVersion;
             const isActive = dbUser && dbUser.estado;
@@ -47,6 +40,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     // 2. Protección de rutas básica
     const isProtectedRoute = event.url.pathname.startsWith('/admin') || 
                            event.url.pathname.startsWith('/tecnico') || 
+                           event.url.pathname.startsWith('/encargado') ||
                            event.url.pathname.startsWith('/dashboard');
 
     if (isProtectedRoute && !event.locals.user) {
@@ -61,6 +55,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         
         if (codRol === 'ADMIN') throw redirect(303, '/admin');
         if (codRol === 'TECH') throw redirect(303, '/tecnico');
+        if (codRol === 'STORE_MANAGER') throw redirect(303, '/encargado/dashboard');
         throw redirect(303, '/dashboard');
     }
 
