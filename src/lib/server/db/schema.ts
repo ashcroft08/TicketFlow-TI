@@ -31,6 +31,7 @@ export const usuarios = pgTable('usuarios', {
 	password: varchar('password', { length: 255 }).notNull(),
 	reset_token: varchar('reset_token', { length: 255 }),
 	reset_token_expiry: timestamp('reset_token_expiry'),
+	token_version: integer('token_version').default(1).notNull(),
 	estado: boolean('estado').default(true),
 	created_at: timestamp('created_at').defaultNow(),
 	updated_at: timestamp('updated_at').defaultNow(),

@@ -80,7 +80,7 @@ async function main() {
 				nombre: 'Administrador Sistema',
 				username: adminUser,
 				email: adminEmail,
-				password: hashedPassword, // Contraseña encriptada
+				password: hashedPassword,
 				estado: true
 			})
 			.onConflictDoNothing();
