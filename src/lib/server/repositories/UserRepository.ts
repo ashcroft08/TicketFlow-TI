@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { usuarios } from '../db/schema';
-import { eq, or } from 'drizzle-orm';
+import { eq, or, sql } from 'drizzle-orm';
 
 export class UserRepository {
     async findByIdentifier(identifier: string) {
@@ -33,8 +33,15 @@ export class UserRepository {
             .set({ 
                 password: passwordHash, 
                 reset_token: null, 
-                reset_token_expiry: null 
+                reset_token_expiry: null,
+                token_version: sql`${usuarios.token_version} + 1`
             })
             .where(eq(usuarios.id_usuario, userId));
+    }
+
+    async findById(id: number) {
+        return await db.query.usuarios.findFirst({
+            where: eq(usuarios.id_usuario, id)
+        });
     }
 }

@@ -29,7 +29,19 @@ export class AuthService {
             return { success: false, error: 'Usuario o contraseña incorrectos' };
         }
 
-        return { success: true, user: { id: user.id_usuario, nombre: user.nombre, rol: user.rol?.rol } };
+        return { 
+            success: true, 
+            user: { 
+                id: user.id_usuario, 
+                nombre: user.nombre, 
+                email: user.email,
+                username: user.username,
+                cod_rol: user.rol?.cod_rol ?? '',
+                rol: user.rol?.rol ?? '', 
+                id_sucursal: user.id_sucursal ?? 0,
+                token_version: user.token_version ?? 1
+            } 
+        };
     }
 
     async requestPasswordReset(identifier: string) {
