@@ -1,11 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { AuthService } from '$lib/server/services/AuthService';
+import { createSessionToken, SESSION_COOKIE } from '$lib/server/auth';
 
 const authService = new AuthService();
 
 export const actions: Actions = {
-    default: async ({ request }) => {
+    default: async ({ request, cookies }) => {
         const data = await request.formData();
         const identifier = data.get('username')?.toString();
         const password = data.get('password')?.toString();
@@ -16,13 +17,37 @@ export const actions: Actions = {
 
         const result = await authService.login(identifier, password);
 
-        if (!result.success) {
+        if (!result.success || !result.user) {
             return fail(401, { error: result.error, username: identifier });
         }
 
-        // TODO: Crear sesión con better-auth
-        // throw redirect(303, '/dashboard');
+        // Crear el token JWT con los datos del usuario
+        const token = createSessionToken({
+            id: result.user.id,
+            nombre: result.user.nombre,
+            email: result.user.email,
+            username: result.user.username,
+            cod_rol: result.user.cod_rol,
+            rol: result.user.rol,
+            id_sucursal: result.user.id_sucursal,
+            token_version: result.user.token_version
+        });
+
+        // Guardar el token en una cookie HttpOnly segura
+        cookies.set(SESSION_COOKIE, token, {
+            path: '/',
+            httpOnly: true,
+            sameSite: 'strict',
+            secure: false, // En producción cambiar a true (HTTPS)
+            maxAge: 60 * 60 * 8 // 8 horas
+        });
+
+        // Redirigir según el rol
+        const codRol = result.user.cod_rol;
+        if (codRol === 'ADMIN') throw redirect(303, '/admin');
+        if (codRol === 'TECH') throw redirect(303, '/tecnico');
+        if (codRol === 'STORE_MANAGER') throw redirect(303, '/dashboard');
         
-        return { success: true, message: 'Login exitoso (Integración de sesión pendiente)' };
+        throw redirect(303, '/dashboard');
     }
 };

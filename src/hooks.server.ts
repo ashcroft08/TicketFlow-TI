@@ -1,17 +1,68 @@
-import type { Handle } from '@sveltejs/kit';
-import { building } from '$app/environment';
-import { auth } from '$lib/server/auth';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
+import { verifySessionToken, SESSION_COOKIE } from "$lib/server/auth";
+import { UserRepository } from "$lib/server/repositories/UserRepository";
+import { redirect, type Handle } from "@sveltejs/kit";
 
-const handleBetterAuth: Handle = async ({ event, resolve }) => {
-	const session = await auth.api.getSession({ headers: event.request.headers });
+const userRepository = new UserRepository();
 
-	if (session) {
-		event.locals.session = session.session;
-		event.locals.user = session.user;
-	}
+export const handle: Handle = async ({ event, resolve }) => {
+    // 1. Leer la cookie de sesión
+    const token = event.cookies.get(SESSION_COOKIE);
 
-	return svelteKitHandler({ event, resolve, auth, building });
+    if (token) {
+        const decodedUser = verifySessionToken(token);
+        
+        if (decodedUser) {
+            // Verificación de seguridad extra: Validar versión del token contra la BD
+            const dbUser = await userRepository.findById(decodedUser.id);
+            
+            const dbVersion = dbUser?.token_version ?? 1;
+            const tokenVersion = decodedUser.token_version;
+            
+            console.log('DEBUG SESIÓN:', {
+                dbVersion,
+                dbVersionType: typeof dbVersion,
+                tokenVersion,
+                tokenVersionType: typeof tokenVersion,
+                dbUserFound: !!dbUser,
+                dbEstado: dbUser?.estado
+            });
+
+            const isVersionValid = dbUser && dbVersion === tokenVersion;
+            const isActive = dbUser && dbUser.estado;
+
+            if (isVersionValid && isActive) {
+                event.locals.user = decodedUser;
+            } else {
+                console.log('Sesión rechazada:', { isVersionValid, isActive, userId: decodedUser.id });
+                event.cookies.delete(SESSION_COOKIE, { path: '/' });
+                event.locals.user = null;
+            }
+        } else {
+            event.locals.user = null;
+        }
+    } else {
+        event.locals.user = null;
+    }
+
+    // 2. Protección de rutas básica
+    const isProtectedRoute = event.url.pathname.startsWith('/admin') || 
+                           event.url.pathname.startsWith('/tecnico') || 
+                           event.url.pathname.startsWith('/dashboard');
+
+    if (isProtectedRoute && !event.locals.user) {
+        console.log('Acceso denegado a ruta protegida, redirigiendo al login');
+        throw redirect(303, "/");
+    }
+
+    // 3. Si el usuario ya está logueado e intenta ir al login, lo mandamos a su dashboard
+    if (event.url.pathname === "/" && event.locals.user) {
+        const codRol = event.locals.user.cod_rol;
+        console.log('Usuario ya logueado, redirigiendo a dashboard:', codRol);
+        
+        if (codRol === 'ADMIN') throw redirect(303, '/admin');
+        if (codRol === 'TECH') throw redirect(303, '/tecnico');
+        throw redirect(303, '/dashboard');
+    }
+
+    return resolve(event);
 };
-
-export const handle: Handle = handleBetterAuth;
