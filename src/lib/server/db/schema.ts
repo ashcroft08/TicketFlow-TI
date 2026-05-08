@@ -207,15 +207,26 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
 	nivel: one(nivel_atencion, { fields: [tickets.id_nivel_atencion], references: [nivel_atencion.id_nivel_atencion] }),
 	usuario_asignado: one(usuarios, { fields: [tickets.id_usuario], references: [usuarios.id_usuario], relationName: 'tickets_asignados' }),
 	creador: one(usuarios, { fields: [tickets.created_by], references: [usuarios.id_usuario], relationName: 'tickets_creados' }),
+	activo_ti: one(activos_ti, { fields: [tickets.id_activo], references: [activos_ti.id_activo] }),
 	adjuntos: many(ticket_adjuntos),
 	comentarios: many(ticket_comentarios),
 	movimientos: many(movimientos_inventario)
+}));
+
+export const ticketComentariosRelations = relations(ticket_comentarios, ({ one }) => ({
+	ticket: one(tickets, { fields: [ticket_comentarios.id_ticket], references: [tickets.id_ticket] }),
+	usuario: one(usuarios, { fields: [ticket_comentarios.id_usuario], references: [usuarios.id_usuario] })
+}));
+
+export const ticketAdjuntosRelations = relations(ticket_adjuntos, ({ one }) => ({
+	ticket: one(tickets, { fields: [ticket_adjuntos.id_ticket], references: [tickets.id_ticket] })
 }));
 
 export const activosTiRelations = relations(activos_ti, ({ one, many }) => ({
 	sucursal: one(sucursal, { fields: [activos_ti.id_sucursal], references: [sucursal.id_sucursal] }),
 	catalogo: one(catalogo_articulos, { fields: [activos_ti.id_catalogo], references: [catalogo_articulos.id_catalogo] }),
 	usuario_asignado: one(usuarios, { fields: [activos_ti.id_usuario_asignado], references: [usuarios.id_usuario] }),
+	tickets: many(tickets),
 	movimientos: many(movimientos_inventario)
 }));
 
