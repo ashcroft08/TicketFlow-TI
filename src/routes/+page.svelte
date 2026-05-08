@@ -1,7 +1,8 @@
 <script lang="ts">
     import { User, Lock, ArrowRight } from 'lucide-svelte';
     import type { ActionData } from './$types';
-    import logo from '$lib/assets/img/TicketFlow_logo.webp';
+    import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
+    import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
 
     let { form }: { form: ActionData } = $props();
 
@@ -14,7 +15,7 @@
 </svelte:head>
 
 <!-- Contenedor principal con fondo premium (gradiente sutil animado) -->
-<div class="relative min-h-screen flex items-center justify-center bg-slate-50 overflow-hidden font-body-md text-on-background selection:bg-primary/20 selection:text-primary">
+<div class="relative min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 transition-colors duration-300 overflow-hidden font-body-md text-slate-800 dark:text-slate-200 selection:bg-primary/20 selection:text-primary">
     
     <!-- Elementos decorativos de fondo (Mesh Gradient / Blobs) -->
     <div class="absolute top-0 -left-4 w-96 h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
@@ -23,15 +24,16 @@
 
     <!-- Tarjeta de Login (Glassmorphism / Premium Card) -->
     <main class="relative w-full max-w-[420px] px-4 sm:px-6 z-10 animate-fade-in-up">
-        <div class="bg-white/80 backdrop-blur-xl border border-white/50 rounded-[24px] p-8 sm:p-10 flex flex-col gap-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300 hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)]">
+        <div class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-[24px] p-8 sm:p-10 flex flex-col gap-8 shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)] dark:hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)]">
             
             <header class="flex flex-col items-center gap-2 text-center">
                 <div class="flex items-center justify-center text-primary mb-2 transform transition-transform duration-500 hover:scale-105">
-                    <img src={logo} alt="TicketFlow Logo" class="h-14 sm:h-16 object-contain drop-shadow-sm" />
+                    <img src={logoClaro} alt="TicketFlow Logo" class="h-20 sm:h-24 object-contain drop-shadow-sm dark:hidden" />
+                    <img src={logoOscuro} alt="TicketFlow Logo" class="h-20 sm:h-24 object-contain drop-shadow-sm hidden dark:block" />
                 </div>
                 <div>
-                    <h2 class="font-h2 text-xl sm:text-2xl text-on-surface font-bold tracking-tight">Bienvenido de nuevo</h2>
-                    <p class="text-xs sm:text-sm text-on-surface-variant mt-1">Ingresa tus credenciales para continuar</p>
+                    <h2 class="font-h2 text-xl sm:text-2xl text-slate-800 dark:text-white font-bold tracking-tight">Bienvenido de nuevo</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">Ingresa tus credenciales para continuar</p>
                 </div>
             </header>
 
@@ -56,15 +58,15 @@
             <form method="POST" class="flex flex-col gap-6">
                 <!-- Campo Usuario -->
                 <div class="flex flex-col gap-2 group">
-                    <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider transition-colors group-focus-within:text-primary" for="username">Usuario o Correo</label>
+                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider transition-colors group-focus-within:text-primary dark:group-focus-within:text-blue-400" for="username">Usuario o Correo</label>
                     <div class="relative">
-                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-200 {focusedField === 'username' ? 'text-primary' : 'text-outline/70'}">
+                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-200 {focusedField === 'username' ? 'text-primary dark:text-blue-400' : 'text-slate-400 dark:text-slate-400'}">
                             <User size={18} strokeWidth={focusedField === 'username' ? 2.5 : 2} />
                         </div>
                         <input
                             onfocus={() => focusedField = 'username'}
                             onblur={() => focusedField = null}
-                            class="w-full h-12 pl-11 pr-4 bg-white/50 border border-outline-variant/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-on-surface placeholder:text-outline/40 transition-all duration-200 hover:bg-white"
+                            class="w-full h-12 pl-11 pr-4 bg-white/50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/30 focus:border-primary dark:focus:border-blue-500 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 transition-all duration-200 hover:bg-white dark:hover:bg-slate-700/50"
                             id="username" name="username" placeholder="ej: jdoe o juan@correo.com" required type="text" value={form?.username ?? ''} />
                     </div>
                 </div>
@@ -72,25 +74,25 @@
                 <!-- Campo Contraseña -->
                 <div class="flex flex-col gap-2 group">
                     <div class="flex items-center justify-between">
-                        <label class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider transition-colors group-focus-within:text-primary" for="password">Contraseña</label>
-                        <a class="text-xs font-semibold text-primary hover:text-primary-container transition-colors hover:underline"
+                        <label class="text-[11px] font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider transition-colors group-focus-within:text-primary dark:group-focus-within:text-blue-400" for="password">Contraseña</label>
+                        <a class="text-xs font-semibold text-primary dark:text-blue-400 hover:text-primary-container dark:hover:text-blue-300 transition-colors hover:underline"
                             href="/forgot-password">¿Olvidaste tu clave?</a>
                     </div>
                     <div class="relative">
-                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-200 {focusedField === 'password' ? 'text-primary' : 'text-outline/70'}">
+                        <div class="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center justify-center transition-colors duration-200 {focusedField === 'password' ? 'text-primary dark:text-blue-400' : 'text-slate-400 dark:text-slate-400'}">
                             <Lock size={18} strokeWidth={focusedField === 'password' ? 2.5 : 2} />
                         </div>
                         <input
                             onfocus={() => focusedField = 'password'}
                             onblur={() => focusedField = null}
-                            class="w-full h-12 pl-11 pr-4 bg-white/50 border border-outline-variant/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-on-surface placeholder:text-outline/40 transition-all duration-200 hover:bg-white"
+                            class="w-full h-12 pl-11 pr-4 bg-white/50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/30 focus:border-primary dark:focus:border-blue-500 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 transition-all duration-200 hover:bg-white dark:hover:bg-slate-700/50"
                             id="password" name="password" placeholder="••••••••" required type="password" />
                     </div>
                 </div>
 
                 <!-- Botón -->
                 <button
-                    class="mt-2 h-12 w-full bg-primary text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] active:translate-y-0 relative overflow-hidden group"
+                    class="mt-2 h-12 w-full bg-primary dark:bg-blue-600 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] active:translate-y-0 relative overflow-hidden group"
                     type="submit">
                     <!-- Efecto de brillo en hover -->
                     <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer"></div>
