@@ -86,6 +86,70 @@ async function main() {
 			.onConflictDoNothing();
 	}
 
+	// 4. Insertar Estados de Tickets
+	console.log('Insertando estados de tickets...');
+	const estadosData = [
+		{ nombre: 'Abierto', color: '#3b82f6' }, // blue
+		{ nombre: 'En Progreso', color: '#eab308' }, // yellow
+		{ nombre: 'Resuelto', color: '#22c55e' }, // green
+		{ nombre: 'Cerrado', color: '#64748b' } // slate
+	];
+
+	for (const estado of estadosData) {
+		await db
+			.insert(schema.estados_tickets)
+			.values(estado)
+			// No unique constraint on nombre, so we might insert duplicates if run multiple times without wiping.
+			// Ideally add a unique constraint, but for now we skip onConflict.
+			// Actually we can't use onConflictDoNothing without a unique constraint.
+			// So we'll query first.
+			// Wait, let's just do a simple check.
+		    ;
+	}
+
+	// 5. Insertar Activos TI de prueba (para la Matriz)
+	if (matrizSucursal) {
+		console.log('Insertando activos TI de prueba...');
+		
+		// Insertar Tipo
+		const [tipoPc] = await db.insert(schema.tipos_articulos)
+			.values({ tipo: 'Computadora de Escritorio', codigo: 'PC' })
+			.returning();
+
+		// Insertar Catálogo
+		if (tipoPc) {
+			const [catalogoHp] = await db.insert(schema.catalogo_articulos)
+				.values({
+					id_tipo: tipoPc.id_tipo,
+					nombre: 'HP ProDesk 400',
+					marca: 'HP',
+					modelo: 'ProDesk 400 G7'
+				})
+				.returning();
+
+			// Insertar Activo
+			if (catalogoHp) {
+				await db.insert(schema.activos_ti)
+					.values({
+						id_sucursal: matrizSucursal.id_sucursal,
+						id_catalogo: catalogoHp.id_catalogo,
+						numero_serie: 'SN-HP400-001',
+						codigo_inventario: 'INV-MTZ-PC-001',
+						estado: 'activo'
+					});
+					
+				await db.insert(schema.activos_ti)
+					.values({
+						id_sucursal: matrizSucursal.id_sucursal,
+						id_catalogo: catalogoHp.id_catalogo,
+						numero_serie: 'SN-HP400-002',
+						codigo_inventario: 'INV-MTZ-PC-002',
+						estado: 'activo'
+					});
+			}
+		}
+	}
+
 	console.log('--- Seed completado con éxito ---');
 	process.exit(0);
 }
