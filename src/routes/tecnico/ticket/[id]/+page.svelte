@@ -1,7 +1,7 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import { invalidateAll } from '$app/navigation';
-    import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle, Save, FileText, Settings2, ChevronDown, ChevronUp, UserPlus } from 'lucide-svelte';
+    import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle, Save, FileText, Settings2, ChevronDown, ChevronUp, UserPlus, Package, Wrench, History } from 'lucide-svelte';
     import type { ActionData, PageData } from './$types';
 
     let { data, form } = $props<{ data: PageData; form: ActionData }>();
