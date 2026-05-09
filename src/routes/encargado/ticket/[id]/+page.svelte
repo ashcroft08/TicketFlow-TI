@@ -100,6 +100,9 @@
 			minute: '2-digit'
 		});
 	};
+
+	let isClosed = $derived(ticket.estado?.nombre === 'Resuelto' || ticket.estado?.nombre === 'Cerrado');
+	let canChat = $derived(!isClosed && !!ticket.id_usuario);
 </script>
 
 <svelte:head>
@@ -353,15 +356,15 @@
 					<input
 						type="text"
 						name="comentario"
-						placeholder={ticket.id_usuario ? "Escribe un mensaje al técnico..." : "Chat bloqueado hasta que se asigne un técnico..."}
+						placeholder={!canChat ? (isClosed ? "Ticket finalizado - Chat cerrado" : "Chat bloqueado hasta que se asigne un técnico...") : "Escribe un mensaje al técnico..."}
 						required
 						autocomplete="off"
 						class="h-12 flex-grow rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-800 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-slate-700 dark:bg-slate-900/80 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/30 disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800"
-						disabled={!ticket.id_usuario || isSubmitting}
+						disabled={!canChat || isSubmitting}
 					/>
 					<button
 						type="submit"
-						disabled={!ticket.id_usuario || isSubmitting}
+						disabled={!canChat || isSubmitting}
 						class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
 					>
 						<Send class="-ml-0.5 h-5 w-5" />

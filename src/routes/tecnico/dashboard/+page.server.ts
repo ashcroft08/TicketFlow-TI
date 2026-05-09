@@ -11,8 +11,12 @@ export const load: PageServerLoad = async ({ locals }) => {
         throw redirect(303, '/');
     }
 
-    // Cargar tickets asignados al técnico
-    const misTickets = await ticketRepository.getTicketsByAssignee(user.id);
+    // Cargar todos los tickets asignados al técnico
+    const allMisTickets = await ticketRepository.getTicketsByAssignee(user.id);
+    
+    // Separar en activos y finalizados
+    const misTickets = allMisTickets.filter(t => t.estado?.nombre !== 'Resuelto' && t.estado?.nombre !== 'Cerrado');
+    const finalizados = allMisTickets.filter(t => t.estado?.nombre === 'Resuelto' || t.estado?.nombre === 'Cerrado');
     
     // Cargar tickets nuevos sin asignar
     const nuevosTickets = await ticketRepository.getUnassignedTickets();
@@ -20,6 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
     return {
         user,
         misTickets,
+        finalizados,
         nuevosTickets
     };
 };

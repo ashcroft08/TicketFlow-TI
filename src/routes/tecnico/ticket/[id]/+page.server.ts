@@ -2,9 +2,11 @@ import { error, fail } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { TicketRepository } from '$lib/server/repositories/TicketRepository';
 import { ReferenceDataRepository } from '$lib/server/repositories/ReferenceDataRepository';
+import { InventoryRepository } from '$lib/server/repositories/InventoryRepository';
 
 const ticketRepository = new TicketRepository();
 const referenceDataRepository = new ReferenceDataRepository();
+const inventoryRepository = new InventoryRepository();
 
 export const load: PageServerLoad = async ({ params, locals }) => {
     // Validar sesión y rol (TECH o ADMIN)
@@ -25,18 +27,27 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     }
 
     // Cargar catálogos para los selectores
-    const [categorias, estados, niveles] = await Promise.all([
+    const [categorias, estados, niveles, tiposMovimiento] = await Promise.all([
         referenceDataRepository.getCategorias(),
         referenceDataRepository.getEstadosTickets(),
-        referenceDataRepository.getNivelesAtencion()
+        referenceDataRepository.getNivelesAtencion(),
+        inventoryRepository.getMovementTypes()
     ]);
+
+    // Si el ticket tiene un activo asignado, cargamos su historial de movimientos
+    let movimientosActivo = [];
+    if (ticket.id_activo) {
+        movimientosActivo = await inventoryRepository.getAssetMovements(ticket.id_activo);
+    }
 
     return {
         user,
         ticket,
         categorias,
         estados,
-        niveles
+        niveles,
+        tiposMovimiento,
+        movimientosActivo
     };
 };
 
@@ -112,6 +123,43 @@ export const actions: Actions = {
         } catch (err) {
             console.error('Error al reclamar ticket:', err);
             return fail(500, { error: 'Ocurrió un error al asignar el ticket' });
+        }
+    },
+
+    registerAssetMovement: async ({ request, params, locals }) => {
+        const user = locals.user;
+        if (!user || (user.cod_rol !== 'TECH' && user.cod_rol !== 'ADMIN')) {
+            return fail(401, { error: 'No autorizado' });
+        }
+
+        const ticketId = parseInt(params.id, 10);
+        const data = await request.formData();
+        
+        const id_activo = parseInt(data.get('id_activo')?.toString() || '', 10);
+        const id_tipo_movimiento = parseInt(data.get('id_tipo_movimiento')?.toString() || '', 10);
+        const nuevo_estado = data.get('nuevo_estado')?.toString();
+        const motivo = data.get('motivo')?.toString();
+
+        if (isNaN(id_activo) || isNaN(id_tipo_movimiento) || !nuevo_estado) {
+            return fail(400, { error: 'Faltan campos obligatorios para registrar el movimiento' });
+        }
+
+        try {
+            // 1. Registrar el movimiento
+            await inventoryRepository.registerMovement({
+                id_ticket: ticketId,
+                id_activo,
+                id_tipo_movimiento,
+                motivo
+            });
+
+            // 2. Actualizar el estado del activo
+            await inventoryRepository.updateAssetStatus(id_activo, nuevo_estado);
+
+            return { success: true, message: '¡Movimiento de inventario registrado y estado actualizado!' };
+        } catch (err) {
+            console.error('Error al registrar movimiento:', err);
+            return fail(500, { error: 'Error al registrar el movimiento de inventario' });
         }
     }
 };

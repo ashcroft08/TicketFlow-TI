@@ -5,7 +5,7 @@
 
     let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-    let activeTab = $state<'mis_tickets' | 'nuevos'>('mis_tickets');
+    let activeTab = $state<'mis_tickets' | 'nuevos' | 'finalizados'>('mis_tickets');
     let isSubmitting = $state<number | null>(null);
 
     // Helper para estados
@@ -98,6 +98,19 @@
                 {#if data.nuevosTickets.length > 0}
                     <span class="ml-1.5 py-0.5 px-2 rounded-full text-[10px] bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400 animate-pulse">
                         {data.nuevosTickets.length}
+                    </span>
+                {/if}
+            </button>
+
+            <button 
+                onclick={() => activeTab = 'finalizados'}
+                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap {activeTab === 'finalizados' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+            >
+                <CheckCircle2 class="w-4 h-4" />
+                Tickets Finalizados
+                {#if data.finalizados.length > 0}
+                    <span class="ml-1.5 py-0.5 px-2 rounded-full text-[10px] {activeTab === 'finalizados' ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}">
+                        {data.finalizados.length}
                     </span>
                 {/if}
             </button>
@@ -225,6 +238,50 @@
                             </form>
                         </div>
                     </div>
+                {/each}
+            {/if}
+            
+            <!-- LISTADO: TICKETS FINALIZADOS -->
+            {#if activeTab === 'finalizados'}
+                {#if data.finalizados.length === 0}
+                    <div class="col-span-full py-16 text-center bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-200/50 dark:border-slate-700/50 border-dashed">
+                        <CheckCircle2 class="w-12 h-12 text-slate-400 mx-auto mb-4 opacity-30" />
+                        <h3 class="text-lg font-bold mb-2 text-slate-400">Historial Vacío</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto">
+                            Aún no has finalizado ningún ticket.
+                        </p>
+                    </div>
+                {/if}
+
+                {#each data.finalizados as ticket}
+                    {@const status = getStatusStyles(ticket.estado?.nombre || '')}
+                    <a href="/tecnico/ticket/{ticket.id_ticket}" class="group relative flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200/60 dark:border-slate-800/60 rounded-[24px] p-6 hover:shadow-lg transition-all duration-300 opacity-80 hover:opacity-100">
+                        
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                                #{ticket.id_ticket}
+                            </span>
+                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {status.bg} {status.text} {status.border}">
+                                <status.icon class="w-3 h-3" />
+                                {ticket.estado?.nombre}
+                            </div>
+                        </div>
+
+                        <h3 class="text-base font-bold mb-3 line-clamp-2 leading-snug text-slate-600 dark:text-slate-400 group-hover:text-blue-600/70 transition-colors">
+                            {ticket.titulo}
+                        </h3>
+
+                        <div class="mt-auto pt-6 border-t border-slate-100/50 dark:border-slate-800/60 flex flex-col gap-2.5">
+                            <div class="flex items-center gap-2 text-xs text-slate-400">
+                                <Calendar class="w-3.5 h-3.5" />
+                                <span>{formatDate(ticket.created_at)}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-slate-400">
+                                <Monitor class="w-3.5 h-3.5" />
+                                <span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'General'}</span>
+                            </div>
+                        </div>
+                    </a>
                 {/each}
             {/if}
 
