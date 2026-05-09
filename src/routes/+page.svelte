@@ -55,7 +55,7 @@
                 </div>
             {/if}
 
-            <form method="POST" class="flex flex-col gap-6">
+            <form method="POST" action="?/login" class="flex flex-col gap-6">
                 <!-- Campo Usuario -->
                 <div class="flex flex-col gap-2 group">
                     <label class="text-[11px] font-bold text-slate-500 dark:text-slate-300 uppercase tracking-wider transition-colors group-focus-within:text-primary dark:group-focus-within:text-blue-400" for="username">Usuario o Correo</label>

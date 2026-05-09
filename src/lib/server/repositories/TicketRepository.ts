@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { tickets, ticket_adjuntos, usuarios, estados_tickets, categorias, ticket_comentarios } from '../db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, isNull } from 'drizzle-orm';
 
 export class TicketRepository {
     async createTicket(data: {
@@ -100,5 +100,76 @@ export class TicketRepository {
         }).returning();
 
         return newComment;
+    }
+
+    // --- Métodos para el Técnico ---
+
+    async getTicketsByAssignee(userId: number) {
+        return await db.query.tickets.findMany({
+            where: eq(tickets.id_usuario, userId),
+            with: {
+                estado: true,
+                categoria: true,
+                activo_ti: {
+                    with: {
+                        catalogo: true
+                    }
+                }
+            },
+            orderBy: [desc(tickets.created_at)]
+        });
+    }
+
+    async getUnassignedTickets() {
+        return await db.query.tickets.findMany({
+            where: isNull(tickets.id_usuario),
+            with: {
+                estado: true,
+                categoria: true,
+                activo_ti: {
+                    with: {
+                        catalogo: true
+                    }
+                }
+            },
+            orderBy: [desc(tickets.created_at)]
+        });
+    }
+
+    async claimTicket(ticketId: number, userId: number) {
+        const [updatedTicket] = await db.update(tickets)
+            .set({ 
+                id_usuario: userId,
+                updated_by: userId,
+                updated_at: new Date()
+            })
+            .where(eq(tickets.id_ticket, ticketId))
+            .returning();
+        return updatedTicket;
+    }
+
+    async updateTicket(ticketId: number, data: {
+        id_estado?: number;
+        id_categoria?: number;
+        id_nivel_atencion?: number;
+        notas_tecnico?: string;
+        updated_by: number;
+    }) {
+        const updateData: any = {
+            updated_by: data.updated_by,
+            updated_at: new Date()
+        };
+        
+        if (data.id_estado !== undefined) updateData.id_estado = data.id_estado;
+        if (data.id_categoria !== undefined) updateData.id_categoria = data.id_categoria;
+        if (data.id_nivel_atencion !== undefined) updateData.id_nivel_atencion = data.id_nivel_atencion;
+        if (data.notas_tecnico !== undefined) updateData.notas_tecnico = data.notas_tecnico;
+
+        const [updatedTicket] = await db.update(tickets)
+            .set(updateData)
+            .where(eq(tickets.id_ticket, ticketId))
+            .returning();
+            
+        return updatedTicket;
     }
 }

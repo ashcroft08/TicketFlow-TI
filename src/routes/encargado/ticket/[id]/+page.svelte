@@ -1,240 +1,390 @@
 <script lang="ts">
-    import { enhance } from '$app/forms';
-    import { invalidateAll } from '$app/navigation';
-    import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle } from 'lucide-svelte';
-    import type { ActionData, PageData } from './$types';
+	import { enhance } from '$app/forms';
+	import { invalidateAll } from '$app/navigation';
+	import {
+		ArrowLeft,
+		Calendar,
+		Monitor,
+		Send,
+		Paperclip,
+		AlertCircle,
+		Clock,
+		CheckCircle2,
+		HelpCircle,
+		ChevronDown,
+		ChevronUp,
+		Info
+	} from 'lucide-svelte';
+	import type { ActionData, PageData } from './$types';
 
-    let { data, form } = $props<{ data: PageData; form: ActionData }>();
+	let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-    // Ref para el contenedor del chat para auto-scroll
-    let chatContainer: HTMLElement;
-    let isSubmitting = $state(false);
+	// Ref para el contenedor del chat para auto-scroll
+	let chatContainer: HTMLElement;
+	let isSubmitting = $state(false);
+	let isInfoExpanded = $state(true);
 
-    // Auto scroll al final del chat
-    const scrollToBottom = () => {
-        if (chatContainer) {
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-        }
-    };
+	// Auto scroll al final del chat
+	const scrollToBottom = () => {
+		if (chatContainer) {
+			chatContainer.scrollTop = chatContainer.scrollHeight;
+		}
+	};
 
-    $effect(() => {
-        // Ejecutar auto-scroll cuando cambie la longitud de los comentarios
-        const _ = data.ticket?.comentarios?.length;
-        scrollToBottom();
-    });
+	$effect(() => {
+		// Ejecutar auto-scroll cuando cambie la longitud de los comentarios
+		const _ = data.ticket?.comentarios?.length;
+		scrollToBottom();
+	});
 
-    // Polling: Refrescar los datos en segundo plano cada 5 segundos
-    $effect(() => {
-        const interval = setInterval(() => {
-            invalidateAll();
-        }, 5000);
+	// Polling: Refrescar los datos en segundo plano cada 5 segundos
+	$effect(() => {
+		const interval = setInterval(() => {
+			invalidateAll();
+		}, 5000);
 
-        return () => clearInterval(interval);
-    });
+		return () => clearInterval(interval);
+	});
 
-    let ticket = $derived(data.ticket);
+	let ticket = $derived(data.ticket);
 
-    // Helper para estados
-    const getStatusStyles = (nombre: string) => {
-        switch (nombre) {
-            case 'Abierto': return { icon: AlertCircle, bg: 'bg-blue-500/10 dark:bg-blue-500/20', text: 'text-blue-600 dark:text-blue-300', border: 'border-blue-500/20 dark:border-blue-500/30' };
-            case 'En Progreso': return { icon: Clock, bg: 'bg-amber-500/10 dark:bg-amber-500/20', text: 'text-amber-600 dark:text-amber-300', border: 'border-amber-500/20 dark:border-amber-500/30' };
-            case 'Resuelto': return { icon: CheckCircle2, bg: 'bg-emerald-500/10 dark:bg-emerald-500/20', text: 'text-emerald-600 dark:text-emerald-300', border: 'border-emerald-500/20 dark:border-emerald-500/30' };
-            case 'Cerrado': return { icon: CheckCircle2, bg: 'bg-slate-500/10 dark:bg-slate-500/20', text: 'text-slate-600 dark:text-slate-300', border: 'border-slate-500/20 dark:border-slate-500/30' };
-            default: return { icon: HelpCircle, bg: 'bg-gray-500/10 dark:bg-gray-500/20', text: 'text-gray-600 dark:text-gray-300', border: 'border-gray-500/20 dark:border-gray-500/30' };
-        }
-    };
+	// Helper para estados
+	const getStatusStyles = (nombre: string) => {
+		switch (nombre) {
+			case 'Abierto':
+				return {
+					icon: AlertCircle,
+					bg: 'bg-blue-500/10 dark:bg-blue-500/20',
+					text: 'text-blue-600 dark:text-blue-300',
+					border: 'border-blue-500/20 dark:border-blue-500/30'
+				};
+			case 'En Progreso':
+				return {
+					icon: Clock,
+					bg: 'bg-amber-500/10 dark:bg-amber-500/20',
+					text: 'text-amber-600 dark:text-amber-300',
+					border: 'border-amber-500/20 dark:border-amber-500/30'
+				};
+			case 'Resuelto':
+				return {
+					icon: CheckCircle2,
+					bg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+					text: 'text-emerald-600 dark:text-emerald-300',
+					border: 'border-emerald-500/20 dark:border-emerald-500/30'
+				};
+			case 'Cerrado':
+				return {
+					icon: CheckCircle2,
+					bg: 'bg-slate-500/10 dark:bg-slate-500/20',
+					text: 'text-slate-600 dark:text-slate-300',
+					border: 'border-slate-500/20 dark:border-slate-500/30'
+				};
+			default:
+				return {
+					icon: HelpCircle,
+					bg: 'bg-gray-500/10 dark:bg-gray-500/20',
+					text: 'text-gray-600 dark:text-gray-300',
+					border: 'border-gray-500/20 dark:border-gray-500/30'
+				};
+		}
+	};
 
-    const status = getStatusStyles(ticket.estado?.nombre || '');
+	const status = getStatusStyles(ticket.estado?.nombre || '');
 
-    const formatDate = (date: Date | string | null) => {
-        if (!date) return '';
-        return new Date(date).toLocaleString('es-ES', {
-            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-        });
-    };
+	const formatDate = (date: Date | string | null) => {
+		if (!date) return '';
+		return new Date(date).toLocaleString('es-ES', {
+			day: 'numeric',
+			month: 'short',
+			hour: '2-digit',
+			minute: '2-digit'
+		});
+	};
 </script>
 
 <svelte:head>
-    <title>Ticket #{ticket.id_ticket} - TicketFlow TI</title>
+	<title>Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 dark:bg-slate-900 font-body-md text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col">
-    
-    <!-- Header Navegación -->
-    <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700/60 sticky top-0 z-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="/encargado/dashboard" class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-blue-400 hover:bg-primary/10 dark:hover:bg-blue-500/10 transition-colors">
-                    <ArrowLeft class="w-5 h-5" />
-                </a>
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Ticket #{ticket.id_ticket}</span>
-                    <h1 class="font-h3 text-base sm:text-lg font-bold leading-tight truncate max-w-[200px] sm:max-w-xs md:max-w-md">{ticket.titulo}</h1>
-                </div>
-            </div>
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border {status.bg} {status.text} {status.border}">
-                <status.icon class="w-3.5 h-3.5" />
-                <span>{ticket.estado?.nombre || 'Pendiente'}</span>
-            </div>
-        </div>
-    </header>
+<div
+	class="flex min-h-screen flex-col bg-slate-50 font-body-md text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200"
+>
+	<!-- Header Navegación -->
+	<header
+		class="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/80"
+	>
+		<div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+			<div class="flex items-center gap-4">
+				<a
+					href="/encargado/dashboard"
+					class="-ml-2 rounded-xl p-2 text-slate-500 transition-colors hover:bg-primary/10 hover:text-primary dark:text-slate-400 dark:hover:bg-blue-500/10 dark:hover:text-blue-400"
+				>
+					<ArrowLeft class="h-5 w-5" />
+				</a>
+				<div class="flex flex-col">
+					<span class="text-[10px] font-bold tracking-wider text-slate-500 uppercase"
+						>Ticket #{ticket.id_ticket}</span
+					>
+					<h1
+						class="max-w-[200px] truncate font-h3 text-base leading-tight font-bold sm:max-w-xs sm:text-lg md:max-w-md"
+					>
+						{ticket.titulo}
+					</h1>
+				</div>
+			</div>
+			<div
+				class="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold {status.bg} {status.text} {status.border}"
+			>
+				<status.icon class="h-3.5 w-3.5" />
+				<span>{ticket.estado?.nombre || 'Pendiente'}</span>
+			</div>
+		</div>
+	</header>
 
-    <!-- Contenido Principal Split-Screen -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start h-[calc(100vh-64px)] overflow-hidden">
-        
-        <!-- PANEL IZQUIERDO: Detalles del Ticket (Oculto en móvil) -->
-        <div class="hidden lg:flex lg:col-span-5 flex-col gap-6 lg:h-full lg:overflow-y-auto pr-2 lg:pb-6 custom-scrollbar">
-            
-            <!-- Tarjeta Info -->
-            <div class="bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-6 shadow-sm">
-                <h2 class="text-xl font-bold mb-4">{ticket.titulo}</h2>
-                
-                <div class="flex flex-col gap-4">
-                    <div>
-                        <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Descripción</span>
-                        <p class="text-sm bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                            {ticket.descripcion}
-                        </p>
-                    </div>
+	<!-- Contenido Principal Split-Screen -->
+	<main
+		class="mx-auto flex h-[calc(100vh-64px)] w-full max-w-7xl flex-grow flex-col items-start gap-6 p-4 sm:px-6 lg:flex-row lg:overflow-hidden lg:px-8"
+	>
+		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
+		<div
+			class="custom-scrollbar flex w-full flex-col gap-6 pr-2 lg:flex lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6"
+		>
+			<!-- Tarjeta Info -->
+			<div
+				class="overflow-hidden rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60"
+			>
+				<!-- Header con botón de plegado (Solo móvil) -->
+				<div
+					class="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-6 py-3 lg:hidden dark:border-slate-700/60 dark:bg-slate-900/30"
+				>
+					<span
+						class="flex items-center gap-2 text-[11px] font-bold tracking-widest text-slate-500 uppercase"
+					>
+						<Info class="h-3.5 w-3.5" /> Detalles del Ticket
+					</span>
+					<button
+						onclick={() => (isInfoExpanded = !isInfoExpanded)}
+						class="rounded-lg border border-slate-200 bg-white p-1.5 text-slate-500 dark:border-slate-700 dark:bg-slate-800"
+					>
+						{#if isInfoExpanded}
+							<ChevronUp class="h-4 w-4" />
+						{:else}
+							<ChevronDown class="h-4 w-4" />
+						{/if}
+					</button>
+				</div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Equipo Afectado</span>
-                            <div class="flex items-center gap-2 text-sm font-medium">
-                                <Monitor class="w-4 h-4 text-primary dark:text-blue-400" />
-                                <span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'General'}</span>
-                            </div>
-                        </div>
-                        <div>
-                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Creado el</span>
-                            <div class="flex items-center gap-2 text-sm font-medium">
-                                <Calendar class="w-4 h-4 text-primary dark:text-blue-400" />
-                                <span>{formatDate(ticket.created_at)}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+				{#if isInfoExpanded}
+					<div class="p-6">
+						<h2 class="mb-4 text-xl font-bold">{ticket.titulo}</h2>
 
-            <!-- Galería de Adjuntos -->
-            {#if ticket.adjuntos && ticket.adjuntos.length > 0}
-                <div class="bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-6 shadow-sm">
-                    <h3 class="text-sm font-bold flex items-center gap-2 mb-4">
-                        <Paperclip class="w-4 h-4 text-slate-500" />
-                        Imágenes Adjuntas ({ticket.adjuntos.length})
-                    </h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        {#each ticket.adjuntos as adjunto}
-                            <a href={adjunto.imagen_url} target="_blank" rel="noopener noreferrer" class="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
-                                <img src={adjunto.imagen_url} alt={adjunto.nombre} class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" />
-                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <span class="text-white text-xs font-semibold">Ver Completa</span>
-                                </div>
-                            </a>
-                        {/each}
-                    </div>
-                </div>
-            {/if}
-        </div>
+						<div class="flex flex-col gap-4">
+							<div>
+								<span
+									class="mb-1 block text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+									>Descripción</span
+								>
+								<p
+									class="rounded-xl border border-slate-100 bg-slate-50 p-4 text-sm dark:border-slate-700/50 dark:bg-slate-900/50"
+								>
+									{ticket.descripcion}
+								</p>
+							</div>
 
-        <!-- PANEL DERECHO: Chat Interno -->
-        <div class="lg:col-span-7 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] shadow-sm flex flex-col h-full lg:h-[calc(100vh-100px)]">
-            
-            <!-- Cabecera Chat -->
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50 rounded-t-[24px]">
-                <h3 class="font-bold text-sm">Chat Interno</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Comunícate con el técnico asignado</p>
-            </div>
+							<div class="grid grid-cols-2 gap-4">
+								<div>
+									<span
+										class="mb-1 block text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+										>Equipo Afectado</span
+									>
+									<div class="flex items-center gap-2 text-sm font-medium">
+										<Monitor class="h-4 w-4 text-primary dark:text-blue-400" />
+										<span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'General'}</span>
+									</div>
+								</div>
+								<div>
+									<span
+										class="mb-1 block text-[11px] font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
+										>Creado el</span
+									>
+									<div class="flex items-center gap-2 text-sm font-medium">
+										<Calendar class="h-4 w-4 text-primary dark:text-blue-400" />
+										<span>{formatDate(ticket.created_at)}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				{/if}
+			</div>
 
-            <!-- Área de Mensajes -->
-            <div bind:this={chatContainer} class="flex-grow p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar bg-slate-50/50 dark:bg-slate-900/30">
-                
-                {#if ticket.comentarios.length === 0}
-                    <div class="m-auto text-center opacity-50">
-                        <div class="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Send class="w-8 h-8 text-primary" />
-                        </div>
-                        <p class="text-sm">Aún no hay mensajes.</p>
-                        <p class="text-xs">Escribe el primer comentario abajo.</p>
-                    </div>
-                {/if}
+			{#if isInfoExpanded}
+				<!-- Galería de Adjuntos -->
+				{#if ticket.adjuntos && ticket.adjuntos.length > 0}
+					<div
+						class="rounded-[24px] border border-slate-200 bg-white/70 p-6 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60"
+					>
+						<h3 class="mb-4 flex items-center gap-2 text-sm font-bold">
+							<Paperclip class="h-4 w-4 text-slate-500" />
+							Imágenes Adjuntas ({ticket.adjuntos.length})
+						</h3>
+						<div class="grid grid-cols-2 gap-3">
+							{#each ticket.adjuntos as adjunto}
+								<a
+									href={adjunto.imagen_url}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="group relative aspect-square overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700"
+								>
+									<img
+										src={adjunto.imagen_url}
+										alt={adjunto.nombre}
+										class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+									/>
+									<div
+										class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+									>
+										<span class="text-xs font-semibold text-white">Ver Completa</span>
+									</div>
+								</a>
+							{/each}
+						</div>
+					</div>
+				{/if}
+			{/if}
+		</div>
 
-                {#each ticket.comentarios as comentario}
-                    {@const isMe = comentario.id_usuario === data.user.id}
-                    {@const senderName = isMe ? 'Tú' : (comentario.usuario?.nombre || 'Usuario')}
-                    {@const senderRole = comentario.usuario?.rol?.cod_rol === 'TECHNICIAN' ? 'Técnico' : 'Encargado'}
+		<!-- PANEL DERECHO: Chat Interno -->
+		<div
+			class="flex h-[600px] h-full w-full flex-col rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:max-h-[calc(100vh-100px)] lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60"
+		>
+			<!-- Cabecera Chat -->
+			<div
+				class="rounded-t-[24px] border-b border-slate-200 bg-white/50 px-6 py-4 dark:border-slate-700/60 dark:bg-slate-800/50"
+			>
+				<h3 class="text-sm font-bold">Canal de Comunicación</h3>
+				<p class="text-xs text-slate-500 dark:text-slate-400">
+					Conversación con el técnico asignado
+				</p>
+			</div>
 
-                    <div class="flex flex-col max-w-[85%] {isMe ? 'self-end items-end' : 'self-start items-start'}">
-                        <div class="flex items-baseline gap-2 mb-1 px-1">
-                            <span class="text-xs font-semibold {isMe ? 'text-primary dark:text-blue-400' : 'text-slate-600 dark:text-slate-300'}">{senderName}</span>
-                            {#if !isMe}
-                                <span class="text-[10px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">{senderRole}</span>
-                            {/if}
-                            <span class="text-[10px] text-slate-400">{formatDate(comentario.created_at)}</span>
-                        </div>
-                        
-                        <div class="px-4 py-2.5 rounded-2xl text-sm shadow-sm
-                            {isMe 
-                                ? 'bg-primary dark:bg-blue-600 text-white rounded-tr-sm' 
-                                : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 rounded-tl-sm text-slate-800 dark:text-slate-200'}">
-                            <p class="whitespace-pre-wrap break-words">{comentario.comentario}</p>
-                        </div>
-                    </div>
-                {/each}
-            </div>
+			<!-- Área de Mensajes -->
+			<div
+				bind:this={chatContainer}
+				class="custom-scrollbar flex flex-grow flex-col gap-4 overflow-y-auto bg-slate-50/50 p-6 dark:bg-slate-900/30"
+			>
+				{#if !ticket.id_usuario}
+					<div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3 mb-4 animate-pulse">
+						<Clock class="w-5 h-5 text-amber-600 shrink-0" />
+						<div class="flex flex-col">
+							<p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Esperando Técnico</p>
+							<p class="text-[11px] text-amber-600 dark:text-amber-500/80">Tu solicitud está en espera. Podrás chatear cuando un técnico tome el ticket.</p>
+						</div>
+					</div>
+				{/if}
 
-            <!-- Input Chat -->
-            <div class="p-4 bg-white/50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700/60 rounded-b-[24px]">
-                <form 
-                    method="POST" 
-                    action="?/sendComment"
-                    class="flex gap-2"
-                    use:enhance={() => {
-                        isSubmitting = true;
-                        return async ({ update }) => {
-                            await update({ reset: true });
-                            isSubmitting = false;
-                            scrollToBottom();
-                        };
-                    }}
-                >
-                    <input 
-                        type="text" 
-                        name="comentario" 
-                        placeholder="Escribe un mensaje..."
-                        required
-                        autocomplete="off"
-                        class="flex-grow h-12 px-4 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/30 focus:border-primary dark:focus:border-blue-500 text-sm text-slate-800 dark:text-white"
-                        disabled={isSubmitting}
-                    />
-                    <button 
-                        type="submit"
-                        disabled={isSubmitting}
-                        class="h-12 w-12 shrink-0 bg-primary dark:bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-primary/90 dark:hover:bg-blue-500 transition-colors disabled:opacity-50"
-                    >
-                        <Send class="w-5 h-5 -ml-0.5" />
-                    </button>
-                </form>
-            </div>
+				{#if ticket.comentarios.length === 0 && ticket.id_usuario}
+					<div class="m-auto text-center opacity-50">
+						<div
+							class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
+						>
+							<Send class="h-8 w-8 text-primary" />
+						</div>
+						<p class="text-sm">Aún no hay mensajes.</p>
+						<p class="text-xs">Escribe el primer comentario abajo.</p>
+					</div>
+				{/if}
 
-        </div>
-    </main>
+				{#each ticket.comentarios as comentario}
+					{@const isMe = comentario.id_usuario === data.user.id}
+					{@const senderName = isMe ? 'Tú' : comentario.usuario?.nombre || 'Usuario'}
+					{@const senderRole =
+						comentario.usuario?.rol?.cod_rol === 'TECHNICIAN' ? 'Técnico' : 'Encargado'}
+
+					<div
+						class="flex max-w-[85%] flex-col {isMe
+							? 'items-end self-end'
+							: 'items-start self-start'}"
+					>
+						<div class="mb-1 flex items-baseline gap-2 px-1">
+							<span
+								class="text-xs font-semibold {isMe
+									? 'text-primary dark:text-blue-400'
+									: 'text-slate-600 dark:text-slate-300'}">{senderName}</span
+							>
+							{#if !isMe}
+								<span
+									class="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600 dark:bg-slate-700 dark:text-slate-400"
+									>{senderRole}</span
+								>
+							{/if}
+							<span class="text-[10px] text-slate-400">{formatDate(comentario.created_at)}</span>
+						</div>
+
+						<div
+							class="rounded-2xl px-4 py-2.5 text-sm shadow-sm
+                            {isMe
+								? 'rounded-tr-sm bg-primary text-white dark:bg-blue-600'
+								: 'rounded-tl-sm border border-slate-200 bg-white text-slate-800 dark:border-slate-700/60 dark:bg-slate-800 dark:text-slate-200'}"
+						>
+							<p class="break-words whitespace-pre-wrap">{comentario.comentario}</p>
+						</div>
+					</div>
+				{/each}
+			</div>
+
+			<!-- Input Chat -->
+			<div
+				class="rounded-b-[24px] border-t border-slate-200 bg-white/50 p-4 dark:border-slate-700/60 dark:bg-slate-800/50"
+			>
+				<form
+					method="POST"
+					action="?/sendComment"
+					class="flex gap-2"
+					use:enhance={() => {
+						isSubmitting = true;
+						return async ({ update }) => {
+							await update({ reset: true });
+							isSubmitting = false;
+							scrollToBottom();
+						};
+					}}
+				>
+					<input
+						type="text"
+						name="comentario"
+						placeholder={ticket.id_usuario ? "Escribe un mensaje al técnico..." : "Chat bloqueado hasta que se asigne un técnico..."}
+						required
+						autocomplete="off"
+						class="h-12 flex-grow rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-800 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-slate-700 dark:bg-slate-900/80 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/30 disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800"
+						disabled={!ticket.id_usuario || isSubmitting}
+					/>
+					<button
+						type="submit"
+						disabled={!ticket.id_usuario || isSubmitting}
+						class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
+					>
+						<Send class="-ml-0.5 h-5 w-5" />
+					</button>
+				</form>
+			</div>
+		</div>
+	</main>
 </div>
 
 <style>
-    /* Estilos para el scrollbar para que se vea premium */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: rgba(156, 163, 175, 0.3);
-        border-radius: 10px;
-    }
-    :global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
-        background-color: rgba(71, 85, 105, 0.5);
-    }
+	/* Estilos para el scrollbar para que se vea premium */
+	.custom-scrollbar::-webkit-scrollbar {
+		width: 6px;
+	}
+	.custom-scrollbar::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.custom-scrollbar::-webkit-scrollbar-thumb {
+		background-color: rgba(156, 163, 175, 0.3);
+		border-radius: 10px;
+	}
+	:global(.dark) .custom-scrollbar::-webkit-scrollbar-thumb {
+		background-color: rgba(71, 85, 105, 0.5);
+	}
 </style>
