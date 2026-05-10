@@ -144,7 +144,6 @@
                                             name="nombre"
                                             bind:value={editNombre}
                                             class="input-compact flex-grow !py-1"
-                                            autoFocus
                                         />
                                         <button type="submit" class="p-1 text-success hover:bg-success/10 rounded transition-colors">
                                             <Check class="w-4 h-4" />

@@ -139,7 +139,7 @@
     @keyframes shimmer {
         100% { transform: translateX(100%); }
     }
-    .animate-shimmer {
+    :global(.animate-shimmer) {
         animation: shimmer 2s infinite;
     }
 </style>

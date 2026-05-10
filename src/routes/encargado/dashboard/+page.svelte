@@ -152,10 +152,12 @@
 {#if showModal}
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <!-- Backdrop con blur fuerte -->
-        <div 
-            class="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-md transition-opacity"
+        <button 
+            type="button"
+            class="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-md transition-opacity cursor-default"
             onclick={() => showModal = false}
-        ></div>
+            aria-label="Cerrar modal"
+        ></button>
 
         <!-- Tarjeta del Formulario -->
         <div class="relative w-full max-w-[480px] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-[28px] shadow-[0_8px_40px_rgb(0,0,0,0.12)] p-6 sm:p-8 animate-fade-in-up my-auto">

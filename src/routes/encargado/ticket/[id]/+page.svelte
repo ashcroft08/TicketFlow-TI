@@ -89,7 +89,7 @@
 		}
 	};
 
-	const status = getStatusStyles(ticket.estado?.nombre || '');
+	const status = $derived(getStatusStyles(ticket.estado?.nombre || ''));
 
 	const formatDate = (date: Date | string | null) => {
 		if (!date) return '';
