@@ -77,31 +77,30 @@
 
     <!-- Sidebar Lateral -->
     <aside 
-        class="fixed inset-y-0 left-0 w-64 glass-card !rounded-none border-r border-white/5 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
+        class="fixed inset-y-0 left-0 w-64 bg-slate-900 border-r border-slate-800 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
     >
         <div class="h-full flex flex-col p-5 sticky top-0">
             <!-- Branding Area -->
             <div class="flex items-center justify-center py-6 mb-4">
-                <img src={logoClaro} alt="TicketFlow" class="h-9 w-auto block dark:hidden" />
-                <img src={logoOscuro} alt="TicketFlow" class="h-9 w-auto hidden dark:block" />
+                <img src={logoOscuro} alt="TicketFlow" class="h-9 w-auto" />
             </div>
 
             <!-- Navegación Inteligente -->
             <nav class="flex-grow space-y-6 overflow-y-auto custom-scrollbar pr-2">
                 {#each navSections as section}
                     <div class="space-y-1">
-                        <h3 class="px-3 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-text-dim dark:text-dark-text-dim opacity-50">
+                        <h3 class="px-3 mb-2 text-[9px] font-black uppercase tracking-[0.2em] text-slate-500">
                             {section.label}
                         </h3>
                         <div class="space-y-1">
                             {#each section.items as item}
                                 <a 
                                     href={item.path}
-                                    class="flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-300 group {isActive(item.path) ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-text-dim hover:bg-primary/5 hover:text-primary'}"
+                                    class="flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-300 group {isActive(item.path) ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'text-slate-400 hover:bg-white/10 hover:text-white'}"
                                     onclick={() => isSidebarOpen = false}
                                 >
                                     <div class="flex items-center gap-3">
-                                        <item.icon class="w-4 h-4 {isActive(item.path) ? 'text-white' : 'group-hover:text-primary transition-colors'}" />
+                                        <item.icon class="w-4 h-4 {isActive(item.path) ? 'text-white' : 'group-hover:text-white transition-colors'}" />
                                         <span class="text-xs font-bold tracking-tight">{item.name}</span>
                                     </div>
                                     {#if isActive(item.path)}
@@ -115,16 +114,16 @@
             </nav>
 
             <!-- User Context & Logout -->
-            <div class="mt-auto pt-5 border-t border-white/5 space-y-4">
+            <div class="mt-auto pt-5 border-t border-slate-800 space-y-4">
                 <div class="flex items-center gap-3 px-2">
-                    <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center font-black text-primary border border-primary/20 shadow-inner">
+                    <div class="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center font-black text-indigo-300 border border-primary/30 shadow-inner">
                         {data.user?.nombre?.[0]}
                     </div>
                     <div class="overflow-hidden">
-                        <p class="text-xs font-bold text-text-main dark:text-dark-text-main truncate leading-none mb-1">{data.user?.nombre}</p>
+                        <p class="text-xs font-bold text-slate-200 truncate leading-none mb-1">{data.user?.nombre}</p>
                         <div class="flex items-center gap-1">
                             <div class="w-1 h-1 rounded-full bg-success"></div>
-                            <p class="text-[9px] font-bold text-text-dim uppercase tracking-widest">Panel Admin</p>
+                            <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Panel Admin</p>
                         </div>
                     </div>
                 </div>
@@ -135,7 +134,7 @@
                 <form action="/?/logout" method="POST" use:enhance>
                     <button 
                         type="submit"
-                        class="w-full flex items-center gap-3 px-3 py-2.5 text-error/70 hover:text-error hover:bg-error/10 rounded-lg transition-all font-bold text-[10px] uppercase tracking-widest border border-transparent hover:border-error/20"
+                        class="w-full flex items-center gap-3 px-3 py-2.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all font-bold text-[10px] uppercase tracking-widest border border-transparent hover:border-red-500/20"
                     >
                         <LogOut class="w-4 h-4" />
                         Finalizar Sesión
