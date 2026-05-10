@@ -167,31 +167,30 @@ GMAIL_APP_PASSWORD="xxxx xxxx xxxx xxxx"
 ## ✅ Estado Actual (Mayo 2026)
 
 ### Completado:
-- [x] Login funcional con JWT (username o email)
-- [x] Diseño premium del login (Glassmorphism, animaciones, responsive PWA)
-- [x] Recuperación de contraseña por correo (con logo incrustado)
-- [x] Versionamiento de tokens JWT (invalidación de sesiones al cambiar clave)
-- [x] Protección de rutas por rol
-- [x] Redirección automática según rol al loguearse
-- [x] Esquema completo de base de datos definido
-- [x] Seed script funcional
+- [x] **Login Maestro**: Funcional con JWT (username o email) y diseño premium.
+- [x] **Redirección por Rol**: El sistema detecta el rol y redirige al dashboard correspondiente.
+- [x] **Logout Robusto**: Solucionado conflicto en `hooks.server.ts` que impedía el cierre de sesión.
+- [x] **Admin Dashboard Funcional**: Métricas reales de tickets, activos, personal y sucursales.
+- [x] **Centro de Mando Administrativo**: Interfaz estabilizada con "Fixed Frame Strategy" para evitar saltos de layout.
+- [x] **Gestión de Perfil**: Página dedicada para que el usuario actualice su nombre, correo y contraseña.
+- [x] **Seguridad de Tabla**: El usuario logueado ya no se muestra en la tabla de gestión de usuarios para evitar auto-eliminación.
+- [x] **Recuperación de Contraseña**: Flujo completo por correo electrónico.
+- [x] **Versionamiento de Tokens**: Invalidación de sesiones al cambiar la clave.
 
 ### Pendiente (próximo paso):
-- [ ] **Vista del Encargado (STORE_MANAGER)**: Crear tickets, ver "Mis Tickets"
-- [ ] Vista del Técnico: Bandeja de tickets asignados
-- [ ] Vista del Admin: CRUD de usuarios, configuración
-- [ ] Logout funcional
-- [ ] Gestión de inventario
-- [ ] Comentarios en tickets
-- [ ] Adjuntos en tickets
-- [ ] Service Worker para PWA (cache del shell)
+- [ ] **Vista del Encargado (STORE_MANAGER)**: Crear tickets, ver "Mis Tickets".
+- [ ] **Bandeja del Técnico**: Lista de tickets asignados y flujo de diagnóstico.
+- [ ] **Gestión de Inventario**: CRUD de activos y movimientos.
+- [ ] **Módulo de Comentarios**: Chat interno en tickets.
+- [ ] **Adjuntos**: Subida de imágenes a Cloudinary (ya configurado en backend).
+- [ ] **Service Worker para PWA**: Caché del shell y notificaciones.
 
 ---
 
 ## ⚠️ Notas Importantes para Continuidad
 
-1. **Svelte 5**: Usar `$props()` en vez de `export let`. Usar `$state()` para reactividad.
-2. **No usar Better Auth**: Incompatible con `id_usuario` serial. Usar el sistema JWT propio.
-3. **Logs de debug**: Hay `console.log('DEBUG SESIÓN:')` en `hooks.server.ts`. **Eliminarlos antes de producción.**
-4. **Ruta API**: Puede quedar una carpeta `src/routes/api/auth/` de Better Auth. **Eliminarla.**
-5. **Tailwind v4**: Las clases personalizadas se definen en `layout.css` con `@theme`, no en `tailwind.config`.
+1. **Svelte 5**: Seguir usando `$props()` y `$state()`.
+2. **Fixed Frame Strategy**: En el dashboard administrativo, mantener alturas consistentes y compactas para que la interfaz quepa en una sola pantalla sin deformar el sidebar.
+3. **Hook de Seguridad**: El `hooks.server.ts` permite POST a la raíz para que las acciones de logout no sean interceptadas por la redirección automática del login.
+4. **Protección de Perfil**: El cambio de datos de cuenta del usuario actual se centraliza en `/admin/perfil`, no en la tabla general de usuarios.
+5. **Tailwind v4**: Las variables de diseño se gestionan en `layout.css`. No usar clases de utilidades ad-hoc si hay tokens disponibles.

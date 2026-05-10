@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { tickets, ticket_adjuntos, usuarios, estados_tickets, categorias, ticket_comentarios } from '../db/schema';
-import { eq, desc, isNull } from 'drizzle-orm';
+import { eq, desc, isNull, and, sql } from 'drizzle-orm';
 
 export class TicketRepository {
     async createTicket(data: {
@@ -41,7 +41,10 @@ export class TicketRepository {
 
     async getTicketsByCreator(userId: number) {
         return await db.query.tickets.findMany({
-            where: eq(tickets.created_by, userId),
+            where: and(
+                eq(tickets.created_by, userId),
+                sql`${tickets.deleted_at} IS NULL`
+            ),
             with: {
                 estado: true,
                 categoria: true,
@@ -106,7 +109,10 @@ export class TicketRepository {
 
     async getTicketsByAssignee(userId: number) {
         return await db.query.tickets.findMany({
-            where: eq(tickets.id_usuario, userId),
+            where: and(
+                eq(tickets.id_usuario, userId),
+                sql`${tickets.deleted_at} IS NULL`
+            ),
             with: {
                 estado: true,
                 categoria: true,
@@ -122,7 +128,10 @@ export class TicketRepository {
 
     async getUnassignedTickets() {
         return await db.query.tickets.findMany({
-            where: isNull(tickets.id_usuario),
+            where: and(
+                isNull(tickets.id_usuario),
+                sql`${tickets.deleted_at} IS NULL`
+            ),
             with: {
                 estado: true,
                 categoria: true,
@@ -170,6 +179,64 @@ export class TicketRepository {
             .where(eq(tickets.id_ticket, ticketId))
             .returning();
             
+        return updatedTicket;
+    }
+    async getAllTickets(includeDeleted = false) {
+        const whereClause = includeDeleted 
+            ? undefined 
+            : sql`${tickets.deleted_at} IS NULL`;
+
+        return await db.query.tickets.findMany({
+            where: whereClause,
+            with: {
+                estado: true,
+                categoria: true,
+                creador: true,
+                usuario_asignado: true,
+                activo_ti: {
+                    with: {
+                        catalogo: true,
+                        sucursal: true
+                    }
+                }
+            },
+            orderBy: [desc(tickets.created_at)]
+        });
+    }
+
+    async deleteTicket(id: number) {
+        return await db.update(tickets)
+            .set({ deleted_at: new Date() })
+            .where(eq(tickets.id_ticket, id))
+            .returning();
+    }
+
+    async restoreTicket(id: number) {
+        return await db.update(tickets)
+            .set({ deleted_at: null })
+            .where(eq(tickets.id_ticket, id))
+            .returning();
+    }
+
+    async assignTicket(ticketId: number, userId: string | number) {
+        const [updatedTicket] = await db.update(tickets)
+            .set({ 
+                id_usuario: typeof userId === 'string' ? parseInt(userId) : userId,
+                updated_at: new Date()
+            })
+            .where(eq(tickets.id_ticket, ticketId))
+            .returning();
+        return updatedTicket;
+    }
+
+    async updateTicketStatus(ticketId: number, statusId: number) {
+        const [updatedTicket] = await db.update(tickets)
+            .set({ 
+                id_estado: statusId,
+                updated_at: new Date()
+            })
+            .where(eq(tickets.id_ticket, ticketId))
+            .returning();
         return updatedTicket;
     }
 }

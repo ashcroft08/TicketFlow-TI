@@ -1,13 +1,16 @@
 import { db } from '../db';
-import { usuarios } from '../db/schema';
-import { eq, or, sql } from 'drizzle-orm';
+import { usuarios, roles } from '../db/schema';
+import { eq, or, sql, asc, and } from 'drizzle-orm';
 
 export class UserRepository {
     async findByIdentifier(identifier: string) {
         return await db.query.usuarios.findFirst({
-            where: or(
-                eq(usuarios.username, identifier),
-                eq(usuarios.email, identifier)
+            where: and(
+                or(
+                    eq(usuarios.username, identifier),
+                    eq(usuarios.email, identifier)
+                ),
+                sql`${usuarios.deleted_at} IS NULL`
             ),
             with: {
                 rol: true,
@@ -41,7 +44,76 @@ export class UserRepository {
 
     async findById(id: number) {
         return await db.query.usuarios.findFirst({
-            where: eq(usuarios.id_usuario, id)
+            where: and(
+                eq(usuarios.id_usuario, id),
+                sql`${usuarios.deleted_at} IS NULL`
+            ),
+            with: {
+                rol: true,
+                sucursal: true
+            }
+        });
+    }
+
+    async getAll() {
+        return await db.query.usuarios.findMany({
+            where: sql`${usuarios.deleted_at} IS NULL`,
+            with: {
+                rol: true,
+                sucursal: true
+            },
+            orderBy: [asc(usuarios.nombre)]
+        });
+    }
+
+    async getRoles() {
+        return await db.query.roles.findMany({
+            where: eq(roles.estado, true)
+        });
+    }
+
+    async create(data: any) {
+        const [newUser] = await db.insert(usuarios)
+            .values({
+                ...data,
+                created_at: new Date(),
+                updated_at: new Date()
+            })
+            .returning();
+        return newUser;
+    }
+
+    async update(id: number, data: any) {
+        const [updatedUser] = await db.update(usuarios)
+            .set({
+                ...data,
+                updated_at: new Date()
+            })
+            .where(eq(usuarios.id_usuario, id))
+            .returning();
+        return updatedUser;
+    }
+
+    async delete(id: number) {
+        return await db.update(usuarios)
+            .set({ deleted_at: new Date() })
+            .where(eq(usuarios.id_usuario, id))
+            .returning();
+    }
+
+    async getUsersByRole(roleCode: string) {
+        const role = await db.query.roles.findFirst({
+            where: eq(roles.cod_rol, roleCode)
+        });
+
+        if (!role) return [];
+
+        return await db.query.usuarios.findMany({
+            where: and(
+                eq(usuarios.id_rol, role.id_rol),
+                sql`${usuarios.deleted_at} IS NULL`
+            ),
+            orderBy: [asc(usuarios.nombre)]
         });
     }
 }

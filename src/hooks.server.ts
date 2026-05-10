@@ -48,12 +48,13 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(303, "/");
     }
 
-    // 3. Si el usuario ya está logueado e intenta ir al login, lo mandamos a su dashboard
-    if (event.url.pathname === "/" && event.locals.user) {
+    // 3. Si el usuario ya está logueado e intenta ir al login (GET), lo mandamos a su dashboard
+    // No redirigimos en POST para permitir que se ejecute la acción de logout
+    if (event.url.pathname === "/" && event.locals.user && event.request.method === 'GET') {
         const codRol = event.locals.user.cod_rol;
         console.log('Usuario ya logueado, redirigiendo a dashboard:', codRol);
         
-        if (codRol === 'ADMIN') throw redirect(303, '/admin');
+        if (codRol === 'ADMIN') throw redirect(303, '/admin/dashboard');
         if (codRol === 'TECH') throw redirect(303, '/tecnico');
         if (codRol === 'STORE_MANAGER') throw redirect(303, '/encargado/dashboard');
         throw redirect(303, '/dashboard');

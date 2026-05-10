@@ -1,0 +1,22 @@
+{
+  "name": "TicketFlow TI",
+  "short_name": "TicketFlow",
+  "description": "Sistema de gestión de soporte técnico e inventario TI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

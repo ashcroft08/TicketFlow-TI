@@ -14,6 +14,9 @@ importers:
       cloudinary:
         specifier: ^2.10.0
         version: 2.10.0
+      dexie:
+        specifier: ^4.4.2
+        version: 4.4.2
       jsonwebtoken:
         specifier: ^9.0.3
         version: 9.0.3
@@ -23,6 +26,9 @@ importers:
       nodemailer:
         specifier: ^8.0.7
         version: 8.0.7
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       '@better-auth/cli':
         specifier: ~1.4.21
@@ -1468,6 +1474,9 @@ packages:
 
   devalue@5.8.0:
     resolution: {integrity: sha512-2zA9pFEsnp7vWBZbXF5JAgAq0fsUIt/1XPbRiAmRV3lp/2C3upzH+sADiyy66aFCihoLEsrQHxNM5w1gIDfsBg==}
+
+  dexie@4.4.2:
+    resolution: {integrity: sha512-zMtV8q79EFE5U8FKZvt0Y/77PCU/Hr/RDxv1EDeo228L+m/HTbeN2AjoQm674rhQCX8n3ljK87lajt7UQuZfvw==}
 
   dotenv@17.4.2:
     resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
@@ -3835,6 +3844,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   devalue@5.8.0: {}
+
+  dexie@4.4.2: {}
 
   dotenv@17.4.2: {}
 

@@ -44,7 +44,7 @@ export const actions: Actions = {
 
         // Redirigir según el rol
         const codRol = result.user.cod_rol;
-        if (codRol === 'ADMIN') throw redirect(303, '/admin');
+        if (codRol === 'ADMIN') throw redirect(303, '/admin/dashboard');
         if (codRol === 'TECH') throw redirect(303, '/tecnico');
         if (codRol === 'STORE_MANAGER') throw redirect(303, '/encargado/dashboard');
         

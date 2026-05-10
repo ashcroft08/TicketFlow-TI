@@ -18,7 +18,8 @@ export const sucursal = pgTable('sucursal', {
 	nombre: varchar('nombre', { length: 100 }).notNull(),
 	estado: boolean('estado').default(true),
 	created_at: timestamp('created_at').defaultNow(),
-	updated_at: timestamp('updated_at').defaultNow()
+	updated_at: timestamp('updated_at').defaultNow(),
+	deleted_at: timestamp('deleted_at')
 });
 
 export const usuarios = pgTable('usuarios', {
@@ -50,7 +51,8 @@ export const estados_tickets = pgTable('estados_tickets', {
 export const categorias = pgTable('categorias', {
 	id_categoria: serial('id_categoria').primaryKey(),
 	nombre_tecnico: varchar('nombre_tecnico', { length: 200 }).notNull(),
-	estado: boolean('estado').default(true)
+	estado: boolean('estado').default(true),
+	deleted_at: timestamp('deleted_at')
 });
 
 export const nivel_atencion = pgTable('nivel_atencion', {
