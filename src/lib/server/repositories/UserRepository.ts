@@ -101,6 +101,24 @@ export class UserRepository {
             .returning();
     }
 
+    async getDeleted() {
+        return await db.query.usuarios.findMany({
+            where: sql`${usuarios.deleted_at} IS NOT NULL`,
+            with: {
+                rol: true,
+                sucursal: true
+            },
+            orderBy: [asc(usuarios.nombre)]
+        });
+    }
+
+    async restore(id: number) {
+        return await db.update(usuarios)
+            .set({ deleted_at: null })
+            .where(eq(usuarios.id_usuario, id))
+            .returning();
+    }
+
     async getUsersByRole(roleCode: string) {
         const role = await db.query.roles.findFirst({
             where: eq(roles.cod_rol, roleCode)

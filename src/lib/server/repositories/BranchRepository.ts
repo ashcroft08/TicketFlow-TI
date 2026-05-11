@@ -58,4 +58,18 @@ export class BranchRepository {
             .where(eq(sucursal.id_sucursal, id))
             .returning();
     }
+
+    async getDeleted() {
+        return await db.query.sucursal.findMany({
+            where: sql`${sucursal.deleted_at} IS NOT NULL`,
+            orderBy: [asc(sucursal.nombre)]
+        });
+    }
+
+    async restore(id: number) {
+        return await db.update(sucursal)
+            .set({ deleted_at: null })
+            .where(eq(sucursal.id_sucursal, id))
+            .returning();
+    }
 }

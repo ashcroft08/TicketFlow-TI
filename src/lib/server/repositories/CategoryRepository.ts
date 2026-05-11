@@ -48,4 +48,18 @@ export class CategoryRepository {
             .where(eq(categorias.id_categoria, id))
             .returning();
     }
+
+    async getDeleted() {
+        return await db.query.categorias.findMany({
+            where: sql`${categorias.deleted_at} IS NOT NULL`,
+            orderBy: [asc(categorias.nombre_tecnico)]
+        });
+    }
+
+    async restore(id: number) {
+        return await db.update(categorias)
+            .set({ deleted_at: null })
+            .where(eq(categorias.id_categoria, id))
+            .returning();
+    }
 }

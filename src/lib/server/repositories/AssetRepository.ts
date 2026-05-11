@@ -56,4 +56,27 @@ export class AssetRepository {
             .where(eq(activos_ti.id_activo, id))
             .returning();
     }
+
+    async getDeleted() {
+        return await db.query.activos_ti.findMany({
+            where: sql`${activos_ti.deleted_at} IS NOT NULL`,
+            with: {
+                catalogo: {
+                    with: {
+                        tipo: true
+                    }
+                },
+                sucursal: true,
+                usuario_asignado: true
+            },
+            orderBy: [desc(activos_ti.created_at)]
+        });
+    }
+
+    async restore(id: number) {
+        return await db.update(activos_ti)
+            .set({ deleted_at: null })
+            .where(eq(activos_ti.id_activo, id))
+            .returning();
+    }
 }

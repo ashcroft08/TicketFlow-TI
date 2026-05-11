@@ -12,7 +12,8 @@
         Menu, 
         X,
         ShieldCheck,
-        ChevronRight
+        ChevronRight,
+        Trash2
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -47,6 +48,7 @@
         {
             label: 'Sistema',
             items: [
+                { name: 'Papelera', icon: Trash2, path: '/admin/papelera' },
                 { name: 'Mi Perfil', icon: Settings, path: '/admin/perfil' },
             ]
         }
