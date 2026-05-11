@@ -110,43 +110,14 @@
 </svelte:head>
 
 <div
-	class="flex min-h-screen flex-col bg-slate-50 font-body-md text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200"
+	class="flex flex-col overflow-hidden bg-slate-50 font-body-md text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200"
 >
-	<!-- Header Navegación -->
-	<header
-		class="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/80"
-	>
-		<div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-			<div class="flex items-center gap-4">
-				<a
-					href="/encargado/dashboard"
-					class="-ml-2 rounded-xl p-2 text-slate-500 transition-colors hover:bg-primary/10 hover:text-primary dark:text-slate-400 dark:hover:bg-blue-500/10 dark:hover:text-blue-400"
-				>
-					<ArrowLeft class="h-5 w-5" />
-				</a>
-				<div class="flex flex-col">
-					<span class="text-[10px] font-bold tracking-wider text-slate-500 uppercase"
-						>Ticket #{ticket.id_ticket}</span
-					>
-					<h1
-						class="max-w-[200px] truncate font-h3 text-base leading-tight font-bold sm:max-w-xs sm:text-lg md:max-w-md"
-					>
-						{ticket.titulo}
-					</h1>
-				</div>
-			</div>
-			<div
-				class="flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold {status.bg} {status.text} {status.border}"
-			>
-				<status.icon class="h-3.5 w-3.5" />
-				<span>{ticket.estado?.nombre || 'Pendiente'}</span>
-			</div>
-		</div>
-	</header>
+	<!-- Header Navegación removido - Info ahora en Navbar -->
+
 
 	<!-- Contenido Principal Split-Screen -->
 	<main
-		class="mx-auto flex h-[calc(100vh-64px)] w-full max-w-7xl flex-grow flex-col items-start gap-6 p-4 sm:px-6 lg:flex-row lg:overflow-hidden lg:px-8"
+		class="mx-auto flex h-[calc(100vh-160px)] w-full max-w-7xl flex-grow flex-col items-start gap-4 p-4 sm:p-6 lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-8"
 	>
 		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
 		<div
@@ -259,7 +230,7 @@
 
 		<!-- PANEL DERECHO: Chat Interno -->
 		<div
-			class="flex h-[600px] h-full w-full flex-col rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:max-h-[calc(100vh-100px)] lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60"
+			class="flex h-[600px] w-full flex-col rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60"
 		>
 			<!-- Cabecera Chat -->
 			<div

@@ -132,7 +132,7 @@
                 </div>
                 
                 <!-- Centro de Conmutación de Vistas -->
-                <RoleSelector />
+                <RoleSelector variant="full" />
 
                 <form action="/?/logout" method="POST" use:enhance>
                     <button 

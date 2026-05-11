@@ -66,29 +66,16 @@
     <title>Gestión Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 dark:bg-slate-900 font-body-md text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col">
+<div class="bg-slate-50 dark:bg-slate-900 font-body-md text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col overflow-hidden">
     
-    <!-- Header Navegación -->
-    <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700/60 sticky top-0 z-20">
-        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <a href="/tecnico/dashboard" class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-blue-600/10 dark:hover:bg-blue-500/10 transition-colors">
-                    <ArrowLeft class="w-5 h-5" />
-                </a>
-                <div class="flex flex-col">
-                    <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Resolución Ticket #{ticket.id_ticket}</span>
-                    <h1 class="font-h3 text-base sm:text-lg font-bold leading-tight truncate max-w-[200px] sm:max-w-xs md:max-w-md">{ticket.titulo}</h1>
-                </div>
-            </div>
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border {status.bg} {status.text} {status.border}">
-                <status.icon class="w-3.5 h-3.5" />
-                <span>{ticket.estado?.nombre || 'Pendiente'}</span>
-            </div>
-        </div>
-    </header>
+    <!-- Header Navegación removido - Info ahora en Navbar -->
 
     <!-- Contenido Principal Split-Screen -->
-    <main class="flex-grow max-w-[1400px] w-full mx-auto p-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:overflow-hidden">
+    <main class="flex-grow max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-4 lg:gap-8 h-[calc(100vh-160px)] lg:overflow-hidden">
+
+
+
+
         
         <!-- PANEL IZQUIERDO: Información y Gestión -->
         <div class="w-full lg:w-1/2 flex flex-col gap-6 lg:h-full lg:overflow-y-auto pr-2 pb-2 lg:pb-6 custom-scrollbar">
@@ -384,7 +371,8 @@
         </div>
 
         <!-- PANEL DERECHO: Chat Interno -->
-        <div class="w-full lg:w-1/2 flex flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] shadow-sm h-[600px] lg:h-full lg:max-h-[calc(100vh-100px)]">
+        <div class="w-full lg:w-1/2 flex flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] shadow-sm h-[600px] lg:h-full">
+
             
             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50 rounded-t-[24px] flex justify-between items-center">
                 <div>

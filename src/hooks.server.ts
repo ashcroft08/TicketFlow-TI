@@ -37,14 +37,29 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.locals.user = null;
     }
 
-    // 2. Protección de rutas básica
-    const isProtectedRoute = event.url.pathname.startsWith('/admin') || 
-                           event.url.pathname.startsWith('/tecnico') || 
-                           event.url.pathname.startsWith('/encargado') ||
-                           event.url.pathname.startsWith('/dashboard');
+    // 2. Protección de rutas por Rol
+    const user = event.locals.user;
+    const path = event.url.pathname;
 
-    if (isProtectedRoute && !event.locals.user) {
-        console.log('Acceso denegado a ruta protegida, redirigiendo al login');
+    if (path.startsWith('/admin') && user?.cod_rol !== 'ADMIN') {
+        throw redirect(303, user ? (user.cod_rol === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard') : '/');
+    }
+
+    if (path.startsWith('/tecnico') && user?.cod_rol !== 'TECH' && user?.cod_rol !== 'ADMIN') {
+        throw redirect(303, user ? (user.cod_rol === 'STORE_MANAGER' ? '/encargado/dashboard' : '/admin/dashboard') : '/');
+    }
+
+    if (path.startsWith('/encargado') && user?.cod_rol !== 'STORE_MANAGER' && user?.cod_rol !== 'ADMIN') {
+        throw redirect(303, user ? (user.cod_rol === 'TECH' ? '/tecnico/dashboard' : '/admin/dashboard') : '/');
+    }
+
+    // Protección de rutas básica (si no está logueado)
+    const isProtectedRoute = path.startsWith('/admin') || 
+                           path.startsWith('/tecnico') || 
+                           path.startsWith('/encargado') ||
+                           path.startsWith('/dashboard');
+
+    if (isProtectedRoute && !user) {
         throw redirect(303, "/");
     }
 
@@ -55,7 +70,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         console.log('Usuario ya logueado, redirigiendo a dashboard:', codRol);
         
         if (codRol === 'ADMIN') throw redirect(303, '/admin/dashboard');
-        if (codRol === 'TECH') throw redirect(303, '/tecnico');
+        if (codRol === 'TECH') throw redirect(303, '/tecnico/dashboard');
         if (codRol === 'STORE_MANAGER') throw redirect(303, '/encargado/dashboard');
         throw redirect(303, '/dashboard');
     }

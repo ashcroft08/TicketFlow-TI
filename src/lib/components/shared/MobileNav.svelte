@@ -6,11 +6,23 @@
   let activePath = $derived(page.url.pathname);
   const isActive = (path: string) => activePath.startsWith(path);
 
-  const navItems = [
-    { name: 'Inicio', icon: LayoutDashboard, path: '/admin/dashboard' },
-    { name: 'Tickets', icon: Ticket, path: '/admin/tickets' },
-    { name: 'Perfil', icon: User, path: '/admin/perfil' }
-  ];
+  let user = $derived(page.data.user);
+
+  const getProfilePath = () => {
+    if (!user) return '/';
+    switch (user.cod_rol) {
+      case 'ADMIN': return '/admin/perfil';
+      case 'TECH': return '/tecnico/perfil';
+      case 'STORE_MANAGER': return '/encargado/perfil';
+      default: return '/';
+    }
+  };
+
+  const navItems = $derived([
+    { name: 'Inicio', icon: LayoutDashboard, path: user?.cod_rol === 'ADMIN' ? '/admin/dashboard' : (user?.cod_rol === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard') },
+    { name: 'Tickets', icon: Ticket, path: user?.cod_rol === 'ADMIN' ? '/admin/tickets' : (user?.cod_rol === 'TECH' ? '/tecnico/ticket' : '/encargado/ticket') },
+    { name: 'Perfil', icon: User, path: getProfilePath() }
+  ]);
 </script>
 
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-glass-bg dark:bg-dark-glass-bg backdrop-blur-xl border-t border-border dark:border-dark-border px-4 pb-safe-offset-2 pt-2 shadow-2xl">

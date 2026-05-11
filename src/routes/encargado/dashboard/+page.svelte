@@ -71,11 +71,8 @@
                     <span>Nuevo Ticket</span>
                 </button>
 
-                <form action="/?/logout" method="POST">
-                    <button type="submit" class="h-12 w-12 bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 text-slate-500 hover:text-error dark:text-slate-400 dark:hover:text-red-400 hover:bg-error/10 dark:hover:bg-red-500/10 rounded-xl flex items-center justify-center transition-all duration-200 hover:shadow-sm" title="Cerrar Sesión">
-                        <LogOut class="w-5 h-5" />
-                    </button>
-                </form>
+                <!-- Logout button removed, now in navbar -->
+
             </div>
         </header>
 
