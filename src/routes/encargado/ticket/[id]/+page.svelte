@@ -112,16 +112,12 @@
 	<title>Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
-<div
-	class="flex flex-col overflow-hidden font-body-md transition-colors duration-300"
->
+<div class="flex flex-col overflow-hidden font-body-md transition-colors duration-300 h-full lg:h-[calc(100vh-160px)]">
 	<!-- Header Navegación removido - Info ahora en Navbar -->
 
 
 	<!-- Contenido Principal Split-Screen -->
-	<main
-		class="mx-auto flex h-[calc(100dvh-136px)] w-full max-w-7xl flex-grow flex-col items-start lg:h-[calc(100vh-160px)] lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-8 lg:py-8"
-	>
+	<div class="flex flex-col lg:flex-row lg:gap-8 h-full overflow-hidden">
 		<!-- Mobile View Toggle (Eliminado, ahora controlado por MobileNav) -->
 
 		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
@@ -134,7 +130,7 @@
 
 			<!-- Tarjeta Info -->
 			<div
-				class="overflow-hidden rounded-t-[32px] lg:rounded-[24px] border-x border-t lg:border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60 h-full"
+				class="overflow-hidden lg:rounded-[24px] lg:border border-slate-200 bg-transparent lg:bg-white/70 lg:shadow-sm lg:backdrop-blur-xl lg:dark:border-slate-700/60 lg:dark:bg-slate-800/60 h-full flex flex-col"
 			>
 				<!-- Header con botón de plegado (Solo móvil) -->
 				<div
@@ -239,7 +235,7 @@
 
 		<!-- PANEL DERECHO: Chat Interno -->
 		<div
-			class="flex-col rounded-t-[32px] lg:rounded-[24px] border-x border-t lg:border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60 {ticketViewState.activeTab ===
+			class="flex flex-col lg:rounded-[24px] lg:border border-slate-200 bg-transparent lg:bg-white/70 lg:shadow-sm lg:backdrop-blur-xl lg:h-full lg:w-1/2 lg:dark:border-slate-700/60 lg:dark:bg-slate-800/60 {ticketViewState.activeTab ===
 			'chat'
 				? 'flex h-full w-full'
 				: 'hidden lg:flex'}"
@@ -248,7 +244,7 @@
 
 			<!-- Cabecera Chat -->
 			<div
-				class="rounded-t-[24px] border-b border-slate-200 bg-white/50 px-6 py-4 dark:border-slate-700/60 dark:bg-slate-800/50"
+				class="border-b border-slate-200 lg:bg-white/50 px-6 py-4 dark:border-slate-700/60 lg:dark:bg-slate-800/50 lg:rounded-t-[24px]"
 			>
 				<h3 class="text-sm font-bold">Canal de Comunicación</h3>
 				<p class="text-xs text-slate-500 dark:text-slate-400">
@@ -323,7 +319,7 @@
 
 			<!-- Input Chat -->
 			<div
-				class="rounded-b-[24px] border-t border-slate-200 bg-white/50 p-4 dark:border-slate-700/60 dark:bg-slate-800/50"
+				class="border-t border-slate-200 lg:bg-white/50 p-4 dark:border-slate-700/60 lg:dark:bg-slate-800/50 lg:rounded-b-[24px]"
 			>
 				<form
 					method="POST"
@@ -357,7 +353,7 @@
 				</form>
 			</div>
 		</div>
-	</main>
+	</div>
 </div>
 
 <style>
