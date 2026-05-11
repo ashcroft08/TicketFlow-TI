@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { User, Lock, ArrowRight } from 'lucide-svelte';
+    import { User, Lock, ArrowRight, Eye, EyeOff } from 'lucide-svelte';
     import type { ActionData } from './$types';
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
     import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
@@ -8,6 +8,7 @@
 
     // Estado para animar los iconos cuando el input tiene el foco
     let focusedField = $state<string | null>(null);
+    let showPassword = $state(false);
 </script>
 
 <svelte:head>
@@ -85,8 +86,21 @@
                         <input
                             onfocus={() => focusedField = 'password'}
                             onblur={() => focusedField = null}
-                            class="w-full h-12 pl-11 pr-4 bg-white/50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/30 focus:border-primary dark:focus:border-blue-500 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 transition-all duration-200 hover:bg-white dark:hover:bg-slate-700/50"
-                            id="password" name="password" placeholder="••••••••" required type="password" />
+                            class="w-full h-12 pl-11 pr-12 bg-white/50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/30 focus:border-primary dark:focus:border-blue-500 text-sm text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-400 transition-all duration-200 hover:bg-white dark:hover:bg-slate-700/50"
+                            id="password" name="password" placeholder="••••••••" required type={showPassword ? "text" : "password"} />
+                        
+                        <button
+                            type="button"
+                            onclick={() => showPassword = !showPassword}
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors duration-200 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5"
+                            title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                        >
+                            {#if showPassword}
+                                <EyeOff size={18} />
+                            {:else}
+                                <Eye size={18} />
+                            {/if}
+                        </button>
                     </div>
                 </div>
 
