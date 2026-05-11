@@ -37,11 +37,8 @@
 </svelte:head>
 
 <!-- Contenedor principal con fondo premium -->
-<div class="relative min-h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden font-body-md text-on-background selection:bg-primary/20 selection:text-primary transition-colors duration-300">
+<div class="relative font-body-md selection:bg-primary/20 selection:text-primary transition-colors duration-300">
     
-    <!-- Elementos decorativos fijos en el fondo -->
-    <div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob pointer-events-none"></div>
-    <div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary-fixed/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000 pointer-events-none"></div>
 
     <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 animate-fade-in-up">
         
@@ -88,34 +85,34 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {#each data.tickets as ticket}
                 {@const status = getStatusStyles(ticket.estado?.nombre || '')}
-                <a href="/encargado/ticket/{ticket.id_ticket}" class="block group bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-6 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
+                <a href="/encargado/ticket/{ticket.id_ticket}" class="block group bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-5 sm:p-6 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
                     
-                    <div class="flex justify-between items-start gap-4 mb-4">
-                        <h3 class="font-h3 text-base sm:text-lg text-slate-800 dark:text-white font-semibold leading-tight line-clamp-2">
+                    <div class="flex justify-between items-start gap-4 mb-3 sm:mb-4">
+                        <h3 class="font-h3 text-sm sm:text-base md:text-lg text-slate-800 dark:text-white font-bold leading-snug line-clamp-2">
                             {ticket.titulo}
                         </h3>
-                        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border {status.bg} {status.text} {status.border}">
-                            <status.icon class="w-3.5 h-3.5" />
+                        <div class="flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-xs font-bold whitespace-nowrap border {status.bg} {status.text} {status.border}">
+                            <status.icon class="w-3 sm:w-3.5 h-3 sm:h-3.5" />
                             <span>{ticket.estado?.nombre || 'Pendiente'}</span>
                         </div>
                     </div>
 
-                    <p class="text-sm text-slate-500 dark:text-slate-300 line-clamp-3 mb-6 flex-grow">
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-300 line-clamp-3 mb-4 sm:mb-6 flex-grow">
                         {ticket.descripcion}
                     </p>
 
-                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700/50 flex flex-col gap-3">
-                        <div class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
-                            <Monitor class="w-4 h-4 opacity-70" />
+                    <div class="pt-4 border-t border-slate-100 dark:border-slate-700/50 flex flex-col gap-2.5 sm:gap-3">
+                        <div class="flex items-center gap-2 text-[10px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-tight">
+                            <Monitor class="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-70" />
                             <span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'Equipo General'}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-300">
-                                <Calendar class="w-4 h-4" />
+                            <div class="flex items-center gap-2 text-[10px] sm:text-xs text-slate-400 dark:text-slate-300">
+                                <Calendar class="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span>{formatDate(ticket.created_at)}</span>
                             </div>
                             {#if ticket.categoria}
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                                <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 dark:text-slate-500">
                                     {ticket.categoria.nombre_tecnico}
                                 </span>
                             {/if}
@@ -123,6 +120,7 @@
                     </div>
                 </a>
             {:else}
+
                 <!-- Estado Vacío Premium -->
                 <div class="col-span-full py-16 px-4 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-700/50 rounded-[32px] flex flex-col items-center justify-center text-center">
                     <div class="w-24 h-24 mb-6 rounded-full bg-primary/5 flex items-center justify-center text-primary/40">

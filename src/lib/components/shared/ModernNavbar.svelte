@@ -37,8 +37,8 @@
             <img src={logoClaro} alt="TicketFlow" class="h-10 w-auto dark:hidden" />
             <img src={logoOscuro} alt="TicketFlow" class="h-10 w-auto hidden dark:block" />
         </a>
-        <!-- Desktop Navigation (Centered) -->
-        <nav class="hidden md:flex flex-1 items-center justify-center px-4">
+        <!-- Desktop/Tablet Navigation (Centered) -->
+        <nav class="hidden sm:flex flex-1 items-center justify-center px-4">
             {#if ticket}
                 {@const status = (() => {
                     switch (ticket.estado?.nombre) {
@@ -49,23 +49,25 @@
                         default: return { icon: HelpCircle, bg: 'bg-gray-500/10 dark:bg-gray-500/20', text: 'text-gray-600 dark:text-gray-300', border: 'border-gray-500/20 dark:border-gray-500/30' };
                     }
                 })()}
-                <div class="flex items-center gap-6" in:fade>
-                    <div class="flex flex-col items-center">
-                        <span class="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] mb-0.5">Resolución Ticket #{ticket.id_ticket}</span>
-                        <h2 class="text-sm font-bold text-slate-900 dark:text-white max-w-md truncate tracking-tight">{ticket.titulo}</h2>
+                <div class="flex items-center gap-3 md:gap-8" in:fade>
+                    <div class="flex flex-col items-start border-l-2 border-slate-200 dark:border-slate-800 pl-3 md:pl-4">
+                        <span class="text-[7px] md:text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] mb-0.5 whitespace-nowrap">Ticket #{ticket.id_ticket}</span>
+                        <h2 class="text-xs md:text-base font-bold text-slate-900 dark:text-white max-w-[120px] md:max-w-md truncate tracking-tight leading-none">{ticket.titulo}</h2>
                     </div>
-                    <div class="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border {status.bg} {status.text} {status.border}">
-                        <status.icon class="w-3 h-3" />
-                        <span>{ticket.estado?.nombre || 'Pendiente'}</span>
+                    <div class="flex items-center gap-1.5 px-2.5 py-1 md:px-4 md:py-1.5 rounded-xl text-[9px] md:text-[11px] font-black uppercase tracking-widest border shadow-sm {status.bg} {status.text} {status.border}">
+                        <status.icon class="w-3 h-3 md:w-3.5 md:h-3.5" />
+                        <span class="inline-block">{ticket.estado?.nombre || 'Pendiente'}</span>
                     </div>
                 </div>
+
             {:else if isProfilePage}
                 <div class="flex flex-col items-center" in:fade>
-                    <span class="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] mb-0.5">Gestión de Cuenta</span>
+                    <span class="text-[9px] text-slate-500 font-black uppercase tracking-[0.2em] mb-0.5">Gestión</span>
                     <h2 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Mi Perfil</h2>
                 </div>
             {/if}
         </nav>
+
 
         <!-- Right Actions -->
         <div class="flex items-center gap-2 sm:gap-4">
@@ -86,41 +88,4 @@
     </div>
 </header>
 
-<!-- BOTTOM NAVIGATION (Mobile Only) -->
-<nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-2xl border-t border-slate-200 dark:border-slate-800 px-4 pb-safe-offset-2 pt-2 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]">
-    <div class="flex items-center justify-around max-w-lg mx-auto">
-        <a 
-            href={role === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard'} 
-            class="flex flex-col items-center gap-1 p-2 transition-all duration-300 relative {isActive('/tecnico/dashboard') || isActive('/encargado/dashboard') ? 'text-primary scale-110' : 'text-slate-400 dark:text-slate-500 hover:text-slate-900 dark:hover:text-white'}"
-        >
-            <div class="relative">
-                <LayoutDashboard class="w-5 h-5" />
-                {#if isActive('/tecnico/dashboard') || isActive('/encargado/dashboard')}
-                    <div class="absolute -top-1 -right-1 w-1.5 h-1.5 bg-primary rounded-full shadow-[0_0_8px_rgba(79,70,229,0.5)]"></div>
-                {/if}
-            </div>
-            <span class="text-[9px] font-black uppercase tracking-tighter">Panel</span>
-        </a>
-        
-        <!-- Center Action Button -->
-        <button class="flex flex-col items-center -mt-8 relative z-50 group">
-            <div class="bg-primary text-white p-3.5 rounded-2xl shadow-xl shadow-primary/40 group-active:scale-90 transition-all border-4 border-white dark:border-slate-900">
-                <PlusCircle class="w-6 h-6" />
-            </div>
-            <span class="text-[9px] font-black uppercase tracking-tighter mt-1 text-primary">Nuevo</span>
-        </button>
 
-        <div class="flex flex-col items-center gap-1 p-2 text-slate-400">
-            <User class="w-5 h-5" />
-            <span class="text-[9px] font-black uppercase tracking-tighter">Perfil</span>
-        </div>
-    </div>
-</nav>v>
-
-<style>
-    @reference "../../../routes/layout.css";
-
-    .pb-safe-offset-2 {
-        padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
-    }
-</style>

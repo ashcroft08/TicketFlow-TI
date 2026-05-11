@@ -11,13 +11,15 @@
 		Clock,
 		CheckCircle2,
 		HelpCircle,
-		ChevronDown,
 		ChevronUp,
-		Info
+		Info,
+		MessageSquare,
+		Settings2
 	} from 'lucide-svelte';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form } = $props<{ data: PageData; form: ActionData }>();
+	import { ticketViewState } from '$lib/states/ui.svelte';
 
 	// Ref para el contenedor del chat para auto-scroll
 	let chatContainer: HTMLElement;
@@ -105,27 +107,34 @@
 	let canChat = $derived(!isClosed && !!ticket.id_usuario);
 </script>
 
+
 <svelte:head>
 	<title>Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
 <div
-	class="flex flex-col overflow-hidden bg-slate-50 font-body-md text-slate-800 transition-colors duration-300 dark:bg-slate-900 dark:text-slate-200"
+	class="flex flex-col overflow-hidden font-body-md transition-colors duration-300"
 >
 	<!-- Header Navegación removido - Info ahora en Navbar -->
 
 
 	<!-- Contenido Principal Split-Screen -->
 	<main
-		class="mx-auto flex h-[calc(100vh-160px)] w-full max-w-7xl flex-grow flex-col items-start gap-4 p-4 sm:p-6 lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-8"
+		class="mx-auto flex h-[calc(100dvh-136px)] w-full max-w-7xl flex-grow flex-col items-start lg:h-[calc(100vh-160px)] lg:flex-row lg:gap-8 lg:overflow-hidden lg:px-8 lg:py-8"
 	>
+		<!-- Mobile View Toggle (Eliminado, ahora controlado por MobileNav) -->
+
 		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
 		<div
-			class="custom-scrollbar flex w-full flex-col gap-6 pr-2 lg:flex lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6"
+			class="custom-scrollbar flex-col gap-6 pr-2 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6 {ticketViewState.activeTab ===
+			'details'
+				? 'flex w-full'
+				: 'hidden lg:flex'}"
 		>
+
 			<!-- Tarjeta Info -->
 			<div
-				class="overflow-hidden rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60"
+				class="overflow-hidden rounded-t-[32px] lg:rounded-[24px] border-x border-t lg:border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60 h-full"
 			>
 				<!-- Header con botón de plegado (Solo móvil) -->
 				<div
@@ -230,8 +239,13 @@
 
 		<!-- PANEL DERECHO: Chat Interno -->
 		<div
-			class="flex h-[600px] w-full flex-col rounded-[24px] border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60"
+			class="flex-col rounded-t-[32px] lg:rounded-[24px] border-x border-t lg:border border-slate-200 bg-white/70 shadow-sm backdrop-blur-xl lg:h-full lg:w-1/2 dark:border-slate-700/60 dark:bg-slate-800/60 {ticketViewState.activeTab ===
+			'chat'
+				? 'flex h-full w-full'
+				: 'hidden lg:flex'}"
 		>
+
+
 			<!-- Cabecera Chat -->
 			<div
 				class="rounded-t-[24px] border-b border-slate-200 bg-white/50 px-6 py-4 dark:border-slate-700/60 dark:bg-slate-800/50"

@@ -1,8 +1,9 @@
 <script lang="ts">
     import { enhance } from '$app/forms';
     import { invalidateAll } from '$app/navigation';
-    import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle, Save, FileText, Settings2, ChevronDown, ChevronUp, UserPlus, Package, Wrench, History } from 'lucide-svelte';
+    import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle, Save, FileText, Settings2, ChevronDown, ChevronUp, UserPlus, Package, Wrench, History, MessageSquare } from 'lucide-svelte';
     import type { ActionData, PageData } from './$types';
+    import { ticketViewState } from '$lib/states/ui.svelte';
 
     let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
@@ -66,19 +67,20 @@
     <title>Gestión Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
-<div class="bg-slate-50 dark:bg-slate-900 font-body-md text-slate-800 dark:text-slate-200 transition-colors duration-300 flex flex-col overflow-hidden">
+<div class="font-body-md transition-colors duration-300 flex flex-col overflow-hidden">
     
     <!-- Header Navegación removido - Info ahora en Navbar -->
 
     <!-- Contenido Principal Split-Screen -->
-    <main class="flex-grow max-w-[1400px] w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col lg:flex-row gap-4 lg:gap-8 h-[calc(100vh-160px)] lg:overflow-hidden">
-
-
-
+    <main class="flex-grow max-w-[1400px] w-full mx-auto lg:p-8 flex flex-col lg:flex-row lg:gap-8 h-[calc(100dvh-136px)] lg:h-[calc(100vh-160px)] lg:overflow-hidden">
+        
+        <!-- Mobile View Toggle (Eliminado, ahora controlado por MobileNav) -->
 
         
         <!-- PANEL IZQUIERDO: Información y Gestión -->
-        <div class="w-full lg:w-1/2 flex flex-col gap-6 lg:h-full lg:overflow-y-auto pr-2 pb-2 lg:pb-6 custom-scrollbar">
+        <div class="w-full lg:w-1/2 flex-col gap-6 lg:h-full lg:overflow-y-auto pr-2 pb-2 lg:pb-6 custom-scrollbar {ticketViewState.activeTab === 'details' ? 'flex' : 'hidden lg:flex'} h-full">
+
+
             
             <!-- Notificación de Éxito o Error -->
             {#if form?.success && form?.message}
@@ -94,7 +96,7 @@
                 </div>
             {/if}
 
-            <div class="bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] shadow-sm overflow-hidden flex flex-col shrink-0">
+            <div class="bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border-x border-t lg:border border-slate-200 dark:border-slate-700/60 rounded-t-[32px] lg:rounded-[24px] shadow-sm overflow-hidden flex flex-col shrink-0 h-full">
                 <!-- Header con botón de plegado (Solo móvil) -->
                 <div class="lg:hidden px-6 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-900/30">
                     <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
@@ -371,7 +373,9 @@
         </div>
 
         <!-- PANEL DERECHO: Chat Interno -->
-        <div class="w-full lg:w-1/2 flex flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] shadow-sm h-[600px] lg:h-full">
+        <div class="w-full lg:w-1/2 flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border-x border-t lg:border border-slate-200 dark:border-slate-700/60 rounded-t-[32px] lg:rounded-[24px] shadow-sm h-full lg:h-full {ticketViewState.activeTab === 'chat' ? 'flex' : 'hidden lg:flex'}">
+
+
 
             
             <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50 rounded-t-[24px] flex justify-between items-center">
