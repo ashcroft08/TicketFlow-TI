@@ -237,7 +237,8 @@
 
             <form 
                 use:enhance={() => {
-                    return async ({ result }) => {
+                    return async ({ result, update }) => {
+                        await update();
                         if (result.type === 'success') closeModal();
                     };
                 }} 
@@ -301,7 +302,7 @@
                     <div class="space-y-1.5">
                         <label for="id_usuario_asignado" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Usuario Responsable</label>
                         <select id="id_usuario_asignado" name="id_usuario_asignado" class="input-compact w-full">
-                            <option value="0">Sin asignar (Disponible)</option>
+                            <option value="">Sin asignar (Disponible)</option>
                             {#each data.users as user}
                                 <option value={user.id_usuario} selected={editingAsset?.id_usuario_asignado === user.id_usuario}>{user.nombre}</option>
                             {/each}

@@ -1,9 +1,10 @@
 <script lang="ts">
-    import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
+    import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
 
     let { data, form } = $props();
+    let formError = $derived(form?.error);
     
     let searchQuery = $state('');
     let showModal = $state(false);
@@ -220,7 +221,8 @@
 
             <form 
                 use:enhance={() => {
-                    return async ({ result }) => {
+                    return async ({ result, update }) => {
+                        await update();
                         if (result.type === 'success') closeModal();
                     };
                 }} 
@@ -228,6 +230,13 @@
                 method="POST" 
                 class="p-8 space-y-6"
             >
+                {#if formError}
+                    <div class="bg-error/10 text-error border border-error/20 p-3 rounded-lg flex items-center gap-2 text-xs font-bold">
+                        <AlertCircle class="w-4 h-4 shrink-0" />
+                        {formError}
+                    </div>
+                {/if}
+
                 {#if editingUser}
                     <input type="hidden" name="id" value={editingUser.id_usuario} />
                 {/if}
@@ -237,42 +246,43 @@
                         <label for="nombre" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Nombre Completo</label>
                         <div class="relative">
                             <UserIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="nombre" type="text" name="nombre" value={editingUser?.nombre || ''} required class="input-compact w-full pl-10" />
+                            <input id="nombre" type="text" name="nombre" value={editingUser?.nombre || ''} required minlength="3" placeholder="Ej: Juan Pérez" class="input-compact w-full pl-10" />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="username" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Username</label>
                         <div class="relative">
                             <Shield class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="username" type="text" name="username" value={editingUser?.username || ''} required class="input-compact w-full pl-10" />
+                            <input id="username" type="text" name="username" value={editingUser?.username || ''} required minlength="3" placeholder="Ej: jperez" class="input-compact w-full pl-10" />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="email" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Email Corporativo</label>
                         <div class="relative">
                             <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="email" type="email" name="email" value={editingUser?.email || ''} required class="input-compact w-full pl-10" />
+                            <input id="email" type="email" name="email" value={editingUser?.email || ''} required placeholder="correo@empresa.com" class="input-compact w-full pl-10" />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="password" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">{editingUser ? 'Nueva Clave (Safe)' : 'Contraseña Maestro'}</label>
                         <div class="relative">
                             <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="password" type="password" name="password" required={!editingUser} class="input-compact w-full pl-10" />
+                            <input id="password" type="password" name="password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'} class="input-compact w-full pl-10" />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="id_rol" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Rol Operativo</label>
-                        <select id="id_rol" name="id_rol" class="input-compact w-full appearance-none bg-no-repeat bg-[right_1rem_center]">
+                        <select id="id_rol" name="id_rol" required class="input-compact w-full appearance-none bg-no-repeat bg-[right_1rem_center]">
+                            <option value="" disabled selected={!editingUser}>Selecciona un rol...</option>
                             {#each data.roles as rol}
                                 <option value={rol.id_rol} selected={editingUser?.id_rol === rol.id_rol}>{rol.rol}</option>
                             {/each}
                         </select>
                     </div>
                     <div class="space-y-1.5">
-                        <label for="id_sucursal" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Sucursal Fija</label>
-                        <select id="id_sucursal" name="id_sucursal" class="input-compact w-full appearance-none">
-                            <option value="0">Sede Global</option>
+                        <label for="id_sucursal" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Sucursal</label>
+                        <select id="id_sucursal" name="id_sucursal" required class="input-compact w-full appearance-none">
+                            <option value="" disabled selected={!editingUser?.id_sucursal}>Selecciona una sucursal...</option>
                             {#each data.branches as branch}
                                 <option value={branch.id_sucursal} selected={editingUser?.id_sucursal === branch.id_sucursal}>{branch.nombre}</option>
                             {/each}

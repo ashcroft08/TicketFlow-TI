@@ -18,19 +18,20 @@
 <div class="flex min-h-screen bg-bg-main dark:bg-dark-bg-main text-text-main dark:text-dark-text-main transition-colors duration-500 overflow-x-hidden">
     
     <!-- Sidebar - Siempre fondo oscuro (Obsidian) -->
-    <aside class="fixed inset-y-0 left-0 w-64 bg-slate-900 border-r border-slate-800 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-hidden">
+    <aside class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} overflow-hidden">
         <div class="h-full flex flex-col">
             <!-- Logo Area -->
             <div class="flex items-center justify-center py-8 shrink-0">
-                <img src={logoOscuro} alt="TicketFlow" class="h-8 w-auto" />
+                <img src={logoClaro} alt="TicketFlow" class="h-8 w-auto dark:hidden" />
+                <img src={logoOscuro} alt="TicketFlow" class="h-8 w-auto hidden dark:block" />
             </div>
 
             <!-- Navigation Area -->
             <nav class="flex-grow px-4 space-y-1 overflow-y-auto custom-scrollbar">
-                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-500 px-2 mb-2">Gestión</p>
+                <p class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 px-2 mb-2">Gestión</p>
                 <a 
                     href="/encargado/dashboard"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {activePath.includes('/dashboard') ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-300 hover:bg-white/10 hover:text-white'}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all {activePath.includes('/dashboard') ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white'}"
                 >
                     <Users class="w-4 h-4" />
                     <span class="text-[11px] font-black uppercase tracking-tight">Panel Gestor</span>
@@ -38,7 +39,7 @@
             </nav>
 
             <!-- Bottom Area (Fixed) -->
-            <div class="p-4 border-t border-slate-800 space-y-4 shrink-0">
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-4 shrink-0">
                 <RoleSelector />
                 
                 <form action="/?/logout" method="POST" use:enhance>

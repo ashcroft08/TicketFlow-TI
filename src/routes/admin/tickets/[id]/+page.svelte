@@ -457,7 +457,7 @@
                         <div transition:slide class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group">
                             <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-600"></div>
                             <div class="flex items-center justify-between mb-2">
-                                <span class="px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{mov.tipo_movimiento?.tipo_movimiento || 'MOVIMIENTO'}</span>
+                                <span class="px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{mov.tipo?.tipo_movimiento || 'MOVIMIENTO'}</span>
                                 <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1.5"><Clock class="w-3 h-3" /> {formatDate(mov.created_at)}</span>
                             </div>
                             <p class="text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed italic">"{mov.motivo || 'Sin observaciones registradas'}"</p>

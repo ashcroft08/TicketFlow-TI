@@ -72,7 +72,8 @@
             <div transition:slide class="glass-card p-6 rounded-lg border-primary/20 shadow-2xl shadow-primary/10">
                 <form 
                     use:enhance={() => {
-                        return async ({ result }) => {
+                        return async ({ result, update }) => {
+                            await update();
                             if (result.type === 'success') {
                                 isCreating = false;
                             }
@@ -91,6 +92,7 @@
                             placeholder="Ej: Planta Industrial, Oficinas Centro..."
                             class="input-compact w-full"
                             required
+                            minlength="3"
                         />
                     </div>
                     <div class="flex gap-2">
@@ -133,7 +135,8 @@
                             <td class="px-6 py-3">
                                 {#if editingId === sucursal.id_sucursal}
                                     <form use:enhance={() => {
-                                        return async ({ result }) => {
+                                        return async ({ result, update }) => {
+                                            await update();
                                             if (result.type === 'success') cancelEdit();
                                         };
                                     }} action="?/update" method="POST" class="flex gap-2 max-w-sm">

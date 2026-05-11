@@ -40,8 +40,23 @@ export const actions: Actions = {
         const id_rol = parseInt(data.get('id_rol')?.toString() || '0');
         const id_sucursal = parseInt(data.get('id_sucursal')?.toString() || '0');
 
-        if (!nombre || !username || !email || !password || !id_rol) {
-            return fail(400, { error: 'Todos los campos son obligatorios' });
+        if (!nombre || nombre.trim().length < 3) {
+            return fail(400, { error: 'El nombre debe tener al menos 3 caracteres' });
+        }
+        if (!username || username.trim().length < 3) {
+            return fail(400, { error: 'El username debe tener al menos 3 caracteres' });
+        }
+        if (!email) {
+            return fail(400, { error: 'El email es obligatorio' });
+        }
+        if (!password || password.length < 6) {
+            return fail(400, { error: 'La contraseña debe tener al menos 6 caracteres' });
+        }
+        if (!id_rol) {
+            return fail(400, { error: 'Debes seleccionar un rol' });
+        }
+        if (!id_sucursal) {
+            return fail(400, { error: 'Debes seleccionar una sucursal' });
         }
 
         try {
@@ -52,7 +67,7 @@ export const actions: Actions = {
                 email,
                 password: hashedPassword,
                 id_rol,
-                id_sucursal: id_sucursal || null,
+                id_sucursal,
                 estado: true
             });
             return { success: true };
@@ -78,8 +93,8 @@ export const actions: Actions = {
         const estado = data.get('estado') === 'true';
         const newPassword = data.get('password')?.toString();
 
-        if (!id || !nombre || !username || !email || !id_rol) {
-            return fail(400, { error: 'Datos incompletos' });
+        if (!id || !nombre || nombre.trim().length < 3 || !username || username.trim().length < 3 || !email || !id_rol || !id_sucursal) {
+            return fail(400, { error: 'Todos los campos obligatorios deben estar completos' });
         }
 
         try {
@@ -88,7 +103,7 @@ export const actions: Actions = {
                 username,
                 email,
                 id_rol,
-                id_sucursal: id_sucursal || null,
+                id_sucursal,
                 estado
             };
 
