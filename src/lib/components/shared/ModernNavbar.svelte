@@ -30,7 +30,7 @@
 </script>
 
 <!-- TOP NAVBAR -->
-<header class="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 z-40 px-4">
+<header class="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/30 dark:border-slate-800/30 z-40 px-4">
     <div class="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
         <!-- Logo -->
         <a href={role === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard'} class="flex items-center gap-4 shrink-0 hover:opacity-90 transition-opacity">

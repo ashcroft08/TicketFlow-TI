@@ -45,7 +45,7 @@
   };
 </script>
 
-<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-t border-slate-200 dark:border-slate-800 px-4 pb-safe pt-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-t border-slate-200/30 dark:border-slate-800/30 px-4 pb-safe pt-3 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
   <div class="flex items-center justify-around max-w-lg mx-auto relative">
     
     {#each navItems() as item}

@@ -71,17 +71,19 @@
                         <Settings class="w-4 h-4 opacity-50 group-hover:opacity-100" />
                         <span class="text-xs font-bold uppercase tracking-widest">Mi Perfil</span>
                     </a>
-
-                    <form action="/?/logout" method="POST" use:enhance>
-                        <button 
-                            type="submit"
-                            class="w-full flex items-center gap-3 px-3 py-2.5 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest"
-                        >
-                            <LogOut class="w-4 h-4" />
-                            Cerrar Sesión
-                        </button>
-                    </form>
                 {/if}
+
+                <div class="h-px bg-slate-200 dark:bg-white/5 my-2 mx-2"></div>
+
+                <form action="/logout" method="POST">
+                    <button 
+                        type="submit"
+                        class="w-full flex items-center gap-3 px-3 py-4 text-red-500/70 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest"
+                    >
+                        <LogOut class="w-4 h-4" />
+                        Cerrar Sesión
+                    </button>
+                </form>
             </div>
         </div>
     {/if}

@@ -64,8 +64,15 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
 
     // 3. Si el usuario ya está logueado e intenta ir al login (GET), lo mandamos a su dashboard
-    // No redirigimos en POST para permitir que se ejecute la acción de logout
-    if (event.url.pathname === "/" && event.locals.user && event.request.method === 'GET') {
+    // No redirigimos si se está solicitando un cierre de sesión explícito
+    const isLoggingOut = event.url.searchParams.has('logout');
+    
+    if (isLoggingOut) {
+        event.cookies.delete(SESSION_COOKIE, { path: '/' });
+        event.locals.user = null;
+    }
+
+    if (event.url.pathname === "/" && event.locals.user && event.request.method === 'GET' && !isLoggingOut) {
         const codRol = event.locals.user.cod_rol;
         console.log('Usuario ya logueado, redirigiendo a dashboard:', codRol);
         

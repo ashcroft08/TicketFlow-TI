@@ -10,8 +10,7 @@
     let chatContainer: HTMLElement;
     let isSubmittingChat = $state(false);
     let isSubmittingDetails = $state(false);
-    let activeDetailTab = $state<'info' | 'gestion'>('gestion');
-    let isManagementExpanded = $state(true);
+    let activeDetailTab = $state<'info' | 'gestion' | 'activo'>('gestion');
 
     // Auto scroll al final del chat
     const scrollToBottom = () => {
@@ -67,79 +66,69 @@
     <title>Gestión Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
-<div class="font-body-md transition-colors duration-300 flex flex-col overflow-hidden">
+<div class="font-body-md transition-colors duration-300 flex flex-col overflow-hidden h-full lg:h-[calc(100vh-160px)]">
     
     <!-- Header Navegación removido - Info ahora en Navbar -->
 
     <!-- Contenido Principal Split-Screen -->
-    <main class="flex-grow max-w-[1400px] w-full mx-auto lg:p-8 flex flex-col lg:flex-row lg:gap-8 h-[calc(100dvh-136px)] lg:h-[calc(100vh-160px)] lg:overflow-hidden">
+    <div class="flex flex-col lg:flex-row lg:gap-8 h-full overflow-hidden">
         
         <!-- Mobile View Toggle (Eliminado, ahora controlado por MobileNav) -->
 
         
         <!-- PANEL IZQUIERDO: Información y Gestión -->
-        <div class="w-full lg:w-1/2 flex-col gap-6 lg:h-full lg:overflow-y-auto pr-2 pb-2 lg:pb-6 custom-scrollbar {ticketViewState.activeTab === 'details' ? 'flex' : 'hidden lg:flex'} h-full">
-
-
-            
-            <!-- Notificación de Éxito o Error -->
-            {#if form?.success && form?.message}
-                <div class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
-                    <CheckCircle2 class="w-5 h-5 shrink-0" />
-                    <p class="text-sm font-medium">{form.message}</p>
-                </div>
-            {/if}
-            {#if form?.error}
-                <div class="bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
-                    <AlertCircle class="w-5 h-5 shrink-0" />
-                    <p class="text-sm font-medium">{form.error}</p>
-                </div>
-            {/if}
-
-            <div class="bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border-x border-t lg:border border-slate-200 dark:border-slate-700/60 rounded-t-[32px] lg:rounded-[24px] shadow-sm overflow-hidden flex flex-col shrink-0 h-full">
-                <!-- Header con botón de plegado (Solo móvil) -->
-                <div class="lg:hidden px-6 py-3 flex items-center justify-between border-b border-slate-200 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-900/30">
-                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                        <Settings2 class="w-3.5 h-3.5" /> Panel de Gestión
-                    </span>
-                    <button 
-                        onclick={() => isManagementExpanded = !isManagementExpanded}
-                        class="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500"
-                    >
-                        {#if isManagementExpanded}
-                            <ChevronUp class="w-4 h-4" />
-                        {:else}
-                            <ChevronDown class="w-4 h-4" />
-                        {/if}
-                    </button>
-                </div>
-
-                {#if isManagementExpanded}
-                    <!-- Pestañas de Gestión vs Info -->
-                    <div class="flex border-b border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50">
+        <div class="w-full lg:w-1/2 flex-col lg:gap-6 lg:h-full lg:overflow-y-auto lg:pr-2 lg:pb-6 custom-scrollbar {ticketViewState.activeTab === 'details' ? 'flex' : 'hidden lg:flex'} h-full overflow-hidden">
+            <div class="bg-transparent lg:bg-white/70 lg:dark:bg-slate-800/60 lg:backdrop-blur-xl lg:border lg:border-slate-200 lg:dark:border-slate-700/60 lg:rounded-[24px] lg:shadow-sm overflow-hidden flex flex-col shrink-0 h-full">
+                <!-- Pestañas de Gestión vs Info (Ahora como Header principal) -->
+                <div class="flex border-b border-slate-200 dark:border-slate-700/60 lg:bg-slate-50/40 lg:dark:bg-slate-900/40 backdrop-blur-md">
                     <button 
                         onclick={() => activeDetailTab = 'gestion'}
-                        class="flex-1 py-3 text-sm font-semibold flex items-center justify-center gap-2 transition-colors {activeDetailTab === 'gestion' ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'gestion' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                     >
-                        <Settings2 class="w-4 h-4" /> Gestión y Diagnóstico
+                        <Settings2 class="w-4 h-4" /> 
+                        <span>Gestión</span>
+                        {#if activeDetailTab === 'gestion'}
+                            <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
+                        {/if}
                     </button>
                     <button 
                         onclick={() => activeDetailTab = 'info'}
-                        class="flex-1 py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors {activeDetailTab === 'info' ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'info' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                     >
-                        <FileText class="w-4 h-4" /> Problema
+                        <FileText class="w-4 h-4" /> 
+                        <span>Problema</span>
+                        {#if activeDetailTab === 'info'}
+                            <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
+                        {/if}
                     </button>
                     {#if ticket.activo_ti}
                         <button 
                             onclick={() => activeDetailTab = 'activo'}
-                            class="flex-1 py-3 text-[13px] font-semibold flex items-center justify-center gap-2 transition-colors {activeDetailTab === 'activo' ? 'border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 dark:border-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                            class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'activo' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                         >
-                            <Package class="w-4 h-4" /> Inventario
+                            <Package class="w-4 h-4" /> 
+                            <span>Inventario</span>
+                            {#if activeDetailTab === 'activo'}
+                                <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
+                            {/if}
                         </button>
                     {/if}
                 </div>
 
-                <div class="p-6">
+                <div class="p-5 lg:p-6 overflow-y-auto custom-scrollbar flex-grow">
+                    <!-- Notificación de Éxito o Error (Ahora dentro del scroll) -->
+                    {#if form?.success && form?.message}
+                        <div class="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up mb-5">
+                            <CheckCircle2 class="w-5 h-5 shrink-0" />
+                            <p class="text-sm font-medium">{form.message}</p>
+                        </div>
+                    {/if}
+                    {#if form?.error}
+                        <div class="bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up mb-5">
+                            <AlertCircle class="w-5 h-5 shrink-0" />
+                            <p class="text-sm font-medium">{form.error}</p>
+                        </div>
+                    {/if}
                     {#if !ticket.id_usuario}
                         <!-- Estado: Sin Asignar -->
                         <div class="flex flex-col items-center text-center py-4">
@@ -368,17 +357,16 @@
                         </div>
                     {/if}
                 </div>
-                {/if}
             </div>
         </div>
 
         <!-- PANEL DERECHO: Chat Interno -->
-        <div class="w-full lg:w-1/2 flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border-x border-t lg:border border-slate-200 dark:border-slate-700/60 rounded-t-[32px] lg:rounded-[24px] shadow-sm h-full lg:h-full {ticketViewState.activeTab === 'chat' ? 'flex' : 'hidden lg:flex'}">
+        <div class="w-full lg:w-1/2 flex-col bg-transparent lg:bg-white/70 lg:dark:bg-slate-800/60 lg:backdrop-blur-xl lg:border lg:border-slate-200 lg:dark:border-slate-700/60 lg:rounded-[24px] lg:shadow-sm h-full overflow-hidden {ticketViewState.activeTab === 'chat' ? 'flex' : 'hidden lg:flex'}">
 
 
 
             
-            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/60 bg-white/50 dark:bg-slate-800/50 rounded-t-[24px] flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700/60 lg:bg-white/50 lg:dark:bg-slate-800/50 lg:rounded-t-[24px] flex justify-between items-center shrink-0">
                 <div>
                     <h3 class="font-bold text-sm">Canal de Comunicación</h3>
                     <p class="text-[11px] text-slate-500 dark:text-slate-400">Conversación con el Encargado</p>
@@ -421,7 +409,7 @@
             </div>
 
             <!-- Input Chat -->
-            <div class="p-4 bg-white/50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700/60 rounded-b-[24px]">
+            <div class="p-4 lg:bg-white/50 lg:dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700/60 lg:rounded-b-[24px] shrink-0">
                 <form 
                     method="POST" 
                     action="?/sendComment"
@@ -459,7 +447,7 @@
             </div>
 
         </div>
-    </main>
+    </div>
 </div>
 
 <style>
