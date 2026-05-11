@@ -283,7 +283,7 @@
 					{@const isMe = comentario.id_usuario === data.user.id}
 					{@const senderName = isMe ? 'Tú' : comentario.usuario?.nombre || 'Usuario'}
 					{@const senderRole =
-						comentario.usuario?.rol?.cod_rol === 'TECHNICIAN' ? 'Técnico' : 'Encargado'}
+						comentario.usuario?.rol?.cod_rol === 'TECH' ? 'Técnico' : 'Encargado'}
 
 					<div
 						class="flex max-w-[85%] flex-col {isMe

@@ -389,8 +389,8 @@
 
                 {#each ticket.comentarios as comentario}
                     {@const isMe = comentario.id_usuario === data.user.id}
-                    {@const senderName = isMe ? 'Tú (Técnico)' : (comentario.usuario?.nombre || 'Usuario')}
-                    {@const senderRole = isMe ? 'Técnico' : 'Encargado'}
+                    {@const senderName = isMe ? 'Tú' : (comentario.usuario?.nombre || 'Usuario')}
+                    {@const senderRole = comentario.usuario?.rol?.cod_rol === 'TECH' ? 'Técnico' : 'Encargado'}
 
                     <div class="flex flex-col max-w-[85%] {isMe ? 'self-end items-end' : 'self-start items-start'}">
                         <div class="flex items-baseline gap-2 mb-1 px-1">
