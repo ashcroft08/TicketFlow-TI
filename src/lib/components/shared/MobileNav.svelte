@@ -10,10 +10,15 @@
   // Determinar el contexto actual
   let isDashboard = $derived(activePath.includes('/dashboard'));
   let isTicketView = $derived(activePath.includes('/ticket/') || activePath.includes('/tickets/'));
+  let currentEnvironment = $derived(
+    activePath.includes('/admin') 
+    ? 'ADMIN' 
+    : (activePath.includes('/tecnico') ? 'TECH' : 'STORE_MANAGER')
+  );
 
   // Items dinámicos basados en el contexto
   const navItems = $derived(() => {
-    if (isDashboard && user?.cod_rol === 'TECH') {
+    if (isDashboard && currentEnvironment === 'TECH') {
       return [
         { name: 'Míos', icon: Ticket, id: 'mis_tickets', count: page.data.misTickets?.length },
         { name: 'Nuevos', icon: AlertCircle, id: 'nuevos', count: page.data.nuevosTickets?.length },
@@ -81,7 +86,7 @@
     {/each}
     
     <!-- Botón de Acción Rápida (Solo en Dashboard de Encargado o si es necesario) -->
-    {#if user?.cod_rol === 'STORE_MANAGER' && isDashboard}
+    {#if currentEnvironment === 'STORE_MANAGER' && isDashboard}
         <div class="absolute -top-10 left-1/2 -translate-x-1/2">
             <button 
                 onclick={() => modalState.showNewTicketModal = true}
