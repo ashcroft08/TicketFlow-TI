@@ -57,7 +57,7 @@
                             </div>
                             <input
                                 class="w-full h-12 pl-11 pr-4 bg-white/50 border border-outline-variant/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-on-surface"
-                                id="password" name="password" placeholder="••••••••" required type="password" />
+                                id="password" name="password" placeholder="••••••••" required type="password" aria-invalid={!!form?.error} />
                         </div>
                     </div>
 
@@ -69,12 +69,12 @@
                             </div>
                             <input
                                 class="w-full h-12 pl-11 pr-4 bg-white/50 border border-outline-variant/60 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-on-surface"
-                                id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password" />
+                                id="confirmPassword" name="confirmPassword" placeholder="••••••••" required type="password" aria-invalid={!!form?.error} />
                         </div>
                     </div>
 
                     <button
-                        class="mt-2 h-12 w-full bg-primary text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50"
+                        class="mt-2 h-12 w-full bg-primary text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                         type="submit" disabled={loading}>
                         {loading ? 'Procesando...' : 'Restablecer Contraseña'}
                     </button>

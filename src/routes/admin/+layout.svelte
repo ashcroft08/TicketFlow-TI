@@ -67,17 +67,17 @@
 
     <!-- SIDEBAR MÓVIL (Overlay) -->
     {#if isSidebarOpen}
-        <!-- svelte-ignore a11y_no_static_element_interactions -->
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <div 
-            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+        <button 
+            class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden w-full cursor-default border-none"
+            aria-label="Cerrar menú lateral"
             onclick={toggleSidebar}
             transition:fade
-        ></div>
+        ></button>
     {/if}
 
     <!-- Sidebar Lateral -->
     <aside 
+        aria-label="Menú principal de administración"
         class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
     >
         <div class="h-full flex flex-col p-5 sticky top-0">
@@ -167,7 +167,7 @@
         </header>
 
         <!-- Main Content Viewport -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-8">
+        <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-8 focus:outline-none" tabindex="-1">
             {@render children()}
         </main>
     </div>

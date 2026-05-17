@@ -90,21 +90,22 @@
             type="text" 
             bind:value={searchQuery}
             placeholder="Buscar por serie, código, modelo o sede..."
+            aria-label="Buscar activos"
             class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm"
         />
     </div>
 
     <!-- Tabla -->
     <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de activos tecnológicos">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-primary/5 border-b border-white/5">
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Equipo / Tipo</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Identificación</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Ubicación / Usuario</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Equipo / Tipo</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Identificación</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Ubicación / Usuario</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
@@ -150,8 +151,8 @@
                             </td>
                             <td class="px-5 py-3 text-right">
                                 <div class="flex justify-end gap-1">
-                                    <button onclick={() => openEdit(asset)} class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all">
-                                        <Edit2 class="w-4 h-4" />
+                                    <button onclick={() => openEdit(asset)} aria-label={`Editar activo ${asset.catalogo?.nombre}`} class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
                                         use:enhance={({ cancel }) => {
@@ -161,8 +162,8 @@
                                         method="POST" 
                                     >
                                         <input type="hidden" name="id" value={asset.id_activo} />
-                                        <button type="submit" class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all">
-                                            <Trash2 class="w-4 h-4" />
+                                        <button type="submit" aria-label={`Eliminar activo ${asset.catalogo?.nombre}`} class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error">
+                                            <Trash2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                     </form>
                                 </div>
@@ -191,16 +192,18 @@
                     <button 
                         disabled={currentPage === 1}
                         onclick={() => currentPage--}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página anterior"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronLeft class="w-4 h-4" />
+                        <ChevronLeft class="w-4 h-4 aria-hidden=true" />
                     </button>
                     <button 
                         disabled={currentPage === totalPages}
                         onclick={() => currentPage++}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página siguiente"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronRight class="w-4 h-4" />
+                        <ChevronRight class="w-4 h-4 aria-hidden=true" />
                     </button>
                 </div>
             </div>
@@ -213,6 +216,9 @@
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         class="fixed inset-0 bg-dark-bg-main/80 backdrop-blur-md z-[60] flex items-center justify-center p-4"
         transition:fade
         onclick={(e) => e.target === e.currentTarget && closeModal()}
@@ -226,12 +232,12 @@
                     <div class="p-2 bg-primary/10 rounded-lg text-primary">
                         <Monitor class="w-5 h-5" />
                     </div>
-                    <h3 class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
+                    <h2 id="modal-title" class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
                         {editingAsset ? 'Actualizar Activo TI' : 'Registro de Nuevo Activo'}
-                    </h3>
+                    </h2>
                 </div>
-                <button onclick={closeModal} class="p-2 hover:bg-white/10 rounded-full transition-colors">
-                    <X class="w-5 h-5 text-text-dim" />
+                <button onclick={closeModal} aria-label="Cerrar modal" class="p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                    <X class="w-5 h-5 text-text-dim aria-hidden=true" />
                 </button>
             </div>
 
@@ -327,10 +333,10 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick={closeModal} class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors">
+                    <button type="button" onclick={closeModal} class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn-primary px-8">
+                    <button type="submit" class="btn-primary px-8 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                         {editingAsset ? 'Actualizar Ficha' : 'Completar Registro'}
                     </button>
                 </div>

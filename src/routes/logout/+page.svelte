@@ -8,6 +8,6 @@
     });
 </script>
 
-<div class="min-h-screen flex items-center justify-center bg-slate-950 text-white font-bold uppercase tracking-widest text-xs">
+<main id="main-content" aria-live="polite" class="min-h-screen flex items-center justify-center bg-slate-950 text-white font-bold uppercase tracking-widest text-xs">
     Cerrando sesión...
-</div>
+</main>

@@ -17,20 +17,23 @@
 
     {#if form?.success}
         <div 
+            role="status"
+            aria-live="polite"
             class="p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3 text-success"
             transition:slide
         >
-            <CheckCircle2 class="w-4 h-4" />
+            <CheckCircle2 class="w-4 h-4 aria-hidden=true" />
             <p class="text-[11px] font-bold uppercase tracking-tight">{form.message}</p>
         </div>
     {/if}
 
     {#if form?.error}
         <div 
+            role="alert"
             class="p-4 bg-error/10 border border-error/20 rounded-lg flex items-center gap-3 text-error"
             transition:slide
         >
-            <AlertCircle class="w-4 h-4" />
+            <AlertCircle class="w-4 h-4 aria-hidden=true" />
             <p class="text-[11px] font-bold uppercase tracking-tight">{form.error}</p>
         </div>
     {/if}
@@ -141,7 +144,7 @@
                     <button 
                         type="submit" 
                         disabled={loading}
-                        class="btn-primary px-8 flex items-center gap-2 disabled:opacity-50"
+                        class="btn-primary px-8 flex items-center gap-2 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         {#if loading}
                             <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

@@ -91,7 +91,7 @@
                     else newUrl.searchParams.set('eliminados', 'true');
                     goto(newUrl.toString());
                 }}
-                class="flex items-center gap-2 px-4 py-2 rounded-md font-bold text-[10px] uppercase tracking-widest transition-all {data.includeDeleted ? 'bg-error text-white shadow-lg shadow-error/20' : 'glass-card text-text-dim hover:text-text-main'}"
+                class="flex items-center gap-2 px-4 py-2 rounded-md font-bold text-[10px] uppercase tracking-widest transition-all focus:outline-none focus:ring-2 focus:ring-primary {data.includeDeleted ? 'bg-error text-white shadow-lg shadow-error/20' : 'glass-card text-text-dim hover:text-text-main'}"
             >
                 {#if data.includeDeleted}
                     <Ticket class="w-3.5 h-3.5" />
@@ -110,20 +110,22 @@
     <!-- Filtros -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
         <div class="md:col-span-2 relative group">
-            <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim group-focus-within:text-primary transition-colors" />
+            <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim group-focus-within:text-primary transition-colors" aria-hidden="true" />
             <input 
                 type="text" 
                 bind:value={searchQuery}
                 placeholder="ID, título o solicitante..."
-                class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm"
+                aria-label="Buscar tickets por ID, título o solicitante"
+                class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm focus:ring-primary"
             />
         </div>
         
         <div class="relative">
-            <Filter class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim" />
+            <Filter class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim" aria-hidden="true" />
             <select 
                 bind:value={statusFilter}
-                class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm appearance-none bg-no-repeat bg-[right_1rem_center]"
+                aria-label="Filtrar por estado del ticket"
+                class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm appearance-none bg-no-repeat bg-[right_1rem_center] focus:ring-primary"
             >
                 <option value="todos">Todos los Estados</option>
                 <option value="abierto">Abiertos</option>
@@ -217,19 +219,21 @@
                                     <input type="hidden" name="id" value={ticket.id_ticket} />
                                     <button 
                                         type="submit"
-                                        class="flex items-center gap-2 px-4 py-2 bg-success text-white text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-success/90 transition-all"
+                                        aria-label={`Restaurar ticket ID-${ticket.id_ticket}`}
+                                        class="flex items-center gap-2 px-4 py-2 bg-success text-white text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-success/90 transition-all focus:outline-none focus:ring-2 focus:ring-success"
                                     >
-                                        <RotateCcw class="w-3.5 h-3.5" />
+                                        <RotateCcw class="w-3.5 h-3.5 aria-hidden=true" />
                                         Restaurar
                                     </button>
                                 </form>
                             {:else}
                                 <button 
                                     onclick={() => openDetails(ticket)}
-                                    class="p-2 bg-primary/5 text-primary hover:bg-primary hover:text-white rounded-md transition-all"
+                                    class="p-2 bg-primary/5 text-primary hover:bg-primary hover:text-white rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary"
                                     title="Ver Detalles"
+                                    aria-label={`Ver detalles del ticket ID-${ticket.id_ticket}`}
                                 >
-                                    <ExternalLink class="w-4 h-4" />
+                                    <ExternalLink class="w-4 h-4 aria-hidden=true" />
                                 </button>
                                 
                                 <form 
@@ -242,10 +246,11 @@
                                     <input type="hidden" name="id" value={ticket.id_ticket} />
                                     <button 
                                         type="submit"
-                                        class="p-2 bg-error/5 text-error hover:bg-error hover:text-white rounded-md transition-all"
+                                        class="p-2 bg-error/5 text-error hover:bg-error hover:text-white rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         title="Eliminar"
+                                        aria-label={`Archivar ticket ID-${ticket.id_ticket}`}
                                     >
-                                        <Trash2 class="w-4 h-4" />
+                                        <Trash2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                 </form>
                             {/if}
@@ -280,16 +285,18 @@
                 <button 
                     disabled={currentPage === 1}
                     onclick={() => currentPage--}
-                    class="p-2 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all"
+                    aria-label="Página anterior"
+                    class="p-2 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                    <ChevronLeft class="w-5 h-5" />
+                    <ChevronLeft class="w-5 h-5 aria-hidden=true" />
                 </button>
                 <button 
                     disabled={currentPage === totalPages}
                     onclick={() => currentPage++}
-                    class="p-2 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all"
+                    aria-label="Página siguiente"
+                    class="p-2 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                    <ChevronRight class="w-5 h-5" />
+                    <ChevronRight class="w-5 h-5 aria-hidden=true" />
                 </button>
             </div>
         </div>
@@ -311,15 +318,18 @@
 
         <div 
             class="relative w-full max-w-2xl glass-card rounded-xl shadow-2xl overflow-hidden border border-white/10"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
             transition:scale={{ duration: 300, start: 0.95, opacity: 0 }}
         >
             <div class="px-8 py-5 border-b border-white/5 flex items-center justify-between bg-primary/5">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-primary/10 rounded-lg text-primary">
-                        <AlertCircle class="w-5 h-5" />
+                        <AlertCircle class="w-5 h-5 aria-hidden=true" />
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">Ficha de Incidencia</h2>
+                        <h2 id="modal-title" class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">Ficha de Incidencia</h2>
                         <div class="flex items-center gap-2 mt-0.5">
                             <span class="text-[10px] text-text-dim font-bold uppercase tracking-widest">ID-{selectedTicket.id_ticket} • {formatDate(selectedTicket.created_at)}</span>
                         </div>
@@ -327,9 +337,10 @@
                 </div>
                 <button 
                     onclick={closeModal}
-                    class="p-2 hover:bg-white/10 rounded-full transition-colors"
+                    aria-label="Cerrar detalles del ticket"
+                    class="p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                    <X class="w-5 h-5 text-text-dim" />
+                    <X class="w-5 h-5 text-text-dim aria-hidden=true" />
                 </button>
             </div>
 
@@ -388,15 +399,15 @@
             <div class="p-6 border-t border-white/5 bg-primary/5 flex flex-col sm:flex-row justify-end gap-3">
                 <button 
                     onclick={closeModal}
-                    class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-all"
+                    class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-all focus:outline-none focus:ring-2 focus:ring-primary rounded"
                 >
                     Volver
                 </button>
                 <a 
                     href="/admin/tickets/{selectedTicket.id_ticket}"
-                    class="btn-primary flex items-center justify-center gap-2 px-8"
+                    class="btn-primary flex items-center justify-center gap-2 px-8 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                    <MessageSquare class="w-4 h-4" />
+                    <MessageSquare class="w-4 h-4 aria-hidden=true" />
                     <span class="text-xs uppercase tracking-widest">Abrir Gestión Técnica</span>
                 </a>
             </div>

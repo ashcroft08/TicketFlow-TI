@@ -135,7 +135,9 @@
 
 		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
 		<div
-			class="custom-scrollbar flex-col gap-6 lg:pr-2 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6 {ticketViewState.activeTab ===
+			tabindex="0"
+			aria-label="Detalles del Ticket"
+			class="custom-scrollbar flex-col gap-6 lg:pr-2 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6 focus:outline-none focus:ring-2 focus:ring-primary {ticketViewState.activeTab ===
 			'details'
 				? 'flex w-full'
 				: 'hidden lg:flex'}"
@@ -168,7 +170,7 @@
 										>Equipo Afectado</span
 									>
 									<div class="flex items-center gap-2 text-sm font-medium">
-										<Monitor class="h-4 w-4 text-primary dark:text-blue-400" />
+										<Monitor class="h-4 w-4 text-primary dark:text-blue-400" aria-hidden="true" />
 										<span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'General'}</span>
 									</div>
 								</div>
@@ -178,7 +180,7 @@
 										>Creado el</span
 									>
 									<div class="flex items-center gap-2 text-sm font-medium">
-										<Calendar class="h-4 w-4 text-primary dark:text-blue-400" />
+										<Calendar class="h-4 w-4 text-primary dark:text-blue-400" aria-hidden="true" />
 										<span>{formatDate(ticket.created_at)}</span>
 									</div>
 								</div>
@@ -193,7 +195,7 @@
 						class="rounded-[24px] border border-slate-200 bg-white/70 p-6 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60"
 					>
 						<h3 class="mb-4 flex items-center gap-2 text-sm font-bold">
-							<Paperclip class="h-4 w-4 text-slate-500" />
+							<Paperclip class="h-4 w-4 text-slate-500" aria-hidden="true" />
 							Imágenes Adjuntas ({ticket.adjuntos.length})
 						</h3>
 						<div class="grid grid-cols-2 gap-3">
@@ -243,11 +245,15 @@
 			<!-- Área de Mensajes -->
 			<div
 				bind:this={chatContainer}
-				class="custom-scrollbar flex flex-grow flex-col gap-4 overflow-y-auto bg-slate-50/50 p-6 dark:bg-slate-900/30"
+				role="log"
+				aria-live="polite"
+				tabindex="0"
+				aria-label="Historial de mensajes de chat"
+				class="custom-scrollbar flex flex-grow flex-col gap-4 overflow-y-auto bg-slate-50/50 p-6 dark:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-primary"
 			>
 				{#if !ticket.id_usuario}
 					<div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex items-center gap-3 mb-4 animate-pulse">
-						<Clock class="w-5 h-5 text-amber-600 shrink-0" />
+						<Clock class="w-5 h-5 text-amber-600 shrink-0" aria-hidden="true" />
 						<div class="flex flex-col">
 							<p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Esperando Técnico</p>
 							<p class="text-[11px] text-amber-600 dark:text-amber-500/80">Tu solicitud está en espera. Podrás chatear cuando un técnico tome el ticket.</p>
@@ -260,7 +266,7 @@
 						<div
 							class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10"
 						>
-							<Send class="h-8 w-8 text-primary" />
+							<Send class="h-8 w-8 text-primary" aria-hidden="true" />
 						</div>
 						<p class="text-sm">Aún no hay mensajes.</p>
 						<p class="text-xs">Escribe el primer comentario abajo.</p>
@@ -328,15 +334,17 @@
 						placeholder={!canChat ? (isClosed ? "Ticket finalizado - Chat cerrado" : "Chat bloqueado hasta que se asigne un técnico...") : "Escribe un mensaje al técnico..."}
 						required
 						autocomplete="off"
+						aria-label="Escribir comentario en el chat"
 						class="h-12 flex-grow rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-800 focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none dark:border-slate-700 dark:bg-slate-900/80 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/30 disabled:opacity-50 disabled:bg-slate-100 dark:disabled:bg-slate-800"
 						disabled={!canChat || isSubmitting}
 					/>
 					<button
 						type="submit"
 						disabled={!canChat || isSubmitting}
-						class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500"
+						aria-label="Enviar mensaje"
+						class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary text-white transition-colors hover:bg-primary/90 disabled:opacity-50 dark:bg-blue-600 dark:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-primary"
 					>
-						<Send class="-ml-0.5 h-5 w-5" />
+						<Send class="-ml-0.5 h-5 w-5" aria-hidden="true" />
 					</button>
 				</form>
 			</div>

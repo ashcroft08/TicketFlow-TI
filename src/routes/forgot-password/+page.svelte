@@ -102,7 +102,7 @@
                                 onfocus={() => focusedField = 'identifier'}
                                 onblur={() => focusedField = null}
                                 class="w-full h-14 pl-12 pr-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 dark:focus:ring-blue-500/10 focus:border-primary dark:focus:border-blue-500 text-[15px] text-slate-800 dark:text-white placeholder:text-slate-400 transition-all duration-300 shadow-sm"
-                                id="identifier" name="identifier" placeholder="ej: jdoe o juan@correo.com" required type="text" />
+                                id="identifier" name="identifier" placeholder="ej: jdoe o juan@correo.com" required type="text" aria-invalid={!!form?.error} />
                         </div>
                     </div>
 
@@ -113,7 +113,7 @@
                         {loading ? 'Enviando...' : 'Enviar Enlace'}
                     </button>
 
-                    <a href="/" class="text-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2">
+                    <a href="/" class="text-center text-sm font-bold text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1">
                         <ArrowLeft size={16} /> Cancelar y volver
                     </a>
                 </form>
@@ -121,7 +121,7 @@
 
             <footer class="mt-12 text-center">
                 <p class="text-xs text-slate-400 dark:text-slate-600">
-                    &copy; 2024 TicketFlow TI. Soporte TI Simplificado.
+                    &copy; {new Date().getFullYear()} TicketFlow TI. Soporte TI Simplificado.
                 </p>
             </footer>
         </div>

@@ -56,3 +56,53 @@ self.addEventListener('fetch', (event) => {
 
     event.respondWith(respond());
 });
+
+// --- NOTIFICACIONES PUSH & SYSTEM ---
+
+self.addEventListener('push', (event) => {
+    let data = { title: 'TicketFlow TI', body: 'Nueva actualización en el sistema.' };
+
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch {
+            data = { title: 'TicketFlow TI', body: event.data.text() };
+        }
+    }
+
+    const options = {
+        body: data.body,
+        icon: '/favicon.png',
+        badge: '/favicon.png',
+        vibrate: [100, 50, 100],
+        data: {
+            url: data.url || '/'
+        }
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+            const targetUrl = event.notification.data.url;
+            
+            // Si ya hay una ventana abierta con la misma URL, enfocarla
+            for (const client of clientList) {
+                if (client.url === targetUrl && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            
+            // Si no hay ventana abierta, abrir una nueva
+            if (clients.openWindow) {
+                return clients.openWindow(targetUrl);
+            }
+        })
+    );
+});

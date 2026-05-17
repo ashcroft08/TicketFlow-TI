@@ -93,7 +93,7 @@
                             onfocus={() => focusedField = 'username'}
                             onblur={() => focusedField = null}
                             class="w-full h-14 pl-12 pr-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 dark:focus:ring-blue-500/10 focus:border-primary dark:focus:border-blue-500 text-[15px] text-slate-800 dark:text-white placeholder:text-slate-400 transition-all duration-300 shadow-sm"
-                            id="username" name="username" placeholder="Tu identificador..." required type="text" value={form?.username ?? ''} />
+                            id="username" name="username" placeholder="Tu identificador..." required type="text" value={form?.username ?? ''} aria-invalid={!!form?.error} />
                     </div>
                 </div>
 
@@ -111,12 +111,14 @@
                             onfocus={() => focusedField = 'password'}
                             onblur={() => focusedField = null}
                             class="w-full h-14 pl-12 pr-12 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/5 dark:focus:ring-blue-500/10 focus:border-primary dark:focus:border-blue-500 text-[15px] text-slate-800 dark:text-white placeholder:text-slate-400 transition-all duration-300 shadow-sm"
-                            id="password" name="password" placeholder="Tu clave secreta..." required type={showPassword ? "text" : "password"} />
+                            id="password" name="password" placeholder="Tu clave secreta..." required type={showPassword ? "text" : "password"} aria-invalid={!!form?.error} />
                         
                         <button
                             type="button"
                             onclick={() => showPassword = !showPassword}
-                            class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors"
+                            aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            aria-pressed={showPassword}
+                            class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-primary dark:hover:text-blue-400 transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded-full"
                         >
                             {#if showPassword}
                                 <EyeOff size={20} />
@@ -138,7 +140,7 @@
 
             <footer class="mt-12 text-center">
                 <p class="text-xs text-slate-400 dark:text-slate-600">
-                    &copy; 2024 TicketFlow TI. Todos los derechos reservados. <br/>
+                    &copy; {new Date().getFullYear()} TicketFlow TI. Todos los derechos reservados. <br/>
                     Tecnología para el soporte eficiente.
                 </p>
             </footer>

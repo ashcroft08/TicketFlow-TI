@@ -61,7 +61,7 @@
             <div class="flex items-center gap-3">
                 <button
                     onclick={() => modalState.showNewTicketModal = true}
-                    class="hidden sm:flex group h-12 px-6 bg-primary dark:bg-blue-600 text-white font-semibold text-sm rounded-xl items-center justify-center gap-2 hover:bg-primary/90 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] relative overflow-hidden shrink-0"
+                    class="hidden sm:flex group h-12 px-6 bg-primary dark:bg-blue-600 text-white font-semibold text-sm rounded-xl items-center justify-center gap-2 hover:bg-primary/90 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] relative overflow-hidden shrink-0 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                 >
                     <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer"></div>
                     <Plus class="w-5 h-5 transition-transform group-hover:rotate-90" />
@@ -85,7 +85,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {#each data.tickets as ticket}
                 {@const status = getStatusStyles(ticket.estado?.nombre || '')}
-                <a href="/encargado/ticket/{ticket.id_ticket}" class="block group bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-5 sm:p-6 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
+                <a href="/encargado/ticket/{ticket.id_ticket}" class="block group bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-5 sm:p-6 shadow-sm hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-all duration-300 flex flex-col h-full hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                     
                     <div class="flex justify-between items-start gap-4 mb-3 sm:mb-4">
                         <h3 class="font-h3 text-sm sm:text-base md:text-lg text-slate-800 dark:text-white font-bold leading-snug line-clamp-2">
@@ -155,16 +155,17 @@
         ></button>
 
         <!-- Tarjeta del Formulario -->
-        <div class="relative w-full max-w-[480px] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-[28px] shadow-[0_8px_40px_rgb(0,0,0,0.12)] p-6 sm:p-8 animate-fade-in-up my-auto">
+        <div role="dialog" aria-modal="true" aria-labelledby="modal-title" class="relative w-full max-w-[480px] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-white/50 dark:border-slate-700/50 rounded-[28px] shadow-[0_8px_40px_rgb(0,0,0,0.12)] p-6 sm:p-8 animate-fade-in-up my-auto">
             
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="font-h2 text-xl sm:text-2xl text-slate-800 dark:text-white font-bold tracking-tight">Reportar Problema</h2>
+                    <h2 id="modal-title" class="font-h2 text-xl sm:text-2xl text-slate-800 dark:text-white font-bold tracking-tight">Reportar Problema</h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Describe el incidente para que podamos ayudarte.</p>
                 </div>
                 <button 
                     onclick={() => modalState.showNewTicketModal = false}
-                    class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
+                    aria-label="Cerrar modal"
+                    class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                     <X class="w-5 h-5" />
                 </button>
@@ -200,6 +201,7 @@
                             placeholder="Ej: La impresora principal no imprime"
                             class="w-full h-12 px-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-slate-800 dark:text-white placeholder:text-slate-400 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900"
                             value={form?.titulo ?? ''}
+                            aria-invalid={!!form?.error}
                         />
                     </div>
                 </div>
@@ -216,6 +218,7 @@
                             id="id_activo" 
                             name="id_activo" 
                             required
+                            aria-invalid={!!form?.error}
                             class="w-full h-12 px-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-slate-800 dark:text-white transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900 appearance-none cursor-pointer"
                         >
                             <option value="" disabled selected class="text-slate-400">Seleccionar equipo...</option>
@@ -245,6 +248,7 @@
                             rows="4"
                             required
                             placeholder="Menciona qué sucedía justo antes del error..."
+                            aria-invalid={!!form?.error}
                             class="w-full p-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-slate-800 dark:text-white placeholder:text-slate-400 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900 resize-none"
                         >{form?.descripcion ?? ''}</textarea>
                     </div>
@@ -279,14 +283,14 @@
                     <button 
                         type="button"
                         onclick={() => modalState.showNewTicketModal = false}
-                        class="flex-1 h-12 bg-transparent text-slate-600 dark:text-slate-300 font-semibold text-sm rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                        class="flex-1 h-12 bg-transparent text-slate-600 dark:text-slate-300 font-semibold text-sm rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
                     >
                         Cancelar
                     </button>
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
-                        class="flex-[2] h-12 bg-primary text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group"
+                        class="flex-[2] h-12 bg-primary text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed relative overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         {#if isSubmitting}
                             <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

@@ -80,21 +80,22 @@
             type="text" 
             bind:value={searchQuery}
             placeholder="Buscar por nombre, email o username..."
+            aria-label="Buscar usuarios"
             class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm"
         />
     </div>
 
     <!-- Tabla -->
     <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de usuarios">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-primary/5 border-b border-white/5">
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Identidad</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Rol / Permisos</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Sucursal</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado</th>
-                        <th class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Identidad</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Rol / Permisos</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Sucursal</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado</th>
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
@@ -130,9 +131,10 @@
                                 <div class="flex justify-end gap-1">
                                     <button 
                                         onclick={() => openEdit(user)}
-                                        class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all"
+                                        aria-label={`Editar usuario ${user.nombre}`}
+                                        class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary"
                                     >
-                                        <Edit2 class="w-4 h-4" />
+                                        <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
                                         use:enhance={({ cancel }) => {
@@ -144,9 +146,10 @@
                                         <input type="hidden" name="id" value={user.id_usuario} />
                                         <button 
                                             type="submit"
-                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all"
+                                            aria-label={`Eliminar usuario ${user.nombre}`}
+                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         >
-                                            <Trash2 class="w-4 h-4" />
+                                            <Trash2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                     </form>
                                 </div>
@@ -175,16 +178,18 @@
                     <button 
                         disabled={currentPage === 1}
                         onclick={() => currentPage--}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página anterior"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronLeft class="w-4 h-4" />
+                        <ChevronLeft class="w-4 h-4 aria-hidden=true" />
                     </button>
                     <button 
                         disabled={currentPage === totalPages}
                         onclick={() => currentPage++}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página siguiente"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronRight class="w-4 h-4" />
+                        <ChevronRight class="w-4 h-4 aria-hidden=true" />
                     </button>
                 </div>
             </div>
@@ -197,6 +202,9 @@
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         class="fixed inset-0 bg-dark-bg-main/80 backdrop-blur-md z-[60] flex items-center justify-center p-4"
         transition:fade
         onclick={(e) => e.target === e.currentTarget && closeModal()}
@@ -210,12 +218,12 @@
                     <div class="p-2 bg-primary/10 rounded-lg text-primary">
                         <Activity class="w-5 h-5" />
                     </div>
-                    <h3 class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
+                    <h2 id="modal-title" class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
                         {editingUser ? 'Actualizar Registro' : 'Nuevo Registro Maestro'}
-                    </h3>
+                    </h2>
                 </div>
-                <button onclick={closeModal} class="p-2 hover:bg-white/10 rounded-full transition-colors">
-                    <X class="w-5 h-5 text-text-dim" />
+                <button onclick={closeModal} aria-label="Cerrar modal" class="p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                    <X class="w-5 h-5 text-text-dim aria-hidden=true" />
                 </button>
             </div>
 
@@ -231,8 +239,8 @@
                 class="p-8 space-y-6"
             >
                 {#if formError}
-                    <div class="bg-error/10 text-error border border-error/20 p-3 rounded-lg flex items-center gap-2 text-xs font-bold">
-                        <AlertCircle class="w-4 h-4 shrink-0" />
+                    <div role="alert" class="bg-error/10 text-error border border-error/20 p-3 rounded-lg flex items-center gap-2 text-xs font-bold">
+                        <AlertCircle class="w-4 h-4 shrink-0 aria-hidden=true" />
                         {formError}
                     </div>
                 {/if}
@@ -246,33 +254,33 @@
                         <label for="nombre" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Nombre Completo</label>
                         <div class="relative">
                             <UserIcon class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="nombre" type="text" name="nombre" value={editingUser?.nombre || ''} required minlength="3" placeholder="Ej: Juan Pérez" class="input-compact w-full pl-10" />
+                            <input id="nombre" type="text" name="nombre" value={editingUser?.nombre || ''} required minlength="3" placeholder="Ej: Juan Pérez" class="input-compact w-full pl-10" aria-invalid={!!formError} />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="username" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Username</label>
                         <div class="relative">
                             <Shield class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="username" type="text" name="username" value={editingUser?.username || ''} required minlength="3" placeholder="Ej: jperez" class="input-compact w-full pl-10" />
+                            <input id="username" type="text" name="username" value={editingUser?.username || ''} required minlength="3" placeholder="Ej: jperez" class="input-compact w-full pl-10" aria-invalid={!!formError} />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="email" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Email Corporativo</label>
                         <div class="relative">
                             <Mail class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="email" type="email" name="email" value={editingUser?.email || ''} required placeholder="correo@empresa.com" class="input-compact w-full pl-10" />
+                            <input id="email" type="email" name="email" value={editingUser?.email || ''} required placeholder="correo@empresa.com" class="input-compact w-full pl-10" aria-invalid={!!formError} />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="password" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">{editingUser ? 'Nueva Clave (Safe)' : 'Contraseña Maestro'}</label>
                         <div class="relative">
                             <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="password" type="password" name="password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'} class="input-compact w-full pl-10" />
+                            <input id="password" type="password" name="password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'} class="input-compact w-full pl-10" aria-invalid={!!formError} />
                         </div>
                     </div>
                     <div class="space-y-1.5">
                         <label for="id_rol" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Rol Operativo</label>
-                        <select id="id_rol" name="id_rol" required class="input-compact w-full appearance-none bg-no-repeat bg-[right_1rem_center]">
+                        <select id="id_rol" name="id_rol" required class="input-compact w-full appearance-none bg-no-repeat bg-[right_1rem_center]" aria-invalid={!!formError}>
                             <option value="" disabled selected={!editingUser}>Selecciona un rol...</option>
                             {#each data.roles as rol}
                                 <option value={rol.id_rol} selected={editingUser?.id_rol === rol.id_rol}>{rol.rol}</option>
@@ -281,7 +289,7 @@
                     </div>
                     <div class="space-y-1.5">
                         <label for="id_sucursal" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Sucursal</label>
-                        <select id="id_sucursal" name="id_sucursal" required class="input-compact w-full appearance-none">
+                        <select id="id_sucursal" name="id_sucursal" required class="input-compact w-full appearance-none" aria-invalid={!!formError}>
                             <option value="" disabled selected={!editingUser?.id_sucursal}>Selecciona una sucursal...</option>
                             {#each data.branches as branch}
                                 <option value={branch.id_sucursal} selected={editingUser?.id_sucursal === branch.id_sucursal}>{branch.nombre}</option>
@@ -300,10 +308,10 @@
                 {/if}
 
                 <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick={closeModal} class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors">
+                    <button type="button" onclick={closeModal} class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn-primary px-8">
+                    <button type="submit" class="btn-primary px-8 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                         {editingUser ? 'Guardar Cambios' : 'Registrar Usuario'}
                     </button>
                 </div>

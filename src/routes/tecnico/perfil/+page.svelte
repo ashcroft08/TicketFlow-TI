@@ -17,20 +17,23 @@
 
     {#if form?.success}
         <div 
+            role="status"
+            aria-live="polite"
             class="p-4 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3 text-success"
             transition:slide
         >
-            <CheckCircle2 class="w-4 h-4" />
+            <CheckCircle2 class="w-4 h-4 aria-hidden=true" />
             <p class="text-[11px] font-bold uppercase tracking-tight">{form.message}</p>
         </div>
     {/if}
 
     {#if form?.error}
         <div 
+            role="alert"
             class="p-4 bg-error/10 border border-error/20 rounded-lg flex items-center gap-3 text-error"
             transition:slide
         >
-            <AlertCircle class="w-4 h-4" />
+            <AlertCircle class="w-4 h-4 aria-hidden=true" />
             <p class="text-[11px] font-bold uppercase tracking-tight">{form.error}</p>
         </div>
     {/if}
@@ -82,7 +85,7 @@
                     <form action="/?/logout" method="POST" use:enhance class="w-full lg:hidden">
                         <button 
                             type="submit"
-                            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 mt-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest border border-red-500/10 hover:border-red-500/30"
+                            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 mt-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest border border-red-500/10 hover:border-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-500"
                         >
                             <LogOut class="w-3.5 h-3.5" />
                             Cerrar Sesión
@@ -151,7 +154,7 @@
                     <button 
                         type="submit" 
                         disabled={loading}
-                        class="btn-primary px-8 flex items-center gap-2 disabled:opacity-50"
+                        class="btn-primary px-8 flex items-center gap-2 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                     >
                         {#if loading}
                             <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>

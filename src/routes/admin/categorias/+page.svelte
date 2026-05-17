@@ -59,7 +59,8 @@
 
         <button 
             onclick={() => isCreating = !isCreating}
-            class="btn-primary flex items-center gap-2"
+            aria-expanded={isCreating}
+            class="btn-primary flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
             <Plus class="w-4 h-4" />
             <span class="uppercase tracking-tighter text-xs">Nueva Clasificación</span>
@@ -94,10 +95,10 @@
                         />
                     </div>
                     <div class="flex gap-2">
-                        <button type="button" onclick={() => isCreating = false} class="px-5 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors">
+                        <button type="button" onclick={() => isCreating = false} class="px-5 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn-primary px-8">
+                        <button type="submit" class="btn-primary px-8 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                             Confirmar
                         </button>
                     </div>
@@ -111,6 +112,7 @@
                 type="text" 
                 bind:value={searchQuery}
                 placeholder="Filtrar por nombre técnico..."
+                aria-label="Buscar categorías"
                 class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm"
             />
         </div>
@@ -118,13 +120,13 @@
 
     <!-- Tabla -->
     <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de categorías">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-primary/5 border-b border-white/5">
-                        <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Nombre Técnico</th>
-                        <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado del Filtro</th>
-                        <th class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
+                        <th scope="col" class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Nombre Técnico</th>
+                        <th scope="col" class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado del Filtro</th>
+                        <th scope="col" class="px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
@@ -144,13 +146,14 @@
                                             type="text" 
                                             name="nombre"
                                             bind:value={editNombre}
+                                            aria-label="Nombre de la categoría"
                                             class="input-compact flex-grow !py-1"
                                         />
-                                        <button type="submit" class="p-1 text-success hover:bg-success/10 rounded transition-colors">
-                                            <Check class="w-4 h-4" />
+                                        <button type="submit" aria-label="Confirmar edición" class="p-1 text-success hover:bg-success/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-success">
+                                            <Check class="w-4 h-4 aria-hidden=true" />
                                         </button>
-                                        <button type="button" onclick={cancelEdit} class="p-1 text-error hover:bg-error/10 rounded transition-colors">
-                                            <X class="w-4 h-4" />
+                                        <button type="button" onclick={cancelEdit} aria-label="Cancelar edición" class="p-1 text-error hover:bg-error/10 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-error">
+                                            <X class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                     </form>
                                 {:else}
@@ -169,7 +172,8 @@
                                     <input type="hidden" name="estado" value={!cat.estado} />
                                     <button 
                                         type="submit"
-                                        class="flex items-center gap-2 group/btn"
+                                        aria-label={cat.estado ? 'Desactivar categoría' : 'Activar categoría'}
+                                        class="flex items-center gap-2 group/btn focus:outline-none focus:ring-2 focus:ring-primary rounded p-1"
                                     >
                                         <div class="w-2 h-2 rounded-full {cat.estado ? 'bg-success' : 'bg-text-dim'} transition-all group-hover/btn:scale-125"></div>
                                         <span class="text-[10px] font-bold uppercase tracking-widest {cat.estado ? 'text-success' : 'text-text-dim'}">
@@ -182,9 +186,10 @@
                                 <div class="flex justify-end gap-1">
                                     <button 
                                         onclick={() => startEdit(cat)}
-                                        class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all"
+                                        aria-label={`Editar categoría ${cat.nombre_tecnico}`}
+                                        class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary"
                                     >
-                                        <Edit2 class="w-4 h-4" />
+                                        <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
                                         use:enhance={({ cancel }) => {
@@ -196,9 +201,10 @@
                                         <input type="hidden" name="id" value={cat.id_categoria} />
                                         <button 
                                             type="submit"
-                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all"
+                                            aria-label={`Eliminar categoría ${cat.nombre_tecnico}`}
+                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         >
-                                            <Trash2 class="w-4 h-4" />
+                                            <Trash2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                     </form>
                                 </div>
@@ -227,16 +233,18 @@
                     <button 
                         disabled={currentPage === 1}
                         onclick={() => currentPage--}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página anterior"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronLeft class="w-4 h-4" />
+                        <ChevronLeft class="w-4 h-4 aria-hidden=true" />
                     </button>
                     <button 
                         disabled={currentPage === totalPages}
                         onclick={() => currentPage++}
-                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm"
+                        aria-label="Página siguiente"
+                        class="p-1.5 glass-card rounded-md disabled:opacity-30 hover:text-primary transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        <ChevronRight class="w-4 h-4" />
+                        <ChevronRight class="w-4 h-4 aria-hidden=true" />
                     </button>
                 </div>
             </div>

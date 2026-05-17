@@ -16,29 +16,18 @@
     let ticket = $derived(page.data.ticket);
     let isProfilePage = $derived(activePath.endsWith('/perfil'));
 
-    const navItems = $derived(
-        role === 'TECH' 
-        ? [
-            { name: 'Inicio', icon: LayoutDashboard, path: '/tecnico/dashboard' },
-            { name: 'Incidencias', icon: Ticket, path: '/tecnico/ticket' },
-        ]
-        : [
-            { name: 'Gestión', icon: LayoutDashboard, path: '/encargado/dashboard' },
-            { name: 'Tickets', icon: Users, path: '/encargado/ticket' },
-        ]
-    );
 </script>
 
 <!-- TOP NAVBAR -->
 <header class="fixed top-0 left-0 right-0 h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/30 dark:border-slate-800/30 z-40 px-4">
     <div class="max-w-7xl mx-auto h-full flex items-center justify-between gap-4">
         <!-- Logo -->
-        <a href={role === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard'} class="flex items-center gap-4 shrink-0 hover:opacity-90 transition-opacity">
-            <img src={logoClaro} alt="TicketFlow" class="h-10 w-auto dark:hidden" />
-            <img src={logoOscuro} alt="TicketFlow" class="h-10 w-auto hidden dark:block" />
+        <a href={role === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard'} class="flex items-center gap-4 shrink-0 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-lg" aria-label="Ir al inicio">
+            <img src={logoClaro} alt="TicketFlow Logo Claro" class="h-10 w-auto dark:hidden" />
+            <img src={logoOscuro} alt="TicketFlow Logo Oscuro" class="h-10 w-auto hidden dark:block" />
         </a>
-        <!-- Desktop/Tablet Navigation (Centered) -->
-        <nav class="hidden sm:flex flex-1 items-center justify-center px-4">
+        <!-- Contextual Header (Centered) -->
+        <div class="hidden sm:flex flex-1 items-center justify-center px-4" aria-live="polite">
             {#if ticket}
                 {@const status = (() => {
                     switch (ticket.estado?.nombre) {
@@ -66,7 +55,7 @@
                     <h2 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight">Mi Perfil</h2>
                 </div>
             {/if}
-        </nav>
+        </div>
 
 
         <!-- Right Actions -->
@@ -74,8 +63,9 @@
             <!-- Home Button -->
             <a 
                 href={role === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard'}
-                class="p-2 text-slate-500 hover:text-primary transition-colors hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg"
+                class="p-2 text-slate-500 hover:text-primary transition-colors hover:bg-slate-100 dark:hover:bg-white/5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                 title="Ir al Inicio"
+                aria-label="Ir al Inicio"
             >
                 <Home class="w-5 h-5" />
             </a>

@@ -90,25 +90,39 @@
 
         
         <!-- PANEL IZQUIERDO: Información y Gestión -->
-        <div class="w-full lg:w-1/2 flex-col lg:gap-6 lg:h-full lg:overflow-y-auto lg:pr-2 lg:pb-6 custom-scrollbar {ticketViewState.activeTab === 'details' ? 'flex' : 'hidden lg:flex'} h-full overflow-hidden">
+        <div 
+            tabindex="0"
+            aria-label="Gestión e Información del Ticket"
+            class="w-full lg:w-1/2 flex-col lg:gap-6 lg:h-full lg:overflow-y-auto lg:pr-2 lg:pb-6 custom-scrollbar focus:outline-none focus:ring-2 focus:ring-blue-600 {ticketViewState.activeTab === 'details' ? 'flex' : 'hidden lg:flex'} h-full overflow-hidden"
+        >
             <div class="bg-transparent lg:bg-white/70 lg:dark:bg-slate-800/60 lg:backdrop-blur-xl lg:border lg:border-slate-200 lg:dark:border-slate-700/60 lg:rounded-[24px] lg:shadow-sm overflow-hidden flex flex-col shrink-0 h-full">
                 <!-- Pestañas de Gestión vs Info (Ahora como Header principal) -->
-                <div class="flex border-b border-slate-200 dark:border-slate-700/60 lg:bg-slate-50/40 lg:dark:bg-slate-900/40 backdrop-blur-md">
+                <div class="flex border-b border-slate-200 dark:border-slate-700/60 lg:bg-slate-50/40 lg:dark:bg-slate-900/40 backdrop-blur-md" role="tablist" aria-label="Menú de Navegación del Ticket">
                     <button 
+                        type="button"
                         onclick={() => activeDetailTab = 'gestion'}
-                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'gestion' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                        role="tab"
+                        aria-selected={activeDetailTab === 'gestion'}
+                        aria-controls="panel-gestion"
+                        id="tab-gestion"
+                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative focus:outline-none focus:ring-2 focus:ring-blue-600 {activeDetailTab === 'gestion' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                     >
-                        <Settings2 class="w-4 h-4" /> 
+                        <Settings2 class="w-4 h-4 aria-hidden=true" /> 
                         <span>Gestión</span>
                         {#if activeDetailTab === 'gestion'}
                             <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
                         {/if}
                     </button>
                     <button 
+                        type="button"
                         onclick={() => activeDetailTab = 'info'}
-                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'info' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                        role="tab"
+                        aria-selected={activeDetailTab === 'info'}
+                        aria-controls="panel-info"
+                        id="tab-info"
+                        class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative focus:outline-none focus:ring-2 focus:ring-blue-600 {activeDetailTab === 'info' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                     >
-                        <FileText class="w-4 h-4" /> 
+                        <FileText class="w-4 h-4 aria-hidden=true" /> 
                         <span>Problema</span>
                         {#if activeDetailTab === 'info'}
                             <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
@@ -116,10 +130,15 @@
                     </button>
                     {#if ticket.activo_ti}
                         <button 
+                            type="button"
                             onclick={() => activeDetailTab = 'activo'}
-                            class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative {activeDetailTab === 'activo' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                            role="tab"
+                            aria-selected={activeDetailTab === 'activo'}
+                            aria-controls="panel-activo"
+                            id="tab-activo"
+                            class="flex-1 py-4 text-[13px] font-bold flex flex-col items-center justify-center gap-1.5 transition-all relative focus:outline-none focus:ring-2 focus:ring-blue-600 {activeDetailTab === 'activo' ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
                         >
-                            <Package class="w-4 h-4" /> 
+                            <Package class="w-4 h-4 aria-hidden=true" /> 
                             <span>Inventario</span>
                             {#if activeDetailTab === 'activo'}
                                 <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400 animate-in fade-in slide-in-from-bottom-1 duration-300"></div>
@@ -172,64 +191,66 @@
                         </div>
                     {:else if activeDetailTab === 'gestion'}
                         <!-- Formulario de Gestión Técnica -->
-                        <form method="POST" action="?/updateDetails" class="flex flex-col gap-5" use:enhance={() => {
-                            isSubmittingDetails = true;
-                            return async ({ update }) => {
-                                await update({ reset: false });
-                                isSubmittingDetails = false;
-                            };
-                        }}>
-                            <div class="grid grid-cols-2 gap-4">
+                        <div role="tabpanel" id="panel-gestion" tabindex="0" aria-labelledby="tab-gestion" class="focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-2xl p-1">
+                            <form method="POST" action="?/updateDetails" class="flex flex-col gap-5" use:enhance={() => {
+                                isSubmittingDetails = true;
+                                return async ({ update }) => {
+                                    await update({ reset: false });
+                                    isSubmittingDetails = false;
+                                };
+                            }}>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_estado">Estado</label>
+                                        <select name="id_estado" id="id_estado" disabled={!isAdmin && isClosed} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm disabled:opacity-50">
+                                            {#each data.estados as estado}
+                                                <option value={estado.id_estado} selected={ticket.id_estado === estado.id_estado}>{estado.nombre}</option>
+                                            {/each}
+                                        </select>
+                                    </div>
+                                    <div class="flex flex-col gap-1.5">
+                                        <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_nivel_atencion">Nivel de Urgencia</label>
+                                        <select name="id_nivel_atencion" id="id_nivel_atencion" disabled={!canEdit} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm disabled:opacity-50">
+                                            <option value="">-- Seleccionar --</option>
+                                            {#each data.niveles as nivel}
+                                                <option value={nivel.id_nivel_atencion} selected={ticket.id_nivel_atencion === nivel.id_nivel_atencion}>{nivel.nombre}</option>
+                                            {/each}
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_estado">Estado</label>
-                                    <select name="id_estado" id="id_estado" disabled={!isAdmin && isClosed} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm disabled:opacity-50">
-                                        {#each data.estados as estado}
-                                            <option value={estado.id_estado} selected={ticket.id_estado === estado.id_estado}>{estado.nombre}</option>
+                                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_categoria">Categoría del Problema</label>
+                                    <select name="id_categoria" id="id_categoria" disabled={!canEdit} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm disabled:opacity-50">
+                                        <option value="">-- Clasificar Problema --</option>
+                                        {#each data.categorias as categoria}
+                                            <option value={categoria.id_categoria} selected={ticket.id_categoria === categoria.id_categoria}>{categoria.nombre_tecnico}</option>
                                         {/each}
                                     </select>
                                 </div>
+
                                 <div class="flex flex-col gap-1.5">
-                                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_nivel_atencion">Nivel de Urgencia</label>
-                                    <select name="id_nivel_atencion" id="id_nivel_atencion" disabled={!canEdit} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm disabled:opacity-50">
-                                        <option value="">-- Seleccionar --</option>
-                                        {#each data.niveles as nivel}
-                                            <option value={nivel.id_nivel_atencion} selected={ticket.id_nivel_atencion === nivel.id_nivel_atencion}>{nivel.nombre}</option>
-                                        {/each}
-                                    </select>
+                                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-between" for="notas_tecnico">
+                                        Notas Técnicas (Privadas)
+                                        <span class="text-[9px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">Solo visible para Técnicos</span>
+                                    </label>
+                                    <textarea name="notas_tecnico" id="notas_tecnico" rows="4" disabled={!canEdit} placeholder="Escribe el diagnóstico, pasos realizados, repuestos necesarios..." class="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm custom-scrollbar disabled:opacity-50">{ticket.notas_tecnico || ''}</textarea>
                                 </div>
-                            </div>
 
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" for="id_categoria">Categoría del Problema</label>
-                                <select name="id_categoria" id="id_categoria" disabled={!canEdit} class="h-10 px-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm disabled:opacity-50">
-                                    <option value="">-- Clasificar Problema --</option>
-                                    {#each data.categorias as categoria}
-                                        <option value={categoria.id_categoria} selected={ticket.id_categoria === categoria.id_categoria}>{categoria.nombre_tecnico}</option>
-                                    {/each}
-                                </select>
-                            </div>
-
-                            <div class="flex flex-col gap-1.5">
-                                <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center justify-between" for="notas_tecnico">
-                                    Notas Técnicas (Privadas)
-                                    <span class="text-[9px] bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-600 dark:text-slate-400">Solo visible para Técnicos</span>
-                                </label>
-                                <textarea name="notas_tecnico" id="notas_tecnico" rows="4" disabled={!canEdit} placeholder="Escribe el diagnóstico, pasos realizados, repuestos necesarios..." class="p-3 bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm custom-scrollbar disabled:opacity-50">{ticket.notas_tecnico || ''}</textarea>
-                            </div>
-
-                            <button type="submit" disabled={isSubmittingDetails || !canEdit} class="mt-2 w-full h-11 bg-slate-800 dark:bg-slate-700 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors disabled:opacity-50">
-                                {#if isSubmittingDetails}
-                                    <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                    Guardando...
-                                {:else}
-                                    <Save class="w-4 h-4" />
-                                    Guardar Cambios
-                                {/if}
-                            </button>
-                        </form>
+                                <button type="submit" disabled={isSubmittingDetails || !canEdit} class="mt-2 w-full h-11 bg-slate-800 dark:bg-slate-700 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                    {#if isSubmittingDetails}
+                                        <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></div>
+                                        Guardando...
+                                    {:else}
+                                        <Save class="w-4 h-4 aria-hidden=true" />
+                                        Guardar Cambios
+                                    {/if}
+                                </button>
+                            </form>
+                        </div>
                     {:else if activeDetailTab === 'info'}
                         <!-- Información Reportada -->
-                        <div class="flex flex-col gap-5">
+                        <div role="tabpanel" id="panel-info" tabindex="0" aria-labelledby="tab-info" class="flex flex-col gap-5 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-2xl p-1">
                             <div>
                                 <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 block">Descripción del Encargado</span>
                                 <p class="text-sm bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-100 dark:border-slate-700/50">
@@ -241,7 +262,7 @@
                                 <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-700/50">
                                     <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Equipo Afectado</span>
                                     <div class="flex items-center gap-1.5 text-sm font-semibold mt-1">
-                                        <Monitor class="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                                        <Monitor class="w-4 h-4 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                                         <span class="truncate">{ticket.activo_ti?.catalogo?.nombre || 'Ninguno'}</span>
                                     </div>
                                     {#if ticket.activo_ti}
@@ -259,7 +280,7 @@
                             {#if ticket.adjuntos && ticket.adjuntos.length > 0}
                                 <div>
                                     <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-2">
-                                        <Paperclip class="w-3.5 h-3.5" />
+                                        <Paperclip class="w-3.5 h-3.5" aria-hidden="true" />
                                         Evidencia ({ticket.adjuntos.length})
                                     </h3>
                                     <div class="grid grid-cols-3 gap-2">
@@ -274,19 +295,15 @@
                         </div>
                     {:else if activeDetailTab === 'activo' && ticket.activo_ti}
                         <!-- Gestión de Activo e Inventario -->
-                        <div class="flex flex-col gap-6">
+                        <div role="tabpanel" id="panel-activo" tabindex="0" aria-labelledby="tab-activo" class="flex flex-col gap-6 focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-2xl p-1">
                             <!-- Resumen del Activo -->
                             <div class="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-2xl p-4">
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-2 text-blue-700 dark:text-blue-400">
-                                        <Monitor class="w-5 h-5" />
+                                        <Monitor class="w-5 h-5" aria-hidden="true" />
                                         <h3 class="font-bold text-sm">{ticket.activo_ti.catalogo?.nombre}</h3>
                                     </div>
-                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider 
-                                        {ticket.activo_ti.estado === 'activo' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 
-                                         ticket.activo_ti.estado === 'en_reparacion' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' :
-                                         ticket.activo_ti.estado === 'baja' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400' :
-                                         'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'}">
+                                    <span class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider {ticket.activo_ti.estado === 'activo' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : ticket.activo_ti.estado === 'en_reparacion' ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' : ticket.activo_ti.estado === 'baja' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'}">
                                         {ticket.activo_ti.estado.replace('_', ' ')}
                                     </span>
                                 </div>
@@ -312,7 +329,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400" for="id_tipo_movimiento">Acción a realizar *</label>
-                                        <select name="id_tipo_movimiento" id="id_tipo_movimiento" required disabled={!canEdit} class="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm disabled:opacity-50">
+                                        <select name="id_tipo_movimiento" id="id_tipo_movimiento" required disabled={!canEdit} class="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm disabled:opacity-50">
                                             <option value="">Seleccionar Acción...</option>
                                             {#each data.tiposMovimiento as tipo}
                                                 <option value={tipo.id_tipo_movimiento}>{tipo.tipo_movimiento}</option>
@@ -322,7 +339,7 @@
 
                                     <div class="flex flex-col gap-1.5">
                                         <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400" for="nuevo_estado">Nuevo Estado del Activo *</label>
-                                        <select name="nuevo_estado" id="nuevo_estado" required disabled={!canEdit} class="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm disabled:opacity-50">
+                                        <select name="nuevo_estado" id="nuevo_estado" required disabled={!canEdit} class="h-10 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm disabled:opacity-50">
                                             <option value="activo" selected={ticket.activo_ti.estado === 'activo'}>Activo (Operativo)</option>
                                             <option value="en_reparacion" selected={ticket.activo_ti.estado === 'en_reparacion'}>En Reparación</option>
                                             <option value="bodega" selected={ticket.activo_ti.estado === 'bodega'}>Bodega (Reserva)</option>
@@ -333,15 +350,15 @@
 
                                 <div class="flex flex-col gap-1.5">
                                     <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400" for="motivo">Motivo / Observaciones (Opcional)</label>
-                                    <textarea name="motivo" id="motivo" rows="2" disabled={!canEdit} placeholder="Ej. Se envía a taller externo por fallo de placa madre..." class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm custom-scrollbar disabled:opacity-50"></textarea>
+                                    <textarea name="motivo" id="motivo" rows="2" disabled={!canEdit} placeholder="Ej. Se envía a taller externo por fallo de placa madre..." class="p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-600 focus:outline-none text-sm custom-scrollbar disabled:opacity-50"></textarea>
                                 </div>
 
-                                <button type="submit" disabled={isSubmittingDetails || !canEdit} class="mt-1 w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50">
+                                <button type="submit" disabled={isSubmittingDetails || !canEdit} class="mt-1 w-full h-10 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-600">
                                     {#if isSubmittingDetails}
-                                        <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></div>
                                         Registrando...
                                     {:else}
-                                        <Save class="w-4 h-4" />
+                                        <Save class="w-4 h-4 aria-hidden=true" />
                                         Guardar Movimiento
                                     {/if}
                                 </button>
@@ -388,12 +405,19 @@
             </div>
 
             <!-- Área de Mensajes -->
-            <div bind:this={chatContainer} class="flex-grow p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar bg-slate-50/50 dark:bg-slate-900/30">
+            <div 
+                bind:this={chatContainer} 
+                role="log"
+                aria-live="polite"
+                tabindex="0"
+                aria-label="Historial de mensajes de chat"
+                class="flex-grow p-6 overflow-y-auto flex flex-col gap-4 custom-scrollbar bg-slate-50/50 dark:bg-slate-900/30 focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
                 
                 {#if ticket.comentarios.length === 0}
                     <div class="m-auto text-center opacity-50">
                         <div class="w-16 h-16 mx-auto mb-4 bg-blue-600/10 rounded-full flex items-center justify-center">
-                            <Send class="w-8 h-8 text-blue-600" />
+                            <Send class="w-8 h-8 text-blue-600" aria-hidden="true" />
                         </div>
                         <p class="text-sm">Aún no hay mensajes.</p>
                         <p class="text-xs">Escribe para pedir más detalles al encargado.</p>
@@ -442,18 +466,20 @@
                         placeholder={!canChat ? (isClosed ? "Ticket finalizado - Chat cerrado" : "Debes tomar el ticket para chatear...") : "Escribe un mensaje al encargado..."}
                         required
                         autocomplete="off"
-                        class="flex-grow h-12 px-4 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 text-sm text-slate-800 dark:text-white disabled:opacity-50"
+                        aria-label="Escribir comentario en el chat"
+                        class="flex-grow h-12 px-4 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-500 text-sm text-slate-800 dark:text-white disabled:opacity-50"
                         disabled={isSubmittingChat || !canChat}
                     />
                     <button 
                         type="submit"
                         disabled={isSubmittingChat || !canChat}
-                        class="h-12 w-12 shrink-0 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        aria-label="Enviar mensaje"
+                        class="h-12 w-12 shrink-0 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                         {#if isSubmittingChat}
-                            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></div>
                         {:else}
-                            <Send class="w-5 h-5 -ml-0.5" />
+                            <Send class="w-5 h-5 -ml-0.5" aria-hidden="true" />
                         {/if}
                     </button>
                 </form>

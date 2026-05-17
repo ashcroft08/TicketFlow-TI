@@ -25,7 +25,7 @@
     <title>{status} - Error | TicketFlow TI</title>
 </svelte:head>
 
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50 dark:bg-[#020617]">
+<main id="main-content" tabindex="-1" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50 dark:bg-[#020617] focus:outline-none">
     <!-- Ambient Background Effects -->
     <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 blur-[120px] rounded-full"></div>
@@ -64,7 +64,7 @@
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
                 onclick={() => history.back()}
-                class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold text-[11px] uppercase tracking-widest hover:bg-white dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+                class="w-full sm:w-auto px-6 py-3 rounded-xl border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 font-bold text-[11px] uppercase tracking-widest hover:bg-white dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary"
             >
                 <ArrowLeft class="w-4 h-4" />
                 Volver Atrás
@@ -72,29 +72,16 @@
             
             <a 
                 href={getDashboardPath()}
-                class="w-full sm:w-auto btn-primary px-8 py-3 flex items-center justify-center gap-2 text-[11px] uppercase tracking-widest font-bold"
+                class="w-full sm:w-auto btn-primary px-8 py-3 flex items-center justify-center gap-2 text-[11px] uppercase tracking-widest font-bold focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
                 <Home class="w-4 h-4" />
                 Ir al Inicio
             </a>
         </div>
 
-        <!-- Search Hint (Optional subtle touch) -->
-        <div class="mt-16 pt-8 border-t border-slate-200 dark:border-white/5">
-            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] mb-4 italic">¿Necesitas ayuda?</p>
-            <div class="flex items-center justify-center gap-6">
-                <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-[11px] font-medium">
-                    <Search class="w-3.5 h-3.5" />
-                    Buscador
-                </div>
-                <div class="flex items-center gap-2 text-slate-400 dark:text-slate-500 text-[11px] font-medium">
-                    <AlertCircle class="w-3.5 h-3.5" />
-                    Soporte TI
-                </div>
-            </div>
-        </div>
+
     </div>
-</div>
+</main>
 
 <style>
     @reference "./layout.css";

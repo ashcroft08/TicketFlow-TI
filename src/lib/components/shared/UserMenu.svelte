@@ -25,12 +25,16 @@
     const close = () => isOpen = false;
 </script>
 
-<svelte:window onclick={close} />
+<svelte:window onclick={close} onkeydown={(e) => { if (e.key === 'Escape') close(); }} />
 
 <div class="relative">
     <button 
+        type="button"
         onclick={toggle}
-        class="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-all border border-transparent hover:border-slate-200 dark:hover:border-white/10"
+        aria-expanded={isOpen}
+        aria-haspopup="menu"
+        aria-label="Abrir menú de usuario"
+        class="flex items-center gap-2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-all border border-transparent hover:border-slate-200 dark:hover:border-white/10 focus:outline-none focus:ring-2 focus:ring-primary"
     >
         <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center font-black text-primary text-xs border border-primary/30">
             {user?.nombre?.[0]}

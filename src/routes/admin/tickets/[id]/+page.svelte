@@ -59,9 +59,10 @@
         <div class="flex items-center gap-4">
             <a 
                 href="/admin/tickets" 
-                class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-500 hover:text-indigo-600 transition-all"
+                aria-label="Volver a la lista de tickets"
+                class="p-2.5 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-500 hover:text-indigo-600 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600"
             >
-                <ChevronLeft class="w-5 h-5" />
+                <ChevronLeft class="w-5 h-5 aria-hidden=true" />
             </a>
             <div>
                 <h1 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -117,30 +118,39 @@
 
             <div class="flex-grow bg-white dark:bg-slate-800 rounded-[32px] border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col overflow-hidden">
                 <!-- Tabs Interface Premium -->
-                <div class="flex border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/30 dark:bg-slate-900/30">
+                <div class="flex border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/30 dark:bg-slate-900/30" role="tablist" aria-label="Gestión de detalles del ticket">
                     <button 
+                        role="tab"
+                        aria-selected={activeDetailTab === 'gestion'}
+                        aria-controls="panel-gestion"
                         onclick={() => activeDetailTab = 'gestion'}
-                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all {activeDetailTab === 'gestion' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
+                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 {activeDetailTab === 'gestion' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
                     >
-                        <Settings2 class="w-4 h-4" /> Diagnóstico
+                        <Settings2 class="w-4 h-4 aria-hidden=true" /> Diagnóstico
                     </button>
                     <button 
+                        role="tab"
+                        aria-selected={activeDetailTab === 'info'}
+                        aria-controls="panel-info"
                         onclick={() => activeDetailTab = 'info'}
-                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all {activeDetailTab === 'info' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
+                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 {activeDetailTab === 'info' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
                     >
-                        <FileText class="w-4 h-4" /> Problema
+                        <FileText class="w-4 h-4 aria-hidden=true" /> Problema
                     </button>
                     <button 
+                        role="tab"
+                        aria-selected={activeDetailTab === 'activo'}
+                        aria-controls="panel-activo"
                         onclick={() => activeDetailTab = 'activo'}
-                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all {activeDetailTab === 'activo' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
+                        class="flex-1 py-4 text-[11px] font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 {activeDetailTab === 'activo' ? 'bg-white dark:bg-slate-800 text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'}"
                     >
-                        <Package class="w-4 h-4" /> Inventario
+                        <Package class="w-4 h-4 aria-hidden=true" /> Inventario
                     </button>
                 </div>
 
                 <div class="p-6 flex-grow overflow-y-auto custom-scrollbar h-[400px]">
                     {#if activeDetailTab === 'gestion'}
-                        <div transition:fade={{ duration: 150 }} class="space-y-6">
+                        <div transition:fade={{ duration: 150 }} class="space-y-6" role="tabpanel" id="panel-gestion" tabindex="0" aria-label="Gestión de Diagnóstico">
                             {#if !isEditingDiagnostic}
                                 <!-- Modo Vista Previa -->
                                 <div class="space-y-8 animate-fade-in">
@@ -175,9 +185,9 @@
 
                                     <button 
                                         onclick={() => isEditingDiagnostic = true}
-                                        class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl text-slate-400 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:border-indigo-500 hover:text-indigo-600 transition-all group"
+                                        class="w-full py-4 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl text-slate-400 font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 hover:border-indigo-500 hover:text-indigo-600 transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-600"
                                     >
-                                        <Settings2 class="w-4 h-4 group-hover:rotate-45 transition-transform" />
+                                        <Settings2 class="w-4 h-4 group-hover:rotate-45 transition-transform aria-hidden=true" />
                                         Editar Información del Diagnóstico
                                     </button>
                                 </div>
@@ -194,7 +204,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div class="space-y-2">
                                             <label for="id_nivel_atencion" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Prioridad del Ticket</label>
-                                            <select id="id_nivel_atencion" name="id_nivel_atencion" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all appearance-none cursor-pointer">
+                                            <select id="id_nivel_atencion" name="id_nivel_atencion" aria-label="Prioridad del Ticket" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10 focus:ring-indigo-600 transition-all appearance-none cursor-pointer">
                                                 <option value="">CLASIFICAR URGENCIA...</option>
                                                 {#each data.niveles as nivel}
                                                     <option value={nivel.id_nivel_atencion} selected={ticket.id_nivel_atencion === nivel.id_nivel_atencion}>{nivel.nombre.toUpperCase()}</option>
@@ -205,7 +215,7 @@
                                         </div>
                                         <div class="space-y-2">
                                             <label for="id_categoria" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block ml-1">Categoría Técnica</label>
-                                            <select id="id_categoria" name="id_categoria" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all appearance-none cursor-pointer">
+                                            <select id="id_categoria" name="id_categoria" aria-label="Categoría Técnica" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3.5 px-4 text-sm font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10 focus:ring-indigo-600 transition-all appearance-none cursor-pointer">
                                                 <option value="">CLASIFICAR PROBLEMA...</option>
                                                 {#each data.categorias as categoria}
                                                     <option value={categoria.id_categoria} selected={ticket.id_categoria === categoria.id_categoria}>{categoria.nombre_tecnico.toUpperCase()}</option>
@@ -221,7 +231,7 @@
                                             <label for="notas_tecnico" class="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Notas Técnicas (Bitácora Privada)</label>
                                             <span class="text-[9px] font-black bg-indigo-100 dark:bg-indigo-900/40 px-2 py-0.5 rounded-full text-indigo-600 dark:text-indigo-400 uppercase tracking-tighter">Acceso Restringido</span>
                                         </div>
-                                        <textarea id="notas_tecnico" name="notas_tecnico" rows="5" placeholder="Escribe el diagnóstico detallado, componentes reemplazados o pasos de resolución..." class="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all resize-none custom-scrollbar">{ticket.notas_tecnico || ''}</textarea>
+                                        <textarea id="notas_tecnico" name="notas_tecnico" aria-label="Notas Técnicas (Bitácora Privada)" rows="5" placeholder="Escribe el diagnóstico detallado, componentes reemplazados o pasos de resolución..." class="w-full p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 focus:ring-indigo-600 outline-none transition-all resize-none custom-scrollbar">{ticket.notas_tecnico || ''}</textarea>
                                     </div>
                                     
                                     <input type="hidden" name="id_estado" value={ticket.id_estado} />
@@ -230,16 +240,16 @@
                                         <button 
                                             type="button"
                                             onclick={() => isEditingDiagnostic = false}
-                                            class="flex-grow py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 transition-all"
+                                            class="flex-grow py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 font-black uppercase tracking-widest text-xs rounded-2xl hover:bg-slate-200 transition-all focus:outline-none focus:ring-2 focus:ring-slate-400"
                                         >
                                             Cancelar
                                         </button>
-                                        <button type="submit" disabled={isSubmitting} class="flex-[2] py-4 bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-black dark:hover:bg-slate-600 transition-all shadow-xl shadow-slate-900/10 disabled:opacity-50">
+                                        <button type="submit" disabled={isSubmitting} class="flex-[2] py-4 bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs rounded-2xl flex items-center justify-center gap-3 hover:bg-black dark:hover:bg-slate-600 transition-all shadow-xl shadow-slate-900/10 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-600">
                                             {#if isSubmitting}
-                                                <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-hidden="true"></div>
                                                 GUARDANDO...
                                             {:else}
-                                                <Save class="w-4 h-4" />
+                                                <Save class="w-4 h-4 aria-hidden=true" />
                                                 GUARDAR DIAGNÓSTICO
                                             {/if}
                                         </button>
@@ -248,7 +258,7 @@
                             {/if}
                         </div>
                     {:else if activeDetailTab === 'info'}
-                        <div transition:fade={{ duration: 150 }} class="space-y-8 animate-fade-in">
+                        <div transition:fade={{ duration: 150 }} class="space-y-8 animate-fade-in" role="tabpanel" id="panel-info" tabindex="0" aria-label="Descripción del Problema">
                             <!-- Descripción Principal -->
                             <section class="space-y-3">
                                 <h3 class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Descripción del Encargado</h3>
@@ -306,7 +316,7 @@
                             {/if}
                         </div>
                     {:else if activeDetailTab === 'activo'}
-                        <div transition:fade={{ duration: 150 }} class="space-y-8 animate-fade-in">
+                        <div transition:fade={{ duration: 150 }} class="space-y-8 animate-fade-in" role="tabpanel" id="panel-activo" tabindex="0" aria-label="Inventario de Activos">
                             <!-- Tarjeta de Activo Pro -->
                             <div class="bg-indigo-600 dark:bg-indigo-500 p-8 rounded-[40px] text-white shadow-xl shadow-indigo-600/20 relative overflow-hidden">
                                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
@@ -335,10 +345,11 @@
                                     <button 
                                         type="button"
                                         onclick={() => isHistoryModalOpen = true}
-                                        class="flex items-center justify-center gap-3 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] hover:bg-white dark:hover:bg-slate-800 transition-all group"
+                                        aria-label="Ver movimientos del activo"
+                                        class="flex items-center justify-center gap-3 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] hover:bg-white dark:hover:bg-slate-800 transition-all group focus:outline-none focus:ring-2 focus:ring-indigo-600"
                                     >
                                         <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600">
-                                            <History class="w-5 h-5 group-hover:rotate-[-45deg] transition-transform" />
+                                            <History class="w-5 h-5 group-hover:rotate-[-45deg] transition-transform aria-hidden=true" />
                                         </div>
                                         <div class="text-left">
                                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Actividad</p>
@@ -349,10 +360,11 @@
                                     <button 
                                         type="button"
                                         onclick={() => isMovementModalOpen = true}
-                                        class="flex items-center justify-center gap-3 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] hover:bg-white dark:hover:bg-slate-800 transition-all group"
+                                        aria-label="Registrar movimiento del activo"
+                                        class="flex items-center justify-center gap-3 p-6 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[32px] hover:bg-white dark:hover:bg-slate-800 transition-all group focus:outline-none focus:ring-2 focus:ring-emerald-600"
                                     >
                                         <div class="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center text-emerald-600">
-                                            <Wrench class="w-5 h-5 group-hover:rotate-[45deg] transition-transform" />
+                                            <Wrench class="w-5 h-5 group-hover:rotate-[45deg] transition-transform aria-hidden=true" />
                                         </div>
                                         <div class="text-left">
                                             <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Mantenimiento</p>
@@ -379,13 +391,14 @@
                     <!-- Control de Estado Rápido -->
                     <div class="px-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
                         <div class="flex items-center gap-3 mb-3">
-                            <Activity class="w-4 h-4 text-indigo-500" />
+                            <Activity class="w-4 h-4 text-indigo-500" aria-hidden="true" />
                             <span class="text-xs font-black uppercase tracking-widest text-slate-400">Estado del Ticket</span>
                         </div>
                         <form use:enhance action="?/updateStatus" method="POST">
                             <select 
                                 name="statusId"
-                                class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 appearance-none cursor-pointer"
+                                aria-label="Cambiar estado del ticket"
+                                class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer"
                                 onchange={(e) => e.target.form.submit()}
                             >
                                 {#each data.estados as estado}
@@ -401,17 +414,17 @@
                     <div class="px-4 py-4 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center gap-3">
-                                <UserPlus class="w-4 h-4 text-indigo-500" />
+                                <UserPlus class="w-4 h-4 text-indigo-500" aria-hidden="true" />
                                 <span class="text-xs font-black uppercase tracking-widest text-slate-400">Responsable TI</span>
                             </div>
                             {#if ticket.usuario_asignado}
-                                <button onclick={() => isEditingTech = !isEditingTech} class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 hover:underline">{isEditingTech ? 'CANCELAR' : 'REASIGNAR'}</button>
+                                <button onclick={() => isEditingTech = !isEditingTech} aria-label="Cambiar asignación de técnico" class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 hover:underline focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded">{isEditingTech ? 'CANCELAR' : 'REASIGNAR'}</button>
                             {/if}
                         </div>
 
                         {#if ticket.usuario_asignado && !isEditingTech}
                             <div transition:slide class="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                                <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center"><User class="w-4 h-4 text-indigo-600" /></div>
+                                <div class="w-8 h-8 rounded-full bg-indigo-500/10 flex items-center justify-center"><User class="w-4 h-4 text-indigo-600" aria-hidden="true" /></div>
                                 <div class="overflow-hidden">
                                     <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Técnico Asignado</p>
                                     <p class="text-xs font-bold text-slate-900 dark:text-white truncate">{ticket.usuario_asignado.nombre}</p>
@@ -420,7 +433,7 @@
                         {:else}
                             <div transition:slide>
                                 <form use:enhance action="?/assignTechnician" method="POST">
-                                    <select name="technicianId" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 appearance-none cursor-pointer" onchange={(e) => { e.target.form.submit(); isEditingTech = false; }}>
+                                    <select name="technicianId" aria-label="Asignar técnico responsable" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer" onchange={(e) => { e.target.form.submit(); isEditingTech = false; }}>
                                         <option value="">SELECCIONAR TÉCNICO...</option>
                                         {#each technicians as tech}<option value={tech.id_usuario} selected={ticket.id_usuario_asignado === tech.id_usuario}>{tech.nombre.toUpperCase()}</option>{/each}
                                     </select>
@@ -430,9 +443,9 @@
                     </div>
 
                     <!-- Botón Modal Chat -->
-                    <button onclick={() => isChatModalOpen = true} class="w-full flex items-center justify-between px-4 py-4 rounded-2xl transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98]">
-                        <div class="flex items-center gap-3"><MessageSquare class="w-5 h-5" /><span class="text-sm font-black uppercase tracking-tight">Bitácora Chat</span></div>
-                        <div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{ticket.comentarios?.length || 0}</span><ChevronRight class="w-4 h-4 opacity-50" /></div>
+                    <button onclick={() => isChatModalOpen = true} aria-label="Abrir chat de gestión" class="w-full flex items-center justify-between px-4 py-4 rounded-2xl transition-all duration-200 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-600">
+                        <div class="flex items-center gap-3"><MessageSquare class="w-5 h-5" aria-hidden="true" /><span class="text-sm font-black uppercase tracking-tight">Bitácora Chat</span></div>
+                        <div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black">{ticket.comentarios?.length || 0}</span><ChevronRight class="w-4 h-4 opacity-50" aria-hidden="true" /></div>
                     </button>
                 </div>
 

@@ -106,18 +106,18 @@
                     <Activity class="w-4 h-4 text-primary" />
                     <h2 class="text-sm font-bold uppercase tracking-widest text-text-main dark:text-dark-text-main">Actividad Reciente</h2>
                 </div>
-                <a href="/admin/tickets" class="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest">Ver Historial</a>
+                <a href="/admin/tickets" class="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary rounded px-1">Ver Historial</a>
             </div>
 
             <div class="glass-card rounded-lg overflow-hidden border-none">
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de tickets recientes">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-primary/5 border-b border-border-main dark:border-dark-border-main">
-                                <th class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Ticket / Fecha</th>
-                                <th class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Estado</th>
-                                <th class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Asignación</th>
-                                <th class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest text-right"></th>
+                                <th scope="col" class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Ticket / Fecha</th>
+                                <th scope="col" class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Estado</th>
+                                <th scope="col" class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest">Asignación</th>
+                                <th scope="col" class="px-4 py-3 text-[10px] font-bold text-text-dim dark:text-dark-text-dim uppercase tracking-widest text-right"></th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-border-main dark:divide-dark-border-main">
@@ -145,8 +145,8 @@
                                         </div>
                                     </td>
                                     <td class="px-4 py-3 text-right">
-                                        <a href="/admin/tickets/{ticket.id_ticket}" class="p-1.5 inline-flex bg-primary/10 text-primary rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <ChevronRight class="w-4 h-4" />
+                                        <a href="/admin/tickets/{ticket.id_ticket}" class="p-1.5 inline-flex bg-primary/10 text-primary rounded-md opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary focus:opacity-100" aria-label={`Ver detalles del ticket ${ticket.titulo}`}>
+                                            <ChevronRight class="w-4 h-4" aria-hidden="true" />
                                         </a>
                                     </td>
                                 </tr>
@@ -165,7 +165,7 @@
             </div>
 
             <div class="grid gap-2">
-                <a href="/admin/sucursales" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all">
+                <a href="/admin/sucursales" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                     <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <MapPin class="w-4 h-4" />
                     </div>
@@ -175,7 +175,7 @@
                     </div>
                 </a>
 
-                <a href="/admin/usuarios" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all">
+                <a href="/admin/usuarios" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                     <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <Users class="w-4 h-4" />
                     </div>
@@ -185,7 +185,7 @@
                     </div>
                 </a>
 
-                <a href="/admin/activos" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all">
+                <a href="/admin/activos" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                     <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <Monitor class="w-4 h-4" />
                     </div>

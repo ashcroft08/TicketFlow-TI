@@ -57,15 +57,15 @@
         </header>
 
         {#if form?.success}
-            <div class="mb-8 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
-                <CheckCircle2 class="w-5 h-5 shrink-0" />
+            <div role="status" aria-live="polite" class="mb-8 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
+                <CheckCircle2 class="w-5 h-5 shrink-0 aria-hidden=true" />
                 <p class="text-sm font-medium">{form.message}</p>
             </div>
         {/if}
 
         {#if form?.error}
-            <div class="mb-8 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
-                <AlertCircle class="w-5 h-5 shrink-0" />
+            <div role="alert" class="mb-8 bg-red-500/10 text-red-700 dark:text-red-400 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 animate-fade-in-up">
+                <AlertCircle class="w-5 h-5 shrink-0 aria-hidden=true" />
                 <p class="text-sm font-medium">{form.error}</p>
             </div>
         {/if}
@@ -74,7 +74,8 @@
         <div class="hidden lg:flex gap-4 mb-8 border-b border-slate-200 dark:border-slate-700/60 pb-px overflow-x-auto custom-scrollbar">
             <button 
                 onclick={() => dashboardState.activeTab = 'mis_tickets'}
-                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap {dashboardState.activeTab === 'mis_tickets' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                aria-current={dashboardState.activeTab === 'mis_tickets' ? 'page' : undefined}
+                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary rounded-t-lg {dashboardState.activeTab === 'mis_tickets' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
             >
                 <Ticket class="w-4 h-4" />
                 Mis Tickets Asignados
@@ -85,7 +86,8 @@
             
             <button 
                 onclick={() => dashboardState.activeTab = 'nuevos'}
-                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap {dashboardState.activeTab === 'nuevos' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                aria-current={dashboardState.activeTab === 'nuevos' ? 'page' : undefined}
+                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary rounded-t-lg {dashboardState.activeTab === 'nuevos' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
             >
                 <AlertCircle class="w-4 h-4" />
                 Nuevos Incidentes
@@ -98,7 +100,8 @@
 
             <button 
                 onclick={() => dashboardState.activeTab = 'finalizados'}
-                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap {dashboardState.activeTab === 'finalizados' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
+                aria-current={dashboardState.activeTab === 'finalizados' ? 'page' : undefined}
+                class="flex items-center gap-2 pb-4 px-2 font-semibold text-sm transition-colors border-b-2 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary rounded-t-lg {dashboardState.activeTab === 'finalizados' ? 'border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'}"
             >
                 <CheckCircle2 class="w-4 h-4" />
                 Tickets Finalizados
@@ -129,7 +132,7 @@
 
                 {#each data.misTickets as ticket}
                     {@const status = getStatusStyles(ticket.estado?.nombre || '')}
-                    <a href="/tecnico/ticket/{ticket.id_ticket}" class="group relative flex flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-5 sm:p-6 hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                    <a href="/tecnico/ticket/{ticket.id_ticket}" class="group relative flex flex-col bg-white/70 dark:bg-slate-800/60 backdrop-blur-xl border border-slate-200 dark:border-slate-700/60 rounded-[24px] p-5 sm:p-6 hover:shadow-xl hover:shadow-blue-500/5 dark:hover:shadow-blue-500/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                         
                         <div class="flex items-start justify-between gap-4 mb-3 sm:mb-4">
                             <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
@@ -222,7 +225,7 @@
                                 <button 
                                     type="submit" 
                                     disabled={isSubmitting === ticket.id_ticket}
-                                    class="w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[10px] sm:text-xs rounded-xl transition-colors disabled:opacity-50"
+                                    class="w-full flex items-center justify-center gap-2 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[10px] sm:text-xs rounded-xl transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                                 >
                                     {#if isSubmitting === ticket.id_ticket}
                                         <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -254,7 +257,7 @@
 
                 {#each data.finalizados as ticket}
                     {@const status = getStatusStyles(ticket.estado?.nombre || '')}
-                    <a href="/tecnico/ticket/{ticket.id_ticket}" class="group relative flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200/60 dark:border-slate-800/60 rounded-[24px] p-5 sm:p-6 hover:shadow-lg transition-all duration-300 opacity-80 hover:opacity-100">
+                    <a href="/tecnico/ticket/{ticket.id_ticket}" class="group relative flex flex-col bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm border border-slate-200/60 dark:border-slate-800/60 rounded-[24px] p-5 sm:p-6 hover:shadow-lg transition-all duration-300 opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                         
                         <div class="flex items-start justify-between gap-4 mb-3 sm:mb-4">
                             <span class="text-[10px] font-bold tracking-wider text-slate-400 uppercase">
