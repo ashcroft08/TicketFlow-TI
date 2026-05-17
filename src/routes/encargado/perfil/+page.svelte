@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { User, Mail, Lock, Shield, Save, CheckCircle2, AlertCircle, MapPin, Briefcase, Activity, Camera } from 'lucide-svelte';
+    import { User, Mail, Lock, Shield, Save, CheckCircle2, AlertCircle, MapPin, Briefcase, Activity, Camera, LogOut } from 'lucide-svelte';
     import { enhance } from '$app/forms';
     import { fade, slide } from 'svelte/transition';
 
@@ -73,11 +73,21 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-[9px] font-bold uppercase tracking-widest text-success border border-success/20">
+                <div class="mt-6 flex flex-col gap-3">
+                    <span class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-success/10 text-[9px] font-bold uppercase tracking-widest text-success border border-success/20">
                         <Activity class="w-3 h-3" />
                         Sesión Verificada
                     </span>
+
+                    <form action="/?/logout" method="POST" use:enhance class="w-full lg:hidden">
+                        <button 
+                            type="submit"
+                            class="w-full flex items-center justify-center gap-2 px-3 py-2.5 mt-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest border border-red-500/10 hover:border-red-500/30"
+                        >
+                            <LogOut class="w-3.5 h-3.5" />
+                            Cerrar Sesión
+                        </button>
+                    </form>
                 </div>
             </div>
 

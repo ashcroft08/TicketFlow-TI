@@ -2,10 +2,10 @@
     import { enhance } from '$app/forms';
     import { Ticket, Plus, X, Monitor, Calendar, Clock, AlertCircle, CheckCircle2, HelpCircle, ArrowRight, LogOut } from 'lucide-svelte';
     import type { ActionData, PageData } from './$types';
+    import { modalState } from '$lib/states/ui.svelte';
 
     let { data, form } = $props<{ data: PageData; form: ActionData }>();
 
-    let showModal = $state(false);
     let isSubmitting = $state(false);
     let focusedField = $state<string | null>(null);
 
@@ -60,8 +60,8 @@
             </div>
             <div class="flex items-center gap-3">
                 <button
-                    onclick={() => showModal = true}
-                    class="group h-12 px-6 bg-primary dark:bg-blue-600 text-white font-semibold text-sm rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] relative overflow-hidden shrink-0"
+                    onclick={() => modalState.showNewTicketModal = true}
+                    class="hidden sm:flex group h-12 px-6 bg-primary dark:bg-blue-600 text-white font-semibold text-sm rounded-xl items-center justify-center gap-2 hover:bg-primary/90 dark:hover:bg-blue-500 hover:shadow-lg hover:shadow-primary/30 dark:hover:shadow-blue-500/20 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] relative overflow-hidden shrink-0"
                 >
                     <div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-shimmer"></div>
                     <Plus class="w-5 h-5 transition-transform group-hover:rotate-90" />
@@ -131,7 +131,7 @@
                         Actualmente no tienes tickets activos. Si experimentas algún problema con tu equipo, repórtalo aquí.
                     </p>
                     <button
-                        onclick={() => showModal = true}
+                        onclick={() => modalState.showNewTicketModal = true}
                         class="mt-8 group flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-container transition-colors"
                     >
                         Crear mi primer ticket
@@ -144,13 +144,13 @@
 </div>
 
 <!-- Modal Creación (Mismo estilo que el Login) -->
-{#if showModal}
+{#if modalState.showNewTicketModal}
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
         <!-- Backdrop con blur fuerte -->
         <button 
             type="button"
             class="fixed inset-0 bg-slate-900/40 dark:bg-slate-900/60 backdrop-blur-md transition-opacity cursor-default"
-            onclick={() => showModal = false}
+            onclick={() => modalState.showNewTicketModal = false}
             aria-label="Cerrar modal"
         ></button>
 
@@ -163,7 +163,7 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Describe el incidente para que podamos ayudarte.</p>
                 </div>
                 <button 
-                    onclick={() => showModal = false}
+                    onclick={() => modalState.showNewTicketModal = false}
                     class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700"
                 >
                     <X class="w-5 h-5" />
@@ -179,7 +179,7 @@
                     return async ({ update }) => {
                         await update();
                         isSubmitting = false;
-                        if (form?.success) showModal = false;
+                        if (form?.success) modalState.showNewTicketModal = false;
                     };
                 }}
                 class="flex flex-col gap-5"
@@ -278,7 +278,7 @@
                 <div class="flex items-center gap-3 mt-2">
                     <button 
                         type="button"
-                        onclick={() => showModal = false}
+                        onclick={() => modalState.showNewTicketModal = false}
                         class="flex-1 h-12 bg-transparent text-slate-600 dark:text-slate-300 font-semibold text-sm rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                     >
                         Cancelar

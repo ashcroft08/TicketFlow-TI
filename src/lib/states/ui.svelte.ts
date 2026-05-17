@@ -10,5 +10,11 @@ class TicketViewState {
     activeTab = $state<'details' | 'chat'>('details');
 }
 
+// Global modal states
+class ModalState {
+    showNewTicketModal = $state(false);
+}
+
 export const dashboardState = new DashboardState();
 export const ticketViewState = new TicketViewState();
+export const modalState = new ModalState();

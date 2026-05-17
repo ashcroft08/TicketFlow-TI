@@ -25,6 +25,7 @@
 	let chatContainer: HTMLElement;
 	let isSubmitting = $state(false);
 	let isInfoExpanded = $state(true);
+    let innerWidth = $state(0);
 
 	// Auto scroll al final del chat
 	const scrollToBottom = () => {
@@ -38,6 +39,16 @@
 		const _ = data.ticket?.comentarios?.length;
 		scrollToBottom();
 	});
+
+    // Mark as read effect
+    $effect(() => {
+        const isChatVisible = innerWidth >= 1024 || ticketViewState.activeTab === 'chat';
+        if (isChatVisible && data.unread_count > 0) {
+            fetch(`/api/tickets/${ticket.id_ticket}/read`, { method: 'POST' }).then(() => {
+                data.unread_count = 0;
+            }).catch(e => console.error('Error marking as read:', e));
+        }
+    });
 
 	// Polling: Refrescar los datos en segundo plano cada 5 segundos
 	$effect(() => {
@@ -112,6 +123,8 @@
 	<title>Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
 
+<svelte:window bind:innerWidth />
+
 <div class="flex flex-col overflow-hidden font-body-md transition-colors duration-300 h-full lg:h-[calc(100vh-160px)]">
 	<!-- Header Navegación removido - Info ahora en Navbar -->
 
@@ -122,7 +135,7 @@
 
 		<!-- PANEL IZQUIERDO: Detalles del Ticket -->
 		<div
-			class="custom-scrollbar flex-col gap-6 pr-2 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6 {ticketViewState.activeTab ===
+			class="custom-scrollbar flex-col gap-6 lg:pr-2 lg:h-full lg:w-1/2 lg:overflow-y-auto lg:pb-6 {ticketViewState.activeTab ===
 			'details'
 				? 'flex w-full'
 				: 'hidden lg:flex'}"
@@ -132,29 +145,7 @@
 			<div
 				class="overflow-hidden lg:rounded-[24px] lg:border border-slate-200 bg-transparent lg:bg-white/70 lg:shadow-sm lg:backdrop-blur-xl lg:dark:border-slate-700/60 lg:dark:bg-slate-800/60 h-full flex flex-col"
 			>
-				<!-- Header con botón de plegado (Solo móvil) -->
-				<div
-					class="flex items-center justify-between border-b border-slate-200 bg-slate-50/50 px-6 py-3 lg:hidden dark:border-slate-700/60 dark:bg-slate-900/30"
-				>
-					<span
-						class="flex items-center gap-2 text-[11px] font-bold tracking-widest text-slate-500 uppercase"
-					>
-						<Info class="h-3.5 w-3.5" /> Detalles del Ticket
-					</span>
-					<button
-						onclick={() => (isInfoExpanded = !isInfoExpanded)}
-						class="rounded-lg border border-slate-200 bg-white p-1.5 text-slate-500 dark:border-slate-700 dark:bg-slate-800"
-					>
-						{#if isInfoExpanded}
-							<ChevronUp class="h-4 w-4" />
-						{:else}
-							<ChevronDown class="h-4 w-4" />
-						{/if}
-					</button>
-				</div>
-
-				{#if isInfoExpanded}
-					<div class="p-6">
+				<div class="p-6">
 						<h2 class="mb-4 text-xl font-bold">{ticket.titulo}</h2>
 
 						<div class="flex flex-col gap-4">
@@ -194,12 +185,10 @@
 							</div>
 						</div>
 					</div>
-				{/if}
 			</div>
 
-			{#if isInfoExpanded}
-				<!-- Galería de Adjuntos -->
-				{#if ticket.adjuntos && ticket.adjuntos.length > 0}
+			<!-- Galería de Adjuntos -->
+			{#if ticket.adjuntos && ticket.adjuntos.length > 0}
 					<div
 						class="rounded-[24px] border border-slate-200 bg-white/70 p-6 shadow-sm backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-800/60"
 					>
@@ -230,7 +219,6 @@
 						</div>
 					</div>
 				{/if}
-			{/if}
 		</div>
 
 		<!-- PANEL DERECHO: Chat Interno -->

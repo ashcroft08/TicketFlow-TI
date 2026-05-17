@@ -40,6 +40,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         movimientosActivo = await inventoryRepository.getAssetMovements(ticket.id_activo);
     }
 
+    // Calculate unread comments count
+    const userLectura = ticket.lecturas?.find(l => l.id_usuario === user.id);
+    const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
+    
+    const unread_count = ticket.comentarios?.filter(
+        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== user.id
+    ).length || 0;
+
     return {
         user,
         ticket,
@@ -47,7 +55,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         estados,
         niveles,
         tiposMovimiento,
-        movimientosActivo
+        movimientosActivo,
+        unread_count
     };
 };
 

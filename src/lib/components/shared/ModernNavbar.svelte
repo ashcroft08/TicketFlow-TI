@@ -83,7 +83,9 @@
             <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1"></div>
 
             <!-- User Profile Dropdown -->
-            <UserMenu {user} />
+            <div class={role === 'STORE_MANAGER' ? 'hidden sm:block' : ''}>
+                <UserMenu {user} />
+            </div>
         </div>
     </div>
 </header>

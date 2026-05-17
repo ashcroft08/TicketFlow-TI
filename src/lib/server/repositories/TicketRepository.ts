@@ -84,7 +84,8 @@ export class TicketRepository {
                         }
                     },
                     orderBy: (comentarios, { asc }) => [asc(comentarios.created_at)]
-                }
+                },
+                lecturas: true
             }
         });
     }

@@ -11,6 +11,7 @@
     let isSubmittingChat = $state(false);
     let isSubmittingDetails = $state(false);
     let activeDetailTab = $state<'info' | 'gestion' | 'activo'>('gestion');
+    let innerWidth = $state(0);
 
     // Auto scroll al final del chat
     const scrollToBottom = () => {
@@ -23,6 +24,16 @@
         // Ejecutar auto-scroll cuando cambie la longitud de los comentarios
         const _ = data.ticket?.comentarios?.length;
         scrollToBottom();
+    });
+
+    // Mark as read effect
+    $effect(() => {
+        const isChatVisible = innerWidth >= 1024 || ticketViewState.activeTab === 'chat';
+        if (isChatVisible && data.unread_count > 0) {
+            fetch(`/api/tickets/${ticket.id_ticket}/read`, { method: 'POST' }).then(() => {
+                data.unread_count = 0;
+            }).catch(e => console.error('Error marking as read:', e));
+        }
     });
 
     // Polling: Refrescar los datos en segundo plano cada 5 segundos para el chat
@@ -65,6 +76,8 @@
 <svelte:head>
     <title>Gestión Ticket #{ticket.id_ticket} - TicketFlow TI</title>
 </svelte:head>
+
+<svelte:window bind:innerWidth />
 
 <div class="font-body-md transition-colors duration-300 flex flex-col overflow-hidden h-full lg:h-[calc(100vh-160px)]">
     

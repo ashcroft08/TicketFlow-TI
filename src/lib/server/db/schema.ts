@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, integer, boolean, timestamp, text, date } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, integer, boolean, timestamp, text, date, primaryKey } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // --- TABLAS DE CONFIGURACIÓN Y ACCESO ---
@@ -101,6 +101,14 @@ export const ticket_comentarios = pgTable('ticket_comentarios', {
 	deleted_at: timestamp('deleted_at')
 });
 
+export const ticket_lecturas = pgTable('ticket_lecturas', {
+	id_ticket: integer('id_ticket').references(() => tickets.id_ticket).notNull(),
+	id_usuario: integer('id_usuario').references(() => usuarios.id_usuario).notNull(),
+	ultima_lectura: timestamp('ultima_lectura').defaultNow().notNull()
+}, (t) => ({
+	pk: primaryKey({ columns: [t.id_ticket, t.id_usuario] })
+}));
+
 // --- TABLAS DE INVENTARIO Y ACTIVOS TI ---
 
 export const tipos_articulos = pgTable('tipos_articulos', {
@@ -196,7 +204,8 @@ export const usuariosRelations = relations(usuarios, ({ one, many }) => ({
 	tickets_asignados: many(tickets, { relationName: 'tickets_asignados' }),
 	tickets_creados: many(tickets, { relationName: 'tickets_creados' }),
 	comentarios: many(ticket_comentarios),
-	activos_asignados: many(activos_ti)
+	activos_asignados: many(activos_ti),
+	lecturas: many(ticket_lecturas)
 }));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
@@ -212,7 +221,8 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
 	activo_ti: one(activos_ti, { fields: [tickets.id_activo], references: [activos_ti.id_activo] }),
 	adjuntos: many(ticket_adjuntos),
 	comentarios: many(ticket_comentarios),
-	movimientos: many(movimientos_inventario)
+	movimientos: many(movimientos_inventario),
+	lecturas: many(ticket_lecturas)
 }));
 
 export const ticketComentariosRelations = relations(ticket_comentarios, ({ one }) => ({
@@ -222,6 +232,11 @@ export const ticketComentariosRelations = relations(ticket_comentarios, ({ one }
 
 export const ticketAdjuntosRelations = relations(ticket_adjuntos, ({ one }) => ({
 	ticket: one(tickets, { fields: [ticket_adjuntos.id_ticket], references: [tickets.id_ticket] })
+}));
+
+export const ticketLecturasRelations = relations(ticket_lecturas, ({ one }) => ({
+	ticket: one(tickets, { fields: [ticket_lecturas.id_ticket], references: [tickets.id_ticket] }),
+	usuario: one(usuarios, { fields: [ticket_lecturas.id_usuario], references: [usuarios.id_usuario] })
 }));
 
 export const activosTiRelations = relations(activos_ti, ({ one, many }) => ({

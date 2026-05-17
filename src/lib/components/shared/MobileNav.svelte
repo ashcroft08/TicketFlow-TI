@@ -2,7 +2,7 @@
   import { page } from '$app/state';
   import { LayoutDashboard, Ticket, User, PlusCircle, MessageSquare, Settings2, AlertCircle, CheckCircle2, History } from 'lucide-svelte';
   import { fade } from 'svelte/transition';
-  import { dashboardState, ticketViewState } from '$lib/states/ui.svelte';
+  import { dashboardState, ticketViewState, modalState } from '$lib/states/ui.svelte';
 
   let activePath = $derived(page.url.pathname);
   let user = $derived(page.data.user);
@@ -23,7 +23,7 @@
     if (isTicketView) {
       return [
         { name: 'Detalles', icon: Settings2, id: 'details' },
-        { name: 'Chat', icon: MessageSquare, id: 'chat', count: page.data.ticket?.comentarios?.length }
+        { name: 'Chat', icon: MessageSquare, id: 'chat', count: page.data.unread_count || 0 }
       ];
     }
     // Default nav if not in specific context
@@ -83,7 +83,10 @@
     <!-- Botón de Acción Rápida (Solo en Dashboard de Encargado o si es necesario) -->
     {#if user?.cod_rol === 'STORE_MANAGER' && isDashboard}
         <div class="absolute -top-10 left-1/2 -translate-x-1/2">
-            <button class="bg-blue-600 text-white p-4 rounded-2xl shadow-2xl shadow-blue-600/40 active:scale-90 transition-all border-4 border-slate-50 dark:border-slate-950 group">
+            <button 
+                onclick={() => modalState.showNewTicketModal = true}
+                class="bg-blue-600 text-white p-4 rounded-2xl shadow-2xl shadow-blue-600/40 active:scale-90 transition-all border-4 border-slate-50 dark:border-slate-950 group"
+            >
                 <PlusCircle class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
             </button>
         </div>

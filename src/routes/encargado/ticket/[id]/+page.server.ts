@@ -25,9 +25,18 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         throw error(403, 'No tienes permiso para ver este ticket');
     }
 
+    // Calculate unread comments count
+    const userLectura = ticket.lecturas?.find(l => l.id_usuario === locals.user.id);
+    const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
+    
+    const unread_count = ticket.comentarios?.filter(
+        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user.id
+    ).length || 0;
+
     return {
         user: locals.user,
-        ticket
+        ticket,
+        unread_count
     };
 };
 
