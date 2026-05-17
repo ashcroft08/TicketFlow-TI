@@ -17,7 +17,6 @@
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
-    import MobileNav from '$lib/components/shared/MobileNav.svelte';
     import RoleSelector from '$lib/components/shared/RoleSelector.svelte';
 
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
@@ -168,13 +167,10 @@
         </header>
 
         <!-- Main Content Viewport -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-28 lg:pb-8">
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-8">
             {@render children()}
         </main>
     </div>
-
-    <!-- Navegación PWA Táctil -->
-    <MobileNav />
 </div>
 
 <style>
