@@ -3,11 +3,14 @@
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
 
+    import HistoryModal from './_components/HistoryModal.svelte';
+    import MovementModal from './_components/MovementModal.svelte';
+    import ChatModal from './_components/ChatModal.svelte';
+
     let { data, form } = $props();
     const ticket = $derived(data.ticket);
     const technicians = $derived(data.technicians);
 
-    let commentContent = $state('');
     let isChatModalOpen = $state(false);
     let isEditingTech = $state(false);
     let isEditingDiagnostic = $state(false);
@@ -45,7 +48,9 @@
 </script>
 
 <svelte:head>
-    <title>#{ticket.id_ticket} - Gestión Maestro</title>
+    <title>Ticket #{ticket.id_ticket} | {ticket.titulo} - Gestión Maestro</title>
+    <meta name="description" content="Gestión y diagnóstico del ticket #{ticket.id_ticket}. Reportado por {ticket.creador?.nombre}. Estado: {ticket.estado?.nombre}." />
+    <meta name="theme-color" content="#4f46e5" />
 </svelte:head>
 
 <div class="h-full max-w-[1440px] mx-auto w-full flex flex-col space-y-6 animate-fade-in pb-10 px-4 sm:px-6 lg:px-8">
@@ -439,134 +444,23 @@
     </div>
 </div>
 
-<!-- Modal Historial de Movimientos -->
-{#if isHistoryModalOpen}
-    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6" transition:fade={{ duration: 200 }}>
-        <button type="button" class="absolute inset-0 bg-slate-950/80 backdrop-blur-xl w-full h-full cursor-default" onclick={() => isHistoryModalOpen = false} aria-label="Cerrar historial"></button>
-        <div class="relative w-full max-w-2xl h-[70vh] bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col" transition:scale={{ duration: 300, start: 0.95, opacity: 0 }}>
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-950/20">
-                <div class="flex items-center gap-3">
-                    <History class="w-6 h-6 text-indigo-600" />
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Trazabilidad del Activo</h2>
-                </div>
-                <button onclick={() => isHistoryModalOpen = false} class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"><X class="w-6 h-6 text-slate-400" /></button>
-            </div>
-            <div class="flex-grow overflow-y-auto p-8 space-y-6 custom-scrollbar">
-                {#if data.movimientosActivo && data.movimientosActivo.length > 0}
-                    {#each data.movimientosActivo as mov}
-                        <div transition:slide class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50 relative overflow-hidden group">
-                            <div class="absolute top-0 left-0 w-1.5 h-full bg-indigo-600"></div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{mov.tipo?.tipo_movimiento || 'MOVIMIENTO'}</span>
-                                <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1.5"><Clock class="w-3 h-3" /> {formatDate(mov.created_at)}</span>
-                            </div>
-                            <p class="text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed italic">"{mov.motivo || 'Sin observaciones registradas'}"</p>
-                            <div class="mt-4 flex items-center gap-2 pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
-                                <div class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-[10px] text-slate-500 font-bold">R</div>
-                                <span class="text-[10px] font-bold text-slate-500">Ref: Registro de Operación #{ticket.id_ticket}</span>
-                            </div>
-                        </div>
-                    {/each}
-                {:else}
-                    <div class="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
-                        <Package class="w-12 h-12 opacity-20" />
-                        <p class="text-sm font-medium">No existen movimientos registrados para este activo.</p>
-                    </div>
-                {/if}
-            </div>
-        </div>
-    </div>
-{/if}
+<!-- Modales Extraídos a Subcomponentes -->
+<HistoryModal 
+    bind:isOpen={isHistoryModalOpen} 
+    movimientosActivo={data.movimientosActivo} 
+    ticketId={ticket.id_ticket} 
+/>
 
-<!-- Modal Registrar Movimiento -->
-{#if isMovementModalOpen}
-    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6" transition:fade={{ duration: 200 }}>
-        <button type="button" class="absolute inset-0 bg-slate-950/80 backdrop-blur-xl w-full h-full cursor-default" onclick={() => isMovementModalOpen = false} aria-label="Cerrar registro"></button>
-        <div class="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800" transition:scale={{ duration: 300, start: 0.95, opacity: 0 }}>
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <Wrench class="w-6 h-6 text-emerald-600" />
-                    <h2 class="text-xl font-bold text-slate-900 dark:text-white uppercase tracking-tight">Nuevo Movimiento</h2>
-                </div>
-                <button onclick={() => isMovementModalOpen = false} class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"><X class="w-6 h-6 text-slate-400" /></button>
-            </div>
-            <form method="POST" action="?/registerAssetMovement" class="p-8 space-y-6" use:enhance={() => { 
-                isSubmitting = true; 
-                return async ({ result, update }) => { 
-                    await update({ reset: false }); 
-                    isSubmitting = false; 
-                    if (result.type === 'success') isMovementModalOpen = false;
-                }; 
-            }}>
-                <input type="hidden" name="id_activo" value={ticket.id_activo} />
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label for="id_tipo_movimiento_mod" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Acción a realizar *</label>
-                        <select id="id_tipo_movimiento_mod" name="id_tipo_movimiento" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all">
-                            <option value="">SELECCIONAR ACCIÓN...</option>
-                            {#each data.tiposMovimiento as tipo}
-                                <option value={tipo.id_tipo_movimiento}>{tipo.tipo_movimiento.toUpperCase()}</option>
-                            {/each}
-                        </select>
-                    </div>
-                    <div class="space-y-2">
-                        <label for="nuevo_estado_mod" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Nuevo Estado *</label>
-                        <select id="nuevo_estado_mod" name="nuevo_estado" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-bold text-slate-700 dark:text-white outline-none focus:ring-4 focus:ring-emerald-500/10 transition-all">
-                            <option value="activo" selected={ticket.activo_ti?.estado === 'activo'}>ACTIVO (EN USO)</option>
-                            <option value="en_reparacion">EN REPARACIÓN (TALLER)</option>
-                            <option value="bodega">BODEGA (RESERVA)</option>
-                            <option value="baja">BAJA (DESECHO)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label for="motivo_mov_mod" class="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Motivo / Observaciones</label>
-                    <textarea id="motivo_mov_mod" name="motivo" placeholder="Describe brevemente el motivo del cambio..." rows="4" class="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium outline-none resize-none focus:ring-4 focus:ring-emerald-500/10 transition-all"></textarea>
-                </div>
-                <div class="flex gap-3">
-                    <button type="button" onclick={() => isMovementModalOpen = false} class="flex-grow py-4 bg-slate-100 dark:bg-slate-800 text-slate-500 font-black uppercase tracking-widest text-[10px] rounded-2xl">Cancelar</button>
-                    <button type="submit" disabled={isSubmitting} class="flex-[2] py-4 bg-emerald-600 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl flex items-center justify-center gap-3 shadow-xl shadow-emerald-600/20">
-                        {#if isSubmitting}
-                            <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                            GUARDANDO...
-                        {:else}
-                            <Save class="w-4 h-4" /> GUARDAR MOVIMIENTO
-                        {/if}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-{/if}
+<MovementModal 
+    bind:isOpen={isMovementModalOpen} 
+    ticket={ticket} 
+    tiposMovimiento={data.tiposMovimiento} 
+/>
 
-<!-- Modal Chat -->
-{#if isChatModalOpen}
-    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6" transition:fade={{ duration: 200 }}>
-        <button type="button" class="absolute inset-0 bg-slate-950/80 backdrop-blur-xl w-full h-full cursor-default" onclick={() => isChatModalOpen = false} aria-label="Cerrar chat"></button>
-        <div class="relative w-full max-w-2xl h-[80vh] bg-white dark:bg-slate-900 rounded-[40px] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 flex flex-col" transition:scale={{ duration: 300, start: 0.95, opacity: 0 }}>
-            <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <div class="flex items-center gap-3"><MessageSquare class="w-6 h-6 text-indigo-600" /><h2 class="text-xl font-bold text-slate-900 dark:text-white">Chat de Gestión</h2></div>
-                <button onclick={() => isChatModalOpen = false} class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"><X class="w-6 h-6 text-slate-400" /></button>
-            </div>
-            <div class="flex-grow overflow-y-auto p-8 space-y-6 bg-slate-50/30 dark:bg-slate-950/20 custom-scrollbar">
-                {#if ticket.comentarios && ticket.comentarios.length > 0}
-                    {#each ticket.comentarios as comment}
-                        <div transition:slide class="flex gap-4 p-4 rounded-2xl border {comment.usuario?.cod_rol === 'ADMIN' ? 'bg-indigo-50/50 dark:bg-indigo-500/5 border-indigo-100 dark:border-indigo-500/20 ml-8' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 mr-8'}">
-                            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0"><User class="w-4 h-4 text-slate-500" /></div>
-                            <div class="space-y-1 flex-grow"><div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-900 dark:text-white">{comment.usuario?.nombre}</span><span class="text-[9px] text-slate-400">{formatDate(comment.created_at)}</span></div><p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{comment.comentario}</p></div>
-                        </div>
-                    {/each}
-                {:else}<div class="h-full flex items-center justify-center text-slate-400 text-sm font-medium">No hay mensajes aún.</div>{/if}
-            </div>
-            <div class="p-6 border-t border-slate-100 dark:border-slate-800">
-                <form use:enhance={() => { return async ({ result }) => { if (result.type === 'success') commentContent = ''; }; }} action="?/addComment" method="POST" class="flex gap-2">
-                    <input bind:value={commentContent} name="content" placeholder="Escribe un mensaje..." class="flex-grow p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-indigo-500/20" />
-                    <button type="submit" disabled={!commentContent.trim()} class="p-4 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20"><Send class="w-5 h-5" /></button>
-                </form>
-            </div>
-        </div>
-    </div>
-{/if}
+<ChatModal 
+    bind:isOpen={isChatModalOpen} 
+    ticket={ticket} 
+/>
 
 <style>
     .animate-fade-in { animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
