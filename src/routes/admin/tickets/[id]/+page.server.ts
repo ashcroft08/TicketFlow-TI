@@ -38,6 +38,14 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         movimientosActivo = await inventoryRepository.getAssetMovements(ticket.id_activo);
     }
 
+    // Calculate unread comments count for admin
+    const userLectura = ticket.lecturas?.find(l => l.id_usuario === locals.user.id);
+    const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
+    
+    const unread_count = ticket.comentarios?.filter(
+        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user.id
+    ).length || 0;
+
     return {
         ticket,
         technicians,
@@ -45,7 +53,8 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         estados,
         niveles,
         tiposMovimiento,
-        movimientosActivo
+        movimientosActivo,
+        unread_count
     };
 };
 

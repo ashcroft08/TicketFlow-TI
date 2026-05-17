@@ -18,6 +18,7 @@
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import RoleSelector from '$lib/components/shared/RoleSelector.svelte';
+    import MobileNav from '$lib/components/shared/MobileNav.svelte';
 
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
     import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
@@ -167,9 +168,12 @@
         </header>
 
         <!-- Main Content Viewport -->
-        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-8">
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-24 lg:pb-8">
             {@render children()}
         </main>
+        
+        <!-- Mobile Bottom Navigation -->
+        <MobileNav />
     </div>
 </div>
 

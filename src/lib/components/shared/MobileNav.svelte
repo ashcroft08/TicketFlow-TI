@@ -9,7 +9,7 @@
 
   // Determinar el contexto actual
   let isDashboard = $derived(activePath.includes('/dashboard'));
-  let isTicketView = $derived(activePath.includes('/ticket/'));
+  let isTicketView = $derived(activePath.includes('/ticket/') || activePath.includes('/tickets/'));
 
   // Items dinámicos basados en el contexto
   const navItems = $derived(() => {
@@ -28,8 +28,8 @@
     }
     // Default nav if not in specific context
     return [
-      { name: 'Inicio', icon: LayoutDashboard, path: user?.cod_rol === 'ADMIN' ? '/admin/dashboard' : (user?.cod_rol === 'TECH' ? '/tecnico/dashboard' : '/encargado/dashboard') },
-      { name: 'Perfil', icon: User, path: activePath.includes('/tecnico') ? '/tecnico/perfil' : '/encargado/perfil' }
+      { name: 'Inicio', icon: LayoutDashboard, path: activePath.includes('/admin') ? '/admin/dashboard' : (activePath.includes('/tecnico') ? '/tecnico/dashboard' : '/encargado/dashboard') },
+      { name: 'Perfil', icon: User, path: activePath.includes('/admin') ? '/admin/perfil' : (activePath.includes('/tecnico') ? '/tecnico/perfil' : '/encargado/perfil') }
     ];
   });
 
