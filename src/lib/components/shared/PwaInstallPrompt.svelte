@@ -1,15 +1,19 @@
 <script lang="ts">
 	import { pwa } from '$lib/pwa.svelte';
 	import { fly } from 'svelte/transition';
-	import { Download, X, Smartphone } from 'lucide-svelte';
+	import { Download, X, Smartphone, Laptop } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	let dismissed = $state<boolean>(true); // Por defecto oculto para evitar parpadeo pre-hidratación
+	let isMobile = $state<boolean>(false);
 
 	onMount(() => {
 		// Validar si el usuario ya descartó la sugerencia de instalación en esta sesión
 		const wasDismissed = sessionStorage.getItem('pwa-prompt-dismissed') === 'true';
 		dismissed = wasDismissed;
+
+		// Detectar dinámicamente si el usuario está en un dispositivo móvil
+		isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 	});
 
 	function handleDismiss() {
@@ -33,13 +37,21 @@
 		aria-describedby="pwa-desc"
 	>
 		<div class="flex items-start gap-4">
-			<div class="shrink-0 p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
-				<Smartphone class="w-6 h-6" aria-hidden="true" />
+			<div class="shrink-0 p-3 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 animate-pulse">
+				{#if isMobile}
+					<Smartphone class="w-6 h-6" aria-hidden="true" />
+				{:else}
+					<Laptop class="w-6 h-6" aria-hidden="true" />
+				{/if}
 			</div>
 			
 			<div class="flex-grow min-w-0">
-				<h3 id="pwa-title" class="text-sm font-bold text-slate-800 dark:text-slate-100">
-					TicketFlow en tu Celular
+				<h3 id="pwa-title" class="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">
+					{#if isMobile}
+						TicketFlow en tu Celular
+					{:else}
+						TicketFlow en tu PC
+					{/if}
 				</h3>
 				<p id="pwa-desc" class="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-normal">
 					Instala la aplicación para acceder de inmediato, recibir notificaciones y trabajar sin conexión.
