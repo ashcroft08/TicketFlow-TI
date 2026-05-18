@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-svelte';
+    import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight, AlertCircle, Eye, EyeOff } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
 
@@ -42,9 +42,14 @@
         showModal = true;
     };
 
+    let showPassword = $state(false);
+    let showConfirmPassword = $state(false);
+
     const closeModal = () => {
         showModal = false;
         editingUser = null;
+        showPassword = false;
+        showConfirmPassword = false;
     };
 </script>
 
@@ -275,7 +280,28 @@
                         <label for="password" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">{editingUser ? 'Nueva Clave (Safe)' : 'Contraseña Maestro'}</label>
                         <div class="relative">
                             <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="password" type="password" name="password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'} class="input-compact w-full pl-10" aria-invalid={!!formError} />
+                            <input id="password" type={showPassword ? 'text' : 'password'} name="password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Dejar vacío para mantener actual' : 'Mínimo 6 caracteres'} class="input-compact w-full pl-10 pr-10" aria-invalid={!!formError} />
+                            <button type="button" onclick={() => showPassword = !showPassword} class="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim/65 hover:text-primary transition-colors focus:outline-none" aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
+                                {#if showPassword}
+                                    <EyeOff class="w-4 h-4" />
+                                {:else}
+                                    <Eye class="w-4 h-4" />
+                                {/if}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label for="confirm_password" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">{editingUser ? 'Confirmar Nueva Clave' : 'Confirmar Contraseña'}</label>
+                        <div class="relative">
+                            <Lock class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
+                            <input id="confirm_password" type={showConfirmPassword ? 'text' : 'password'} name="confirm_password" required={!editingUser} minlength="6" placeholder={editingUser ? 'Repite la nueva clave' : 'Repite la contraseña'} class="input-compact w-full pl-10 pr-10" aria-invalid={!!formError} />
+                            <button type="button" onclick={() => showConfirmPassword = !showConfirmPassword} class="absolute right-3 top-1/2 -translate-y-1/2 text-text-dim/65 hover:text-primary transition-colors focus:outline-none" aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}>
+                                {#if showConfirmPassword}
+                                    <EyeOff class="w-4 h-4" />
+                                {:else}
+                                    <Eye class="w-4 h-4" />
+                                {/if}
+                            </button>
                         </div>
                     </div>
                     <div class="space-y-1.5">

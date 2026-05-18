@@ -37,6 +37,7 @@ export const actions: Actions = {
         const username = data.get('username')?.toString();
         const email = data.get('email')?.toString();
         const password = data.get('password')?.toString();
+        const confirm_password = data.get('confirm_password')?.toString();
         const id_rol = parseInt(data.get('id_rol')?.toString() || '0');
         const id_sucursal = parseInt(data.get('id_sucursal')?.toString() || '0');
 
@@ -51,6 +52,9 @@ export const actions: Actions = {
         }
         if (!password || password.length < 6) {
             return fail(400, { error: 'La contraseña debe tener al menos 6 caracteres' });
+        }
+        if (password !== confirm_password) {
+            return fail(400, { error: 'Las contraseñas no coinciden' });
         }
         if (!id_rol) {
             return fail(400, { error: 'Debes seleccionar un rol' });
@@ -92,9 +96,19 @@ export const actions: Actions = {
         const id_sucursal = parseInt(data.get('id_sucursal')?.toString() || '0');
         const estado = data.get('estado') === 'true';
         const newPassword = data.get('password')?.toString();
+        const confirmPassword = data.get('confirm_password')?.toString();
 
         if (!id || !nombre || nombre.trim().length < 3 || !username || username.trim().length < 3 || !email || !id_rol || !id_sucursal) {
             return fail(400, { error: 'Todos los campos obligatorios deben estar completos' });
+        }
+
+        if (newPassword && newPassword.trim() !== '') {
+            if (newPassword.length < 6) {
+                return fail(400, { error: 'La nueva contraseña debe tener al menos 6 caracteres' });
+            }
+            if (newPassword !== confirmPassword) {
+                return fail(400, { error: 'Las contraseñas no coinciden' });
+            }
         }
 
         try {
