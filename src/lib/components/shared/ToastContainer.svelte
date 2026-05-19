@@ -1,63 +1,60 @@
 <script lang="ts">
-	import { toast } from '$lib/toast.svelte';
-	import { fly, fade } from 'svelte/transition';
-	import { CheckCircle2, AlertCircle, Info, X } from 'lucide-svelte';
+    import { toast } from '$lib/state/toast.svelte';
+    import { CheckCircle, AlertCircle, Info, X } from 'lucide-svelte';
+    import { flip } from 'svelte/animate';
+    import { fly } from 'svelte/transition';
 
-	// Asignación de iconos y clases según el tipo de Toast
-	const config = {
-		success: {
-			icon: CheckCircle2,
-			bg: 'bg-white/80 dark:bg-slate-900/90 border-emerald-500/30 dark:border-emerald-500/20',
-			iconColor: 'text-emerald-500 dark:text-emerald-400',
-			ring: 'focus:ring-emerald-500'
-		},
-		error: {
-			icon: AlertCircle,
-			bg: 'bg-white/80 dark:bg-slate-900/90 border-red-500/30 dark:border-red-500/20',
-			iconColor: 'text-red-500 dark:text-red-400',
-			ring: 'focus:ring-red-500'
-		},
-		info: {
-			icon: Info,
-			bg: 'bg-white/80 dark:bg-slate-900/90 border-blue-500/30 dark:border-blue-500/20',
-			iconColor: 'text-blue-500 dark:text-blue-400',
-			ring: 'focus:ring-blue-500'
-		}
-	};
+    const getIcon = (type: string) => {
+        switch (type) {
+            case 'success': return CheckCircle;
+            case 'error': return AlertCircle;
+            case 'warning': return AlertCircle;
+            default: return Info;
+        }
+    };
+
+    const getStyles = (type: string) => {
+        switch (type) {
+            case 'success': 
+                return 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400';
+            case 'error': 
+                return 'bg-rose-500/10 border-rose-500/20 text-rose-400';
+            case 'warning': 
+                return 'bg-amber-500/10 border-amber-500/20 text-amber-400';
+            default: 
+                return 'bg-sky-500/10 border-sky-500/20 text-sky-400';
+        }
+    };
 </script>
 
 <div 
-	role="status" 
-	aria-live="polite" 
-	class="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:bottom-6 z-[9999] flex flex-col gap-3 max-w-full md:w-[380px] pointer-events-none"
+    class="fixed top-5 right-5 z-[100] flex flex-col gap-3 w-full max-w-sm pointer-events-none"
+    role="region"
+    aria-live="polite"
+    aria-label="Notificaciones del sistema"
 >
-	{#each toast.list as item (item.id)}
-		{@const cfg = config[item.type]}
-		{@const Icon = cfg.icon}
-		
-		<div
-			in:fly={{ y: 50, duration: 400 }}
-			out:fade={{ duration: 250 }}
-			class="pointer-events-auto w-full flex items-start gap-3.5 p-4 rounded-2xl border backdrop-blur-xl shadow-lg dark:shadow-slate-950/30 {cfg.bg} transition-all duration-300 transform"
-		>
-			<div class="shrink-0 mt-0.5 {cfg.iconColor}">
-				<Icon class="w-5 h-5" aria-hidden="true" />
-			</div>
-			
-			<div class="flex-grow min-w-0">
-				<p class="text-sm font-semibold text-slate-800 dark:text-slate-100 leading-snug break-words">
-					{item.message}
-				</p>
-			</div>
+    {#each toast.toasts as t (t.id)}
+        <div 
+            transition:fly={{ x: 100, duration: 250 }}
+            class="glass-card flex gap-3 p-4 rounded-xl border pointer-events-auto items-start shadow-2xl backdrop-blur-md transition-all {getStyles(t.type)}"
+        >
+            <div class="flex-shrink-0 mt-0.5">
+                <svelte:component this={getIcon(t.type)} class="w-5 h-5" />
+            </div>
+            
+            <div class="flex-grow">
+                <p class="text-xs font-bold leading-normal text-text-main dark:text-dark-text-main">
+                    {t.message}
+                </p>
+            </div>
 
-			<button
-				type="button"
-				onclick={() => toast.remove(item.id)}
-				aria-label="Cerrar notificación"
-				class="shrink-0 -mt-1 -mr-1 p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors focus:outline-none focus:ring-2 {cfg.ring}"
-			>
-				<X class="w-4 h-4" aria-hidden="true" />
-			</button>
-		</div>
-	{/each}
+            <button 
+                onclick={() => toast.dismiss(t.id)} 
+                aria-label="Cerrar notificación" 
+                class="flex-shrink-0 text-text-dim hover:text-text-main dark:hover:text-dark-text-main p-0.5 rounded transition-colors focus:outline-none focus:ring-1 focus:ring-current/30"
+            >
+                <X class="w-3.5 h-3.5" />
+            </button>
+        </div>
+    {/each}
 </div>

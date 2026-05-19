@@ -3,8 +3,22 @@
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
-    let { data } = $props();
+    let { data, form } = $props();
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡El estado del ticket ha sido actualizado correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     let searchQuery = $state('');
     let statusFilter = $state('todos');
@@ -210,15 +224,23 @@
                         <div class="flex items-center gap-2">
                             {#if data.includeDeleted && ticket.deleted_at}
                                 <form 
-                                    use:enhance={({ cancel }) => {
-                                        if (!confirm('¿Restaurar este ticket al flujo activo?')) return cancel();
-                                    }} 
+                                    use:enhance 
                                     action="?/restore" 
                                     method="POST"
                                 >
                                     <input type="hidden" name="id" value={ticket.id_ticket} />
                                     <button 
-                                        type="submit"
+                                        type="button"
+                                        onclick={(e) => {
+                                            const form = e.currentTarget.closest('form');
+                                            if (form) {
+                                                confirmState.ask(
+                                                    '¿Restaurar Ticket?',
+                                                    `¿Estás seguro de restaurar el ticket ID-${ticket.id_ticket} al flujo de trabajo activo?`,
+                                                    () => form.requestSubmit()
+                                                );
+                                            }
+                                        }}
                                         aria-label={`Restaurar ticket ID-${ticket.id_ticket}`}
                                         class="flex items-center gap-2 px-4 py-2 bg-success text-white text-[10px] font-bold uppercase tracking-widest rounded-md hover:bg-success/90 transition-all focus:outline-none focus:ring-2 focus:ring-success"
                                     >
@@ -237,15 +259,23 @@
                                 </button>
                                 
                                 <form 
-                                    use:enhance={({ cancel }) => {
-                                        if (!confirm('¿Archivar este ticket? (Podrá ser recuperado de la papelera)')) return cancel();
-                                    }} 
+                                    use:enhance 
                                     action="?/delete" 
                                     method="POST" 
                                 >
                                     <input type="hidden" name="id" value={ticket.id_ticket} />
                                     <button 
-                                        type="submit"
+                                        type="button"
+                                        onclick={(e) => {
+                                            const form = e.currentTarget.closest('form');
+                                            if (form) {
+                                                confirmState.ask(
+                                                    '¿Archivar Ticket?',
+                                                    `¿Estás seguro de enviar a la papelera el ticket ID-${ticket.id_ticket}?`,
+                                                    () => form.requestSubmit()
+                                                );
+                                            }
+                                        }}
                                         class="p-2 bg-error/5 text-error hover:bg-error hover:text-white rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         title="Eliminar"
                                         aria-label={`Archivar ticket ID-${ticket.id_ticket}`}

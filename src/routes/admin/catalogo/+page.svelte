@@ -2,8 +2,22 @@
     import { Package, Plus, Edit2, Trash2, Search, Check, X, ChevronLeft, ChevronRight, Layers, Tag, Cpu, Monitor } from 'lucide-svelte';
     import { slide, fade, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
-    let { data } = $props();
+    let { data, form } = $props();
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡Modelo del catálogo guardado correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     // --- Estado del Catálogo ---
     let searchQuery = $state('');
@@ -147,14 +161,26 @@
                                         <Edit2 class="w-4 h-4" />
                                     </button>
                                     <form
-                                        use:enhance={({ cancel }) => {
-                                            if (!confirm(`¿Eliminar "${item.nombre}" del catálogo?`)) return cancel();
-                                        }}
+                                        use:enhance
                                         action="?/deleteItem"
                                         method="POST"
                                     >
                                         <input type="hidden" name="id" value={item.id_catalogo} />
-                                        <button type="submit" aria-label={`Eliminar ${item.nombre}`} class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error">
+                                        <button 
+                                            type="button" 
+                                            onclick={(e) => {
+                                                const form = e.currentTarget.closest('form');
+                                                if (form) {
+                                                    confirmState.ask(
+                                                        '¿Eliminar Modelo de Catálogo?',
+                                                        `¿Estás seguro de eliminar "${item.nombre}" del catálogo permanentemente?`,
+                                                        () => form.requestSubmit()
+                                                    );
+                                                }
+                                            }}
+                                            aria-label={`Eliminar ${item.nombre}`} 
+                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
+                                        >
                                             <Trash2 class="w-4 h-4" />
                                         </button>
                                     </form>

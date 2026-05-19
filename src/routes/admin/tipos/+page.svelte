@@ -2,8 +2,22 @@
     import { Layers, Plus, Edit2, Trash2, Search, Check, X, ChevronLeft, ChevronRight, Cpu } from 'lucide-svelte';
     import { slide, fade } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
-    let { data } = $props();
+    let { data, form } = $props();
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡Tipo de hardware guardado correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     let searchQuery = $state('');
     let isCreating = $state(false);
@@ -247,15 +261,23 @@
                                         <Edit2 class="w-4 h-4" />
                                     </button>
                                     <form 
-                                        use:enhance={({ cancel }) => {
-                                            if (!confirm(`¿Eliminar el tipo "${tipo.tipo}" permanentemente?`)) return cancel();
-                                        }} 
+                                        use:enhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >
                                         <input type="hidden" name="id" value={tipo.id_tipo} />
                                         <button 
-                                            type="submit"
+                                            type="button"
+                                            onclick={(e) => {
+                                                const form = e.currentTarget.closest('form');
+                                                if (form) {
+                                                    confirmState.ask(
+                                                        '¿Eliminar Tipo de Equipo?',
+                                                        `¿Estás seguro de eliminar permanentemente el tipo "${tipo.tipo}"?`,
+                                                        () => form.requestSubmit()
+                                                    );
+                                                }
+                                            }}
                                             aria-label={`Eliminar tipo ${tipo.tipo}`}
                                             class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         >

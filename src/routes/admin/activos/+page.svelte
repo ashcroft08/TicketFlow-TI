@@ -2,8 +2,22 @@
     import { Monitor, Plus, Edit2, Trash2, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
-    let { data } = $props();
+    let { data, form } = $props();
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡Activo de inventario guardado correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     let searchQuery = $state('');
     let showModal = $state(false);
@@ -230,14 +244,26 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance={({ cancel }) => {
-                                            if (!confirm('¿Eliminar este activo del inventario?')) return cancel();
-                                        }} 
+                                        use:enhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >
                                         <input type="hidden" name="id" value={asset.id_activo} />
-                                        <button type="submit" aria-label={`Eliminar activo ${asset.catalogo?.nombre}`} class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error">
+                                        <button 
+                                            type="button" 
+                                            onclick={(e) => {
+                                                const form = e.currentTarget.closest('form');
+                                                if (form) {
+                                                    confirmState.ask(
+                                                        '¿Eliminar Activo de Inventario?',
+                                                        `¿Estás seguro de eliminar permanentemente el activo "${asset.codigo_inventario || 'este activo'}" del inventario?`,
+                                                        () => form.requestSubmit()
+                                                    );
+                                                }
+                                            }}
+                                            aria-label={`Eliminar activo ${asset.catalogo?.nombre}`} 
+                                            class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
+                                        >
                                             <Trash2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                     </form>

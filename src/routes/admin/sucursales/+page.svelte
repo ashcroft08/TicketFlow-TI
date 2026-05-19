@@ -2,8 +2,22 @@
     import { MapPin, Plus, Edit2, Trash2, Search, Check, X, ChevronLeft, ChevronRight } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
     let { data, form } = $props();
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡Sucursal guardada correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     let searchQuery = $state('');
     let isCreating = $state(false);
@@ -194,15 +208,23 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance={({ cancel }) => {
-                                            if (!confirm('¿Eliminar esta sucursal permanentemente?')) return cancel();
-                                        }} 
+                                        use:enhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >
                                         <input type="hidden" name="id" value={sucursal.id_sucursal} />
                                         <button 
-                                            type="submit"
+                                            type="button"
+                                            onclick={(e) => {
+                                                const form = e.currentTarget.closest('form');
+                                                if (form) {
+                                                    confirmState.ask(
+                                                        '¿Eliminar Sucursal?',
+                                                        `¿Estás seguro de eliminar permanentemente la sucursal "${sucursal.nombre}"?`,
+                                                        () => form.requestSubmit()
+                                                    );
+                                                }
+                                            }}
                                             aria-label={`Eliminar sucursal ${sucursal.nombre}`}
                                             class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         >

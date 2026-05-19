@@ -20,6 +20,8 @@
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import RoleSelector from '$lib/components/shared/RoleSelector.svelte';
+    import ToastContainer from '$lib/components/shared/ToastContainer.svelte';
+    import ConfirmModal from '$lib/components/shared/ConfirmModal.svelte';
 
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
     import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
@@ -175,6 +177,10 @@
             {@render children()}
         </main>
     </div>
+
+    <!-- Modales y Notificaciones Premium Globales -->
+    <ConfirmModal />
+    <ToastContainer />
 </div>
 
 <style>

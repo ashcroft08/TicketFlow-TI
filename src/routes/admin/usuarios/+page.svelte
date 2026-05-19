@@ -2,9 +2,23 @@
     import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight, AlertCircle, Eye, EyeOff } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { confirmState } from '$lib/state/confirm.svelte';
+    import { toast } from '$lib/state/toast.svelte';
 
     let { data, form } = $props();
     let formError = $derived(form?.error);
+
+    let lastProcessedForm: any = null;
+    $effect(() => {
+        if (form && form !== lastProcessedForm) {
+            lastProcessedForm = form;
+            if (form.success) {
+                toast.success(form.message || '¡Usuario guardado correctamente!');
+            } else if (form.error) {
+                toast.error(form.error);
+            }
+        }
+    });
     
     let searchQuery = $state('');
     let showModal = $state(false);
@@ -142,15 +156,23 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance={({ cancel }) => {
-                                            if (!confirm('¿Eliminar permanentemente este usuario?')) return cancel();
-                                        }} 
+                                        use:enhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >
                                         <input type="hidden" name="id" value={user.id_usuario} />
                                         <button 
-                                            type="submit"
+                                            type="button"
+                                            onclick={(e) => {
+                                                const form = e.currentTarget.closest('form');
+                                                if (form) {
+                                                    confirmState.ask(
+                                                        '¿Eliminar Usuario?',
+                                                        `¿Estás seguro de eliminar permanentemente al usuario "${user.nombre}"?`,
+                                                        () => form.requestSubmit()
+                                                    );
+                                                }
+                                            }}
                                             aria-label={`Eliminar usuario ${user.nombre}`}
                                             class="p-1.5 text-text-dim hover:text-error hover:bg-error/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-error"
                                         >
