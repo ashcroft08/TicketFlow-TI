@@ -19,7 +19,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     ]);
 
     // Filtrar al usuario logueado por seguridad (que se gestione desde su Perfil)
-    const users = allUsers.filter(u => u.id_usuario !== locals.user.id);
+    let users = allUsers.filter(u => u.id_usuario !== locals.user.id);
+
+    // Por seguridad, si el administrador logueado no es el Administrador de Sistema principal (provesa.tec@gmail.com),
+    // ocultamos la cuenta principal de la lista para evitar que sea editada o eliminada.
+    if (locals.user.email !== 'provesa.tec@gmail.com') {
+        users = users.filter(u => u.email !== 'provesa.tec@gmail.com' && u.username !== 'admin');
+    }
 
     return {
         users,
@@ -102,6 +108,14 @@ export const actions: Actions = {
             return fail(400, { error: 'Todos los campos obligatorios deben estar completos' });
         }
 
+        // --- VALIDACIÓN DE SEGURIDAD DEL SUPER ADMINISTRADOR ---
+        const targetUser = await userRepository.findById(id);
+        if (!targetUser) return fail(404, { error: 'Usuario no encontrado' });
+
+        if ((targetUser.email === 'provesa.tec@gmail.com' || targetUser.username === 'admin') && locals.user.email !== 'provesa.tec@gmail.com') {
+            return fail(403, { error: 'No tienes permisos para modificar al super administrador principal del sistema' });
+        }
+
         if (newPassword && newPassword.trim() !== '') {
             if (newPassword.length < 6) {
                 return fail(400, { error: 'La nueva contraseña debe tener al menos 6 caracteres' });
@@ -140,6 +154,14 @@ export const actions: Actions = {
         const id = parseInt(data.get('id')?.toString() || '0');
 
         if (!id) return fail(400);
+
+        // --- VALIDACIÓN DE SEGURIDAD DEL SUPER ADMINISTRADOR ---
+        const targetUser = await userRepository.findById(id);
+        if (!targetUser) return fail(404, { error: 'Usuario no encontrado' });
+
+        if (targetUser.email === 'provesa.tec@gmail.com' || targetUser.username === 'admin') {
+            return fail(403, { error: 'Por razones de seguridad críticas, el super administrador principal del sistema no puede ser eliminado' });
+        }
 
         try {
             await userRepository.delete(id);

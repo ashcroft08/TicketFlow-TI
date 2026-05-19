@@ -13,7 +13,9 @@
         X,
         ShieldCheck,
         ChevronRight,
-        Trash2
+        Trash2,
+        Package,
+        Layers
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -31,24 +33,26 @@
         {
             label: 'Operaciones',
             items: [
-                { name: 'Dashboard', icon: LayoutDashboard, path: '/admin/dashboard' },
-                { name: 'Incidencias', icon: Ticket, path: '/admin/tickets' },
+                { name: 'Panel de Control', icon: LayoutDashboard, path: '/admin/dashboard' },
+                { name: 'Tickets / Soporte', icon: Ticket, path: '/admin/tickets' },
             ]
         },
         {
-            label: 'Catálogos',
+            label: 'Catálogos Maestros',
             items: [
-                { name: 'Usuarios', icon: Users, path: '/admin/usuarios' },
-                { name: 'Sucursales', icon: MapPin, path: '/admin/sucursales' },
-                { name: 'Categorías', icon: Tags, path: '/admin/categorias' },
-                { name: 'Activos TI', icon: Monitor, path: '/admin/activos' },
+                { name: 'Personal / Usuarios', icon: Users, path: '/admin/usuarios' },
+                { name: 'Sucursales / Tiendas', icon: MapPin, path: '/admin/sucursales' },
+                { name: 'Categorías de Tickets', icon: Tags, path: '/admin/categorias' },
+                { name: 'Tipos de Hardware', icon: Layers, path: '/admin/tipos' },
+                { name: 'Modelos de Equipos', icon: Package, path: '/admin/catalogo' },
+                { name: 'Inventario de Equipos', icon: Monitor, path: '/admin/activos' },
             ]
         },
         {
             label: 'Sistema',
             items: [
-                { name: 'Papelera', icon: Trash2, path: '/admin/papelera' },
-                { name: 'Mi Perfil', icon: Settings, path: '/admin/perfil' },
+                { name: 'Papelera de Reciclaje', icon: Trash2, path: '/admin/papelera' },
+                { name: 'Mi Perfil / Ajustes', icon: Settings, path: '/admin/perfil' },
             ]
         }
     ];
@@ -78,9 +82,9 @@
     <!-- Sidebar Lateral -->
     <aside 
         aria-label="Menú principal de administración"
-        class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:relative lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
+        class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
     >
-        <div class="h-full flex flex-col p-5 sticky top-0">
+        <div class="h-full flex flex-col p-5 overflow-hidden">
             <!-- Branding Area -->
             <div class="flex items-center justify-center py-6 mb-4">
                 <img src={logoClaro} alt="TicketFlow" class="h-9 w-auto dark:hidden" />

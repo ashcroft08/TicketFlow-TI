@@ -32,13 +32,88 @@
         if (searchQuery) currentPage = 1;
     });
 
+    // --- Estado reactivo del formulario de activos ---
+    let selectedCatalogoId = $state('');
+    let selectedSucursalId = $state('');
+    let selectedUsuarioId = $state('');
+    let numeroSerie = $state('');
+    let codigoInventario = $state('');
+    let isCodigoManuallyEdited = $state(false);
+
+    // Filtrar usuarios pertenecientes a la sucursal seleccionada
+    const filteredUsers = $derived(
+        data.users.filter(u => {
+            if (!selectedSucursalId) return true;
+            return u.id_sucursal?.toString() === selectedSucursalId ||
+                   (editingAsset && editingAsset.id_usuario_asignado === u.id_usuario);
+        })
+    );
+
+    // Resetear el usuario asignado si ya no pertenece a la sucursal seleccionada
+    $effect(() => {
+        if (selectedUsuarioId && selectedSucursalId) {
+            const isUserValid = filteredUsers.some(u => u.id_usuario.toString() === selectedUsuarioId);
+            if (!isUserValid) {
+                selectedUsuarioId = '';
+            }
+        }
+    });
+
+    // Auto-generación inteligente de código de inventario
+    $effect(() => {
+        if (!isCodigoManuallyEdited && !editingAsset) {
+            const cat = data.catalogos.find(c => c.id_catalogo.toString() === selectedCatalogoId);
+            const branch = data.branches.find(b => b.id_sucursal.toString() === selectedSucursalId);
+            
+            if (cat && branch) {
+                // Código del tipo o primeras 3 letras del tipo en mayúsculas
+                const tipoCode = cat.tipo?.codigo || cat.tipo?.tipo?.slice(0, 3).toUpperCase() || 'ACT';
+                
+                // Prefijo limpio de la sucursal (ej: La Concordia -> LAC, Matriz -> MAT)
+                const branchName = branch.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+                const branchWords = branchName.split(/\s+/).filter(w => w.length > 0);
+                let branchCode = 'SUC';
+                if (branchWords.length > 1) {
+                    branchCode = branchWords.map(w => w[0]).join('').slice(0, 3);
+                } else if (branchWords[0]) {
+                    branchCode = branchWords[0].slice(0, 3);
+                }
+
+                // Suffix basado en número de serie o PEND si está vacío
+                let suffix = '';
+                if (numeroSerie.trim()) {
+                    const cleanSerie = numeroSerie.replace(/[^A-Za-z0-9]/g, '');
+                    suffix = cleanSerie.slice(-6).toUpperCase();
+                } else {
+                    suffix = 'PEND';
+                }
+
+                codigoInventario = `${tipoCode}-${branchCode}-${suffix}`;
+            } else {
+                codigoInventario = '';
+            }
+        }
+    });
+
     const openCreate = () => {
         editingAsset = null;
+        selectedCatalogoId = '';
+        selectedSucursalId = '';
+        selectedUsuarioId = '';
+        numeroSerie = '';
+        codigoInventario = '';
+        isCodigoManuallyEdited = false;
         showModal = true;
     };
 
     const openEdit = (asset: any) => {
         editingAsset = asset;
+        selectedCatalogoId = asset.id_catalogo?.toString() || '';
+        selectedSucursalId = asset.id_sucursal?.toString() || '';
+        selectedUsuarioId = asset.id_usuario_asignado?.toString() || '';
+        numeroSerie = asset.numero_serie || '';
+        codigoInventario = asset.codigo_inventario || '';
+        isCodigoManuallyEdited = true; // No sobreescribir al editar existentes
         showModal = true;
     };
 
@@ -259,10 +334,10 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div class="space-y-1.5">
                         <label for="id_catalogo" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Modelo de Equipo</label>
-                        <select id="id_catalogo" name="id_catalogo" required class="input-compact w-full">
+                        <select id="id_catalogo" name="id_catalogo" bind:value={selectedCatalogoId} required class="input-compact w-full">
                             <option value="">Seleccionar del catálogo...</option>
                             {#each data.catalogos as cat}
-                                <option value={cat.id_catalogo} selected={editingAsset?.id_catalogo === cat.id_catalogo}>
+                                <option value={cat.id_catalogo.toString()}>
                                     {cat.nombre} ({cat.tipo?.tipo})
                                 </option>
                             {/each}
@@ -271,10 +346,10 @@
 
                     <div class="space-y-1.5">
                         <label for="id_sucursal" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Ubicación / Sede</label>
-                        <select id="id_sucursal" name="id_sucursal" required class="input-compact w-full">
+                        <select id="id_sucursal" name="id_sucursal" bind:value={selectedSucursalId} required class="input-compact w-full">
                             <option value="">Asignar a sucursal...</option>
                             {#each data.branches as branch}
-                                <option value={branch.id_sucursal} selected={editingAsset?.id_sucursal === branch.id_sucursal}>{branch.nombre}</option>
+                                <option value={branch.id_sucursal.toString()}>{branch.nombre}</option>
                             {/each}
                         </select>
                     </div>
@@ -283,7 +358,7 @@
                         <label for="numero_serie" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Número de Serie</label>
                         <div class="relative">
                             <Hash class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="numero_serie" type="text" name="numero_serie" value={editingAsset?.numero_serie || ''} placeholder="Ej: S/N 123456" class="input-compact w-full pl-10" />
+                            <input id="numero_serie" type="text" name="numero_serie" bind:value={numeroSerie} placeholder="Ej: S/N 123456" class="input-compact w-full pl-10" />
                         </div>
                     </div>
 
@@ -291,7 +366,15 @@
                         <label for="codigo_inventario" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Código de Inventario</label>
                         <div class="relative">
                             <Tag class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="codigo_inventario" type="text" name="codigo_inventario" value={editingAsset?.codigo_inventario || ''} placeholder="Ej: ACT-001" class="input-compact w-full pl-10" />
+                            <input 
+                                id="codigo_inventario" 
+                                type="text" 
+                                name="codigo_inventario" 
+                                bind:value={codigoInventario} 
+                                oninput={() => isCodigoManuallyEdited = true}
+                                placeholder="Ej: ACT-001" 
+                                class="input-compact w-full pl-10" 
+                            />
                         </div>
                     </div>
 
@@ -307,10 +390,10 @@
 
                     <div class="space-y-1.5">
                         <label for="id_usuario_asignado" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Usuario Responsable</label>
-                        <select id="id_usuario_asignado" name="id_usuario_asignado" class="input-compact w-full">
+                        <select id="id_usuario_asignado" name="id_usuario_asignado" bind:value={selectedUsuarioId} class="input-compact w-full">
                             <option value="">Sin asignar (Disponible)</option>
-                            {#each data.users as user}
-                                <option value={user.id_usuario} selected={editingAsset?.id_usuario_asignado === user.id_usuario}>{user.nombre}</option>
+                            {#each filteredUsers as user}
+                                <option value={user.id_usuario.toString()}>{user.nombre}</option>
                             {/each}
                         </select>
                     </div>
