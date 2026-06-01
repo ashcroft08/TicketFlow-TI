@@ -31,7 +31,7 @@ export const UpdateUserSchema = CreateUserSchema.partial().omit({ password: true
 export const CreateTicketSchema = z.object({
 	titulo: z.string().min(5, 'El título debe tener al menos 5 caracteres').max(200),
 	descripcion: z.string().min(10, 'La descripción debe detallar el problema (mínimo 10 caracteres)'),
-	id_categoria: z.coerce.number().int().positive('Debe seleccionar una categoría válida'),
+	id_categoria: z.coerce.number().int().positive('Debe seleccionar una categoría válida').optional().nullable(),
 	id_activo: z.coerce.number().int().positive().optional().nullable(),
 	id_nivel_atencion: z.coerce.number().int().positive().optional().nullable()
 });

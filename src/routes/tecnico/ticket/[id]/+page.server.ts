@@ -35,7 +35,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     ]);
 
     // Si el ticket tiene un activo asignado, cargamos su historial de movimientos
-    let movimientosActivo = [];
+    let movimientosActivo: Awaited<ReturnType<typeof inventoryRepository.getAssetMovements>> = [];
     if (ticket.id_activo) {
         movimientosActivo = await inventoryRepository.getAssetMovements(ticket.id_activo);
     }

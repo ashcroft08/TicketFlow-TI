@@ -79,11 +79,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         movimientosActivo = await inventoryRepository.getAssetMovements(ticket.id_activo);
     }
 
-    const userLectura = ticket.lecturas?.find(l => l.id_usuario === locals.user?.id_usuario);
+    const userLectura = ticket.lecturas?.find(l => l.id_usuario === locals.user?.id);
     const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
     
     const unread_count = ticket.comentarios?.filter(
-        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user?.id_usuario
+        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user?.id
     ).length || 0;
 
     // Retornamos los datos estructurados y tipados
@@ -137,7 +137,7 @@ export const actions: Actions = {
 
             await ticketRepository.updateTicket(ticketId, {
                 ...data,
-                updated_by: user.id_usuario
+                updated_by: user.id
             });
 
             return { success: true, message: 'Diagnóstico y gestión actualizados correctamente' };
@@ -178,8 +178,9 @@ export const actions: Actions = {
 
             await ticketRepository.addComment({
                 id_ticket: ticketId,
-                id_usuario: locals.user!.id_usuario,
-                comentario: content
+                id_usuario: locals.user!.id,
+                comentario: content,
+                tipo_comentario: 'publico'
             });
             return { success: true };
         } catch (err) {

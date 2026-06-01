@@ -21,7 +21,10 @@
     <title>Dashboard Admin - TicketFlow TI</title>
 </svelte:head>
 
-<div class="space-y-6 animate-fade-in-up">
+<div class="space-y-6 animate-fade-in-up relative">
+    <!-- Orbes decorativos flotantes de fondo para un look ultra premium -->
+    <div class="absolute -top-12 -right-12 w-64 h-64 bg-primary/5 dark:bg-primary/10 rounded-full blur-[80px] pointer-events-none animate-blob"></div>
+    <div class="absolute top-1/2 left-1/3 w-72 h-72 bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[100px] pointer-events-none animate-blob animation-delay-4000"></div>
     <!-- Header del Dashboard -->
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -39,7 +42,7 @@
     <!-- Stats Grid Principal -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1: Tickets Abiertos -->
-        <div class="glass-card p-4 rounded-lg group hover:border-error/30">
+        <div class="glass-card-premium p-5 group hover:-translate-y-1 hover:border-error/30">
             <div class="flex justify-between items-start mb-3">
                 <div class="p-2 bg-error/10 rounded-md text-error group-hover:bg-error group-hover:text-white transition-all duration-300">
                     <AlertCircle class="w-5 h-5" />
@@ -56,7 +59,7 @@
         </div>
 
         <!-- Card 2: En Proceso -->
-        <div class="glass-card p-4 rounded-lg group hover:border-primary/30">
+        <div class="glass-card-premium p-5 group hover:-translate-y-1 hover:border-primary/30">
             <div class="flex justify-between items-start mb-3">
                 <div class="p-2 bg-primary/10 rounded-md text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     <Clock class="w-5 h-5" />
@@ -70,7 +73,7 @@
         </div>
 
         <!-- Card 3: Activos TI -->
-        <div class="glass-card p-4 rounded-lg group hover:border-success/30">
+        <div class="glass-card-premium p-5 group hover:-translate-y-1 hover:border-success/30">
             <div class="flex justify-between items-start mb-3">
                 <div class="p-2 bg-success/10 rounded-md text-success group-hover:bg-success group-hover:text-white transition-all duration-300">
                     <Monitor class="w-5 h-5" />
@@ -84,7 +87,7 @@
         </div>
 
         <!-- Card 4: Técnicos -->
-        <div class="glass-card p-4 rounded-lg group hover:border-primary/30">
+        <div class="glass-card-premium p-5 group hover:-translate-y-1 hover:border-primary/30">
             <div class="flex justify-between items-start mb-3">
                 <div class="p-2 bg-primary/10 rounded-md text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
                     <Users class="w-5 h-5" />
@@ -109,7 +112,7 @@
                 <a href="/admin/tickets" class="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-primary rounded px-1">Ver Historial</a>
             </div>
 
-            <div class="glass-card rounded-lg overflow-hidden border-none">
+            <div class="glass-card-premium overflow-hidden border-none">
                 <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de tickets recientes">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -165,8 +168,8 @@
             </div>
 
             <div class="grid gap-2">
-                <a href="/admin/sucursales" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
-                    <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                <a href="/admin/sucursales" class="glass-card-premium p-4 flex items-center gap-4 group hover:-translate-y-0.5 hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <MapPin class="w-4 h-4" />
                     </div>
                     <div>
@@ -175,8 +178,8 @@
                     </div>
                 </a>
 
-                <a href="/admin/usuarios" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
-                    <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                <a href="/admin/usuarios" class="glass-card-premium p-4 flex items-center gap-4 group hover:-translate-y-0.5 hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <Users class="w-4 h-4" />
                     </div>
                     <div>
@@ -185,8 +188,8 @@
                     </div>
                 </a>
 
-                <a href="/admin/activos" class="glass-card p-3 rounded-md flex items-center gap-3 group hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
-                    <div class="p-2 bg-primary/10 rounded-sm text-primary group-hover:bg-primary group-hover:text-white transition-all">
+                <a href="/admin/activos" class="glass-card-premium p-4 flex items-center gap-4 group hover:-translate-y-0.5 hover:border-primary/50 transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary group-hover:bg-primary group-hover:text-white transition-all">
                         <Monitor class="w-4 h-4" />
                     </div>
                     <div>

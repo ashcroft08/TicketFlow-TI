@@ -15,7 +15,7 @@ export const actions: Actions = {
 		// Validación con Zod
 		const parsed = LoginSchema.safeParse({ username, password });
 		if (!parsed.success) {
-			const errorMsg = parsed.error.errors[0]?.message || 'Datos de inicio de sesión inválidos';
+			const errorMsg = parsed.error.issues[0]?.message || 'Datos de inicio de sesión inválidos';
 			return fail(400, { error: errorMsg, username });
 		}
 

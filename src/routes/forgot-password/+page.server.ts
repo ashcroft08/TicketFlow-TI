@@ -13,7 +13,7 @@ export const actions: Actions = {
 		// Validación con Zod
 		const parsed = ForgotPasswordSchema.safeParse({ identifier });
 		if (!parsed.success) {
-			const errorMsg = parsed.error.errors[0]?.message || 'Ingrese su usuario o correo';
+			const errorMsg = parsed.error.issues[0]?.message || 'Ingrese su usuario o correo';
 			return fail(400, { error: errorMsg });
 		}
 

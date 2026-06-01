@@ -41,7 +41,7 @@ export const actions: Actions = {
                 marca,
                 modelo,
                 id_tipo,
-                created_by: locals.user.id_usuario
+                created_by: locals.user.id
             });
             return { success: true };
         } catch (err) {
@@ -70,7 +70,7 @@ export const actions: Actions = {
                 marca,
                 modelo,
                 id_tipo,
-                updated_by: locals.user.id_usuario
+                updated_by: locals.user.id
             });
             return { success: true };
         } catch (err) {

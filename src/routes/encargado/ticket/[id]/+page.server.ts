@@ -62,7 +62,8 @@ export const actions: Actions = {
             await ticketRepository.addComment({
                 id_ticket: ticketId,
                 id_usuario: locals.user.id,
-                comentario
+                comentario,
+                tipo_comentario: 'publico'
             });
 
             return { success: true };
