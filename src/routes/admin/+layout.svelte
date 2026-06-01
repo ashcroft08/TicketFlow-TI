@@ -16,7 +16,8 @@
         Trash2,
         Package,
         Layers,
-        Sliders
+        Sliders,
+        Terminal
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -38,6 +39,7 @@
             items: [
                 { name: 'Panel de Control', icon: LayoutDashboard, path: '/admin/dashboard' },
                 { name: 'Tickets / Soporte', icon: Ticket, path: '/admin/tickets' },
+                { name: 'Proyectos de Software', icon: Terminal, path: '/admin/proyectos' },
             ]
         },
         {

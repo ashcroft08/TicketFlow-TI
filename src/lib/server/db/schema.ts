@@ -278,3 +278,7 @@ export const cajasRelations = relations(cajas, ({ one, many }) => ({
 	activos: many(activos_ti),
 	tickets: many(tickets)
 }));
+
+export const proyectosSoftwareRelations = relations(proyectos_software, ({ one }) => ({
+	encargado: one(usuarios, { fields: [proyectos_software.id_encargado], references: [usuarios.id_usuario] })
+}));
