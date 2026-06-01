@@ -30,6 +30,19 @@
             default: return { icon: HelpCircle, bg: 'bg-gray-500/10', text: 'text-gray-600 dark:text-gray-400', border: 'border-gray-500/20' };
         }
     };
+    let selectedCajaId = $state('');
+
+    // Filtrar los activos según la Caja seleccionada
+    const filteredActivos = $derived(
+        data.activos.filter((a: any) => {
+            if (selectedCajaId === 'sueltos') {
+                return !a.id_caja;
+            } else if (selectedCajaId) {
+                return a.id_caja?.toString() === selectedCajaId;
+            }
+            return true; // Si no hay nada seleccionado, mostrar todos
+        })
+    );
 </script>
 
 <svelte:head>
@@ -206,6 +219,32 @@
                     </div>
                 </div>
 
+                <!-- Ubicación de Falla (Caja / Punto de Venta) -->
+                <div class="flex flex-col gap-1.5 group">
+                    <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors group-focus-within:text-primary" for="id_caja">
+                        Ubicación / Caja
+                    </label>
+                    <div class="relative">
+                        <select 
+                            onfocus={() => focusedField = 'id_caja'}
+                            onblur={() => focusedField = null}
+                            id="id_caja" 
+                            name="id_caja" 
+                            bind:value={selectedCajaId}
+                            class="w-full h-12 px-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-slate-800 dark:text-white transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900 appearance-none cursor-pointer"
+                        >
+                            <option value="">Todas las Cajas / Todo el Inventario</option>
+                            <option value="sueltos">Equipos Sueltos / Administrativos</option>
+                            {#each data.cajas as caja}
+                                <option value={caja.id_caja.toString()}>{caja.nombre}</option>
+                            {/each}
+                        </select>
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Activo TI -->
                 <div class="flex flex-col gap-1.5 group">
                     <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider transition-colors group-focus-within:text-primary" for="id_activo">
@@ -222,9 +261,9 @@
                             class="w-full h-12 px-4 bg-slate-50/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm text-slate-800 dark:text-white transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-900 appearance-none cursor-pointer"
                         >
                             <option value="" disabled selected class="text-slate-400">Seleccionar equipo...</option>
-                            {#each data.activos as activo}
+                            {#each filteredActivos as activo}
                                 <option value={activo.id_activo} selected={form?.id_activo === activo.id_activo.toString()}>
-                                    {activo.catalogo?.nombre} ({activo.codigo_inventario})
+                                    {activo.catalogo?.nombre} ({activo.codigo_inventario}) {#if activo.caja}— [{activo.caja.nombre}]{/if}
                                 </option>
                             {/each}
                         </select>

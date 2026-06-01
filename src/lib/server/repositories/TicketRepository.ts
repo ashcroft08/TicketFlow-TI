@@ -17,6 +17,7 @@ export class TicketRepository {
 			titulo: data.titulo,
 			descripcion: data.descripcion,
 			id_activo: data.id_activo,
+			id_caja: data.id_caja,
 			id_estado: idEstado
 		}).returning();
 
@@ -43,6 +44,7 @@ export class TicketRepository {
 			with: {
 				estado: true,
 				categoria: true,
+				caja: true,
 				activo_ti: {
 					with: {
 						catalogo: true
@@ -59,6 +61,7 @@ export class TicketRepository {
 			with: {
 				estado: true,
 				categoria: true,
+				caja: true,
 				creador: {
 					with: { rol: true }
 				},

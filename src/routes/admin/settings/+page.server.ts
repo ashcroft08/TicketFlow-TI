@@ -2,23 +2,31 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { ReferenceDataRepository } from '$lib/server/repositories/ReferenceDataRepository';
 import { InventoryRepository } from '$lib/server/repositories/InventoryRepository';
+import { CajaRepository } from '$lib/server/repositories/CajaRepository';
+import { BranchRepository } from '$lib/server/repositories/BranchRepository';
 
 const referenceDataRepository = new ReferenceDataRepository();
 const inventoryRepository = new InventoryRepository();
+const cajaRepository = new CajaRepository();
+const branchRepository = new BranchRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || locals.user.cod_rol !== 'ADMIN') {
         throw redirect(303, '/');
     }
 
-    const [estados, movimientos] = await Promise.all([
+    const [estados, movimientos, cajas, sucursales] = await Promise.all([
         referenceDataRepository.getEstadosTickets(false),
-        inventoryRepository.getMovementTypes(false)
+        inventoryRepository.getMovementTypes(false),
+        cajaRepository.getAll(),
+        branchRepository.getActive()
     ]);
 
     return {
         estados,
-        movimientos
+        movimientos,
+        cajas,
+        sucursales
     };
 };
 
@@ -140,6 +148,66 @@ export const actions: Actions = {
         } catch (err) {
             console.error('Error al eliminar tipo de movimiento:', err);
             return fail(500, { error: 'Error al desactivar el tipo de movimiento de inventario' });
+        }
+    },
+
+    // --- ACCIONES PARA CAJAS ---
+    createCaja: async ({ request, locals }) => {
+        if (!locals.user || locals.user.cod_rol !== 'ADMIN') return fail(401);
+
+        const data = await request.formData();
+        const nombre = data.get('nombre')?.toString()?.trim();
+        const id_sucursal = parseInt(data.get('id_sucursal')?.toString() || '0');
+
+        if (!nombre || !id_sucursal) {
+            return fail(400, { error: 'El nombre de la caja y la sucursal son requeridos' });
+        }
+
+        try {
+            await cajaRepository.create({ nombre, id_sucursal });
+            return { success: true, message: '¡Caja creada exitosamente!' };
+        } catch (err) {
+            console.error('Error al crear caja:', err);
+            return fail(500, { error: 'Error al crear la caja' });
+        }
+    },
+
+    updateCaja: async ({ request, locals }) => {
+        if (!locals.user || locals.user.cod_rol !== 'ADMIN') return fail(401);
+
+        const data = await request.formData();
+        const id = parseInt(data.get('id')?.toString() || '0');
+        const nombre = data.get('nombre')?.toString()?.trim();
+        const id_sucursal = parseInt(data.get('id_sucursal')?.toString() || '0');
+        const estado = data.get('estado')?.toString() === 'true';
+
+        if (!id || !nombre || !id_sucursal) {
+            return fail(400, { error: 'Datos incompletos para actualizar' });
+        }
+
+        try {
+            await cajaRepository.update(id, { nombre, id_sucursal, estado });
+            return { success: true, message: '¡Caja actualizada correctamente!' };
+        } catch (err) {
+            console.error('Error al actualizar caja:', err);
+            return fail(500, { error: 'Error al actualizar la caja' });
+        }
+    },
+
+    deleteCaja: async ({ request, locals }) => {
+        if (!locals.user || locals.user.cod_rol !== 'ADMIN') return fail(401);
+
+        const data = await request.formData();
+        const id = parseInt(data.get('id')?.toString() || '0');
+
+        if (!id) return fail(400, { error: 'ID requerido' });
+
+        try {
+            await cajaRepository.delete(id);
+            return { success: true, message: '¡Caja desactivada con éxito!' };
+        } catch (err) {
+            console.error('Error al desactivar caja:', err);
+            return fail(500, { error: 'Error al desactivar la caja' });
         }
     }
 };

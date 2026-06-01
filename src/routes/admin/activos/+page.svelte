@@ -50,9 +50,29 @@
     let selectedCatalogoId = $state('');
     let selectedSucursalId = $state('');
     let selectedUsuarioId = $state('');
+    let selectedCajaId = $state('');
     let numeroSerie = $state('');
     let codigoInventario = $state('');
     let isCodigoManuallyEdited = $state(false);
+
+    // Filtrar cajas pertenecientes a la sucursal seleccionada
+    const filteredCajas = $derived(
+        data.cajas.filter(c => {
+            if (!selectedSucursalId) return true;
+            return c.id_sucursal?.toString() === selectedSucursalId ||
+                   (editingAsset && editingAsset.id_caja === c.id_caja);
+        })
+    );
+
+    // Resetear la caja si ya no pertenece a la sucursal seleccionada
+    $effect(() => {
+        if (selectedCajaId && selectedSucursalId) {
+            const isCajaValid = filteredCajas.some(c => c.id_caja.toString() === selectedCajaId);
+            if (!isCajaValid) {
+                selectedCajaId = '';
+            }
+        }
+    });
 
     // Filtrar usuarios pertenecientes a la sucursal seleccionada
     const filteredUsers = $derived(
@@ -114,6 +134,7 @@
         selectedCatalogoId = '';
         selectedSucursalId = '';
         selectedUsuarioId = '';
+        selectedCajaId = '';
         numeroSerie = '';
         codigoInventario = '';
         isCodigoManuallyEdited = false;
@@ -125,6 +146,7 @@
         selectedCatalogoId = asset.id_catalogo?.toString() || '';
         selectedSucursalId = asset.id_sucursal?.toString() || '';
         selectedUsuarioId = asset.id_usuario_asignado?.toString() || '';
+        selectedCajaId = asset.id_caja?.toString() || '';
         numeroSerie = asset.numero_serie || '';
         codigoInventario = asset.codigo_inventario || '';
         isCodigoManuallyEdited = true; // No sobreescribir al editar existentes
@@ -223,9 +245,12 @@
                             </td>
                             <td class="px-5 py-3">
                                 <div class="space-y-1">
-                                    <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-main dark:text-dark-text-main">
+                                    <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-main dark:text-dark-text-main flex-wrap">
                                         <MapPin class="w-3 h-3 text-text-dim" />
                                         {asset.sucursal?.nombre}
+                                        {#if asset.caja}
+                                            <span class="ml-1.5 px-1.5 py-0.2 bg-blue-500/10 text-blue-500 dark:text-blue-400 text-[8px] font-black uppercase rounded tracking-wider border border-blue-500/20">{asset.caja.nombre}</span>
+                                        {/if}
                                     </div>
                                     <div class="flex items-center gap-1.5 text-[10px] italic text-text-dim">
                                         <UserIcon class="w-3 h-3 opacity-50" />
@@ -420,6 +445,16 @@
                             <option value="">Sin asignar (Disponible)</option>
                             {#each filteredUsers as user}
                                 <option value={user.id_usuario.toString()}>{user.nombre}</option>
+                            {/each}
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="id_caja" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Caja (Punto de Venta)</label>
+                        <select id="id_caja" name="id_caja" bind:value={selectedCajaId} class="input-compact w-full">
+                            <option value="">Sin asignar (Suelto / Bodega)</option>
+                            {#each filteredCajas as caja}
+                                <option value={caja.id_caja.toString()}>{caja.nombre}</option>
                             {/each}
                         </select>
                     </div>

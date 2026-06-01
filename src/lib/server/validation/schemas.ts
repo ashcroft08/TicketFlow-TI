@@ -33,6 +33,7 @@ export const CreateTicketSchema = z.object({
 	descripcion: z.string().min(10, 'La descripción debe detallar el problema (mínimo 10 caracteres)'),
 	id_categoria: z.coerce.number().int().positive('Debe seleccionar una categoría válida').optional().nullable(),
 	id_activo: z.coerce.number().int().positive().optional().nullable(),
+	id_caja: z.coerce.number().int().positive().optional().nullable(),
 	id_nivel_atencion: z.coerce.number().int().positive().optional().nullable()
 });
 
@@ -56,6 +57,7 @@ export const CreateAssetSchema = z.object({
 	id_sucursal: z.coerce.number().int().positive('Debe seleccionar una sucursal válida'),
 	id_catalogo: z.coerce.number().int().positive('Debe seleccionar un artículo del catálogo'),
 	id_usuario_asignado: z.coerce.number().int().positive().optional().nullable(),
+	id_caja: z.coerce.number().int().positive().optional().nullable(),
 	numero_serie: z.string().max(200).optional().nullable(),
 	codigo_inventario: z.string().max(100).optional().nullable(),
 	estado: z.enum(['activo', 'en_reparacion', 'bodega', 'baja']).default('bodega'),

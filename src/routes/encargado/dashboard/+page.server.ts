@@ -3,10 +3,12 @@ import type { PageServerLoad, Actions } from './$types';
 import { TicketRepository } from '$lib/server/repositories/TicketRepository';
 import { ReferenceDataRepository } from '$lib/server/repositories/ReferenceDataRepository';
 import { CloudinaryService } from '$lib/server/services/CloudinaryService';
+import { CajaRepository } from '$lib/server/repositories/CajaRepository';
 
 const ticketRepository = new TicketRepository();
 const referenceDataRepository = new ReferenceDataRepository();
 const cloudinaryService = new CloudinaryService();
+const cajaRepository = new CajaRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
     // Si no hay usuario, el hook ya debería haber redirigido, pero por si acaso
@@ -25,12 +27,16 @@ export const load: PageServerLoad = async ({ locals }) => {
     // Obtener los activos asignados a la sucursal del usuario
     const activosSucursal = await referenceDataRepository.getActivosBySucursal(sucursalId);
 
+    // Obtener las cajas de la sucursal del usuario
+    const cajasSucursal = sucursalId ? await cajaRepository.getBySucursal(sucursalId) : [];
+
     // Obtener los tickets creados por este usuario
     const misTickets = await ticketRepository.getTicketsByCreator(userId);
 
     return {
         user: locals.user,
         activos: activosSucursal,
+        cajas: cajasSucursal,
         tickets: misTickets
     };
 };
@@ -45,6 +51,7 @@ export const actions: Actions = {
         const titulo = data.get('titulo')?.toString().trim();
         const descripcion = data.get('descripcion')?.toString().trim();
         const idActivoStr = data.get('id_activo')?.toString();
+        const idCajaStr = data.get('id_caja')?.toString();
         const adjuntosFiles = data.getAll('adjuntos') as File[];
 
         if (!titulo || !descripcion || !idActivoStr) {
@@ -57,6 +64,7 @@ export const actions: Actions = {
         }
 
         const idActivo = parseInt(idActivoStr, 10);
+        const idCaja = idCajaStr ? parseInt(idCajaStr, 10) : null;
         if (isNaN(idActivo)) {
             return fail(400, { error: 'Activo inválido.' });
         }
@@ -66,14 +74,14 @@ export const actions: Actions = {
             // Procesar y subir imágenes si existen
             for (const file of adjuntosFiles) {
                 if (file && file.size > 0 && file.type.startsWith('image/')) {
-                    const arrayBuffer = await file.arrayBuffer();
-                    const buffer = Buffer.from(arrayBuffer);
-                    const result = await cloudinaryService.uploadImage(buffer);
-                    adjuntosUrls.push({
-                        nombre: file.name,
-                        url: result.url,
-                        public_id: result.public_id
-                    });
+                     const arrayBuffer = await file.arrayBuffer();
+                     const buffer = Buffer.from(arrayBuffer);
+                     const result = await cloudinaryService.uploadImage(buffer);
+                     adjuntosUrls.push({
+                         nombre: file.name,
+                         url: result.url,
+                         public_id: result.public_id
+                     });
                 }
             }
 
@@ -82,6 +90,7 @@ export const actions: Actions = {
                 titulo,
                 descripcion,
                 id_activo: idActivo,
+                id_caja: idCaja && !isNaN(idCaja) ? idCaja : null,
                 adjuntos: adjuntosUrls
             });
 

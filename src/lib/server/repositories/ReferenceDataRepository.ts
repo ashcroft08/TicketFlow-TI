@@ -7,7 +7,8 @@ export class ReferenceDataRepository {
         return await db.query.activos_ti.findMany({
             where: eq(activos_ti.id_sucursal, idSucursal),
             with: {
-                catalogo: true
+                catalogo: true,
+                caja: true
             }
         });
     }

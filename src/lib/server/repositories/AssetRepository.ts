@@ -14,7 +14,8 @@ export class AssetRepository {
 					}
 				},
 				sucursal: true,
-				usuario_asignado: true
+				usuario_asignado: true,
+				caja: true
 			},
 			orderBy: [desc(activos_ti.created_at)]
 		});
@@ -78,7 +79,8 @@ export class AssetRepository {
 					}
 				},
 				sucursal: true,
-				usuario_asignado: true
+				usuario_asignado: true,
+				caja: true
 			},
 			orderBy: [desc(activos_ti.created_at)]
 		});

@@ -22,6 +22,16 @@ export const sucursal = pgTable('sucursal', {
 	deleted_at: timestamp('deleted_at')
 });
 
+export const cajas = pgTable('cajas', {
+	id_caja: serial('id_caja').primaryKey(),
+	id_sucursal: integer('id_sucursal').references(() => sucursal.id_sucursal).notNull(),
+	nombre: varchar('nombre', { length: 100 }).notNull(),
+	estado: boolean('estado').default(true),
+	created_at: timestamp('created_at').defaultNow(),
+	updated_at: timestamp('updated_at').defaultNow(),
+	deleted_at: timestamp('deleted_at')
+});
+
 export const usuarios = pgTable('usuarios', {
 	id_usuario: serial('id_usuario').primaryKey(),
 	id_rol: integer('id_rol').references(() => roles.id_rol),
@@ -69,6 +79,7 @@ export const tickets = pgTable('tickets', {
 	id_nivel_atencion: integer('id_nivel_atencion').references(() => nivel_atencion.id_nivel_atencion),
 	id_usuario: integer('id_usuario').references(() => usuarios.id_usuario), // Asignado a
 	id_activo: integer('id_activo').references(() => activos_ti.id_activo),
+	id_caja: integer('id_caja').references(() => cajas.id_caja),
 	created_by: integer('created_by').references(() => usuarios.id_usuario),
 	updated_by: integer('updated_by').references(() => usuarios.id_usuario),
 	titulo: varchar('titulo', { length: 200 }).notNull(),
@@ -138,6 +149,7 @@ export const activos_ti = pgTable('activos_ti', {
 	id_sucursal: integer('id_sucursal').references(() => sucursal.id_sucursal),
 	id_catalogo: integer('id_catalogo').references(() => catalogo_articulos.id_catalogo),
 	id_usuario_asignado: integer('id_usuario_asignado').references(() => usuarios.id_usuario),
+	id_caja: integer('id_caja').references(() => cajas.id_caja),
 	numero_serie: varchar('numero_serie', { length: 200 }),
 	codigo_inventario: varchar('codigo_inventario', { length: 100 }),
 	estado: varchar('estado', { length: 50 }).notNull(), // activo|en_reparacion|baja|bodega
@@ -219,6 +231,7 @@ export const ticketsRelations = relations(tickets, ({ one, many }) => ({
 	usuario_asignado: one(usuarios, { fields: [tickets.id_usuario], references: [usuarios.id_usuario], relationName: 'tickets_asignados' }),
 	creador: one(usuarios, { fields: [tickets.created_by], references: [usuarios.id_usuario], relationName: 'tickets_creados' }),
 	activo_ti: one(activos_ti, { fields: [tickets.id_activo], references: [activos_ti.id_activo] }),
+	caja: one(cajas, { fields: [tickets.id_caja], references: [cajas.id_caja] }),
 	adjuntos: many(ticket_adjuntos),
 	comentarios: many(ticket_comentarios),
 	movimientos: many(movimientos_inventario),
@@ -243,6 +256,7 @@ export const activosTiRelations = relations(activos_ti, ({ one, many }) => ({
 	sucursal: one(sucursal, { fields: [activos_ti.id_sucursal], references: [sucursal.id_sucursal] }),
 	catalogo: one(catalogo_articulos, { fields: [activos_ti.id_catalogo], references: [catalogo_articulos.id_catalogo] }),
 	usuario_asignado: one(usuarios, { fields: [activos_ti.id_usuario_asignado], references: [usuarios.id_usuario] }),
+	caja: one(cajas, { fields: [activos_ti.id_caja], references: [cajas.id_caja] }),
 	tickets: many(tickets),
 	movimientos: many(movimientos_inventario)
 }));
@@ -257,4 +271,10 @@ export const movimientosInventarioRelations = relations(movimientos_inventario, 
 	activo: one(activos_ti, { fields: [movimientos_inventario.id_activo], references: [activos_ti.id_activo] }),
 	persona: one(personas, { fields: [movimientos_inventario.id_persona], references: [personas.id_persona] }),
 	tipo: one(tipos_movimientos, { fields: [movimientos_inventario.id_tipo_movimiento], references: [tipos_movimientos.id_tipo_movimiento] })
+}));
+
+export const cajasRelations = relations(cajas, ({ one, many }) => ({
+	sucursal: one(sucursal, { fields: [cajas.id_sucursal], references: [sucursal.id_sucursal] }),
+	activos: many(activos_ti),
+	tickets: many(tickets)
 }));

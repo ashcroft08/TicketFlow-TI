@@ -3,28 +3,32 @@ import type { PageServerLoad, Actions } from './$types';
 import { AssetRepository } from '$lib/server/repositories/AssetRepository';
 import { BranchRepository } from '$lib/server/repositories/BranchRepository';
 import { UserRepository } from '$lib/server/repositories/UserRepository';
+import { CajaRepository } from '$lib/server/repositories/CajaRepository';
 
 const assetRepository = new AssetRepository();
 const branchRepository = new BranchRepository();
 const userRepository = new UserRepository();
+const cajaRepository = new CajaRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || locals.user.cod_rol !== 'ADMIN') {
         throw redirect(303, '/');
     }
 
-    const [activos, catalogos, branches, users] = await Promise.all([
+    const [activos, catalogos, branches, users, cajas] = await Promise.all([
         assetRepository.getAll(),
         assetRepository.getCatalogs(),
         branchRepository.getActive(),
-        userRepository.getAll() // Para asignar a usuarios
+        userRepository.getAll(), // Para asignar a usuarios
+        cajaRepository.getActive()
     ]);
 
     return {
         activos,
         catalogos,
         branches,
-        users
+        users,
+        cajas
     };
 };
 
@@ -37,6 +41,7 @@ export const actions: Actions = {
             id_catalogo: parseInt(data.get('id_catalogo')?.toString() || '0'),
             id_sucursal: parseInt(data.get('id_sucursal')?.toString() || '0'),
             id_usuario_asignado: parseInt(data.get('id_usuario_asignado')?.toString() || '0') || null,
+            id_caja: parseInt(data.get('id_caja')?.toString() || '0') || null,
             numero_serie: data.get('numero_serie')?.toString() || null,
             codigo_inventario: data.get('codigo_inventario')?.toString() || null,
             estado: (data.get('estado')?.toString() || 'activo') as 'activo' | 'en_reparacion' | 'bodega' | 'baja',
@@ -66,6 +71,7 @@ export const actions: Actions = {
             id_catalogo: parseInt(data.get('id_catalogo')?.toString() || '0'),
             id_sucursal: parseInt(data.get('id_sucursal')?.toString() || '0'),
             id_usuario_asignado: parseInt(data.get('id_usuario_asignado')?.toString() || '0') || null,
+            id_caja: parseInt(data.get('id_caja')?.toString() || '0') || null,
             numero_serie: data.get('numero_serie')?.toString() || null,
             codigo_inventario: data.get('codigo_inventario')?.toString() || null,
             estado: (data.get('estado')?.toString() || 'activo') as 'activo' | 'en_reparacion' | 'bodega' | 'baja',
