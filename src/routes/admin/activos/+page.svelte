@@ -12,9 +12,9 @@
         if (form && form !== lastProcessedForm) {
             lastProcessedForm = form;
             if (form.success) {
-                toast.success(form.message || '¡Activo de inventario guardado correctamente!');
+                toast.success((form as any).message || '¡Activo de inventario guardado correctamente!');
             } else if (form.error) {
-                toast.error(form.error);
+                toast.error((form as any).error);
             }
         }
     });

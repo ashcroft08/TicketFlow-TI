@@ -12,9 +12,9 @@
         if (form && form !== lastProcessedForm) {
             lastProcessedForm = form;
             if (form.success) {
-                toast.success(form.message || '¡Modelo del catálogo guardado correctamente!');
+                toast.success((form as any).message || '¡Modelo del catálogo guardado correctamente!');
             } else if (form.error) {
-                toast.error(form.error);
+                toast.error((form as any).error);
             }
         }
     });

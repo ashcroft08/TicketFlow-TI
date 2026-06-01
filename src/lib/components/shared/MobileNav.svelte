@@ -16,8 +16,16 @@
     : (activePath.includes('/tecnico') ? 'TECH' : 'STORE_MANAGER')
   );
 
+  interface NavItem {
+    name: string;
+    icon: any;
+    id?: string;
+    count?: number;
+    path?: string;
+  }
+
   // Items dinámicos basados en el contexto
-  const navItems = $derived(() => {
+  const navItems = $derived((): NavItem[] => {
     if (isDashboard && currentEnvironment === 'TECH') {
       return [
         { name: 'Míos', icon: Ticket, id: 'mis_tickets', count: page.data.misTickets?.length },
@@ -43,7 +51,8 @@
     if (isTicketView) ticketViewState.activeTab = id as any;
   };
 
-  const isTabActive = (id: string) => {
+  const isTabActive = (id: string | undefined) => {
+    if (!id) return false;
     if (isDashboard) return dashboardState.activeTab === id;
     if (isTicketView) return ticketViewState.activeTab === id;
     return false;
@@ -57,13 +66,13 @@
       {#if item.id}
         <!-- Pestañas Contextuales -->
         <button 
-          onclick={() => handleTabClick(item.id)}
+          onclick={() => item.id && handleTabClick(item.id)}
           aria-pressed={isTabActive(item.id)}
           class="flex flex-col items-center gap-1.5 px-3 py-1 transition-all duration-300 relative focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg {isTabActive(item.id) ? 'text-blue-600 dark:text-blue-400 scale-110' : 'text-slate-400 dark:text-slate-500'}"
         >
           <div class="relative">
             <item.icon class="w-5 h-5 {isTabActive(item.id) ? 'fill-blue-600/10' : ''}" />
-            {#if item.count > 0}
+            {#if item.count && item.count > 0}
               <div class="absolute -top-2 -right-2 bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[8px] font-black px-1 rounded-full border border-white dark:border-slate-900">
                 {item.count}
               </div>
@@ -77,9 +86,9 @@
       {:else}
         <!-- Links de Navegación Estándar -->
         <a 
-          href={item.path} 
-          aria-current={activePath.startsWith(item.path) ? 'page' : undefined}
-          class="flex flex-col items-center gap-1.5 px-3 py-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg {activePath.startsWith(item.path) ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}"
+          href={item.path || ''} 
+          aria-current={item.path && activePath.startsWith(item.path) ? 'page' : undefined}
+          class="flex flex-col items-center gap-1.5 px-3 py-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg {item.path && activePath.startsWith(item.path) ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'}"
         >
           <item.icon class="w-5 h-5" />
           <span class="text-[9px] font-black uppercase tracking-widest">{item.name}</span>

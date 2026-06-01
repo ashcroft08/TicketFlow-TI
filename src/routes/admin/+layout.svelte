@@ -15,7 +15,8 @@
         ChevronRight,
         Trash2,
         Package,
-        Layers
+        Layers,
+        Sliders
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -54,6 +55,7 @@
             label: 'Sistema',
             items: [
                 { name: 'Papelera de Reciclaje', icon: Trash2, path: '/admin/papelera' },
+                { name: 'Ajustes del Sistema', icon: Sliders, path: '/admin/settings' },
                 { name: 'Mi Perfil / Ajustes', icon: Settings, path: '/admin/perfil' },
             ]
         }

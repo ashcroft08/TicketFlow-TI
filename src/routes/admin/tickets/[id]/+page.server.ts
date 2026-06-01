@@ -83,7 +83,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
     
     const unread_count = ticket.comentarios?.filter(
-        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user?.id
+        (c) => c.created_at && new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user?.id
     ).length || 0;
 
     // Retornamos los datos estructurados y tipados
@@ -104,7 +104,7 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
             const { statusId } = parseFormData(formData, updateStatusSchema);
-            const ticketId = parseInt(params.id);
+            const ticketId = parseInt(params.id || '0');
 
             await ticketRepository.updateTicketStatus(ticketId, statusId);
             return { success: true };
@@ -117,7 +117,7 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
             const { technicianId } = parseFormData(formData, assignTechnicianSchema);
-            const ticketId = parseInt(params.id);
+            const ticketId = parseInt(params.id || '0');
 
             await ticketRepository.assignTicket(ticketId, technicianId);
             return { success: true };
@@ -133,7 +133,7 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
             const data = parseFormData(formData, updateDetailsSchema);
-            const ticketId = parseInt(params.id);
+            const ticketId = parseInt(params.id || '0');
 
             await ticketRepository.updateTicket(ticketId, {
                 ...data,
@@ -151,7 +151,7 @@ export const actions: Actions = {
         if (!user || user.cod_rol !== 'ADMIN') return fail(401, { error: 'No autorizado' });
 
         try {
-            const ticketId = parseInt(params.id, 10);
+            const ticketId = parseInt(params.id || '0', 10);
             const formData = await request.formData();
             const data = parseFormData(formData, registerAssetMovementSchema);
 
@@ -174,7 +174,7 @@ export const actions: Actions = {
         try {
             const formData = await request.formData();
             const { content } = parseFormData(formData, addCommentSchema);
-            const ticketId = parseInt(params.id);
+            const ticketId = parseInt(params.id || '0');
 
             await ticketRepository.addComment({
                 id_ticket: ticketId,

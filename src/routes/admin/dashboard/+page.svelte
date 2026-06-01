@@ -129,7 +129,7 @@
                                     <td class="px-4 py-3">
                                         <div class="flex flex-col">
                                             <span class="text-sm font-bold truncate max-w-[200px] text-text-main dark:text-dark-text-main">{ticket.titulo}</span>
-                                            <span class="text-[10px] text-text-dim dark:text-dark-text-dim font-medium">{formatDate(ticket.created_at)}</span>
+                                            <span class="text-[10px] text-text-dim dark:text-dark-text-dim font-medium">{formatDate(ticket.created_at ?? '')}</span>
                                         </div>
                                     </td>
                                     <td class="px-4 py-3">

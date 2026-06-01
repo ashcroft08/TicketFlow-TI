@@ -13,9 +13,9 @@
         if (form && form !== lastProcessedForm) {
             lastProcessedForm = form;
             if (form.success) {
-                toast.success(form.message || '¡El estado del ticket ha sido actualizado correctamente!');
+                toast.success((form as any).message || '¡El estado del ticket ha sido actualizado correctamente!');
             } else if (form.error) {
-                toast.error(form.error);
+                toast.error((form as any).error);
             }
         }
     });
@@ -179,12 +179,12 @@
                             <span class="text-[9px] font-black px-1.5 py-0.5 rounded bg-primary/10 text-primary uppercase tracking-tighter">
                                 ID-{ticket.id_ticket}
                             </span>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border {getStatusStyles(ticket.estado?.nombre)}">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest border {getStatusStyles(ticket.estado?.nombre || '')}">
                                 {ticket.estado?.nombre}
                             </span>
                             <div class="flex items-center gap-1.5 text-[10px] text-text-dim font-medium">
                                 <Clock class="w-3 h-3" />
-                                {formatDate(ticket.created_at)}
+                                {formatDate(ticket.created_at ?? '')}
                             </div>
                         </div>
                         

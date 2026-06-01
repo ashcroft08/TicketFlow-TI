@@ -20,17 +20,19 @@ export const load: PageServerLoad = async ({ params, locals }) => {
         throw error(404, 'Ticket no encontrado');
     }
 
+    const user = locals.user;
+
     // Seguridad: verificar que el usuario logueado sea el creador o tenga un rol superior
-    if (locals.user.cod_rol === 'STORE_MANAGER' && ticket.created_by !== locals.user.id) {
+    if (user.cod_rol === 'STORE_MANAGER' && ticket.created_by !== user.id) {
         throw error(403, 'No tienes permiso para ver este ticket');
     }
 
     // Calculate unread comments count
-    const userLectura = ticket.lecturas?.find(l => l.id_usuario === locals.user.id);
+    const userLectura = ticket.lecturas?.find(l => l.id_usuario === user.id);
     const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
     
     const unread_count = ticket.comentarios?.filter(
-        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== locals.user.id
+        (c) => c.created_at && new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== user.id
     ).length || 0;
 
     return {

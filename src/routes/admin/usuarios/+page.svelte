@@ -12,10 +12,11 @@
     $effect(() => {
         if (form && form !== lastProcessedForm) {
             lastProcessedForm = form;
-            if (form.success) {
-                toast.success(form.message || '¡Usuario guardado correctamente!');
-            } else if (form.error) {
-                toast.error(form.error);
+            const f = form as any;
+            if (f.success) {
+                toast.success(f.message || '¡Usuario guardado correctamente!');
+            } else if (f.error) {
+                toast.error(f.error);
             }
         }
     });

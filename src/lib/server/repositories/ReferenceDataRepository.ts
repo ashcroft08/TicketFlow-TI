@@ -18,9 +18,11 @@ export class ReferenceDataRepository {
         });
     }
 
-    async getEstadosTickets() {
+    async getEstadosTickets(onlyActive = true) {
+        const whereClause = onlyActive ? eq(estados_tickets.estado, true) : undefined;
         return await db.query.estados_tickets.findMany({
-            where: eq(estados_tickets.estado, true)
+            where: whereClause,
+            orderBy: [asc(estados_tickets.nombre)]
         });
     }
 
@@ -29,5 +31,35 @@ export class ReferenceDataRepository {
             where: eq(nivel_atencion.estado, true),
             orderBy: [asc(nivel_atencion.orden)]
         });
+    }
+
+    // --- Métodos CRUD para Estados de Tickets ---
+
+    async createEstado(data: { nombre: string; color: string }) {
+        const [newEstado] = await db.insert(estados_tickets)
+            .values({
+                nombre: data.nombre,
+                color: data.color,
+                estado: true
+            })
+            .returning();
+        return newEstado;
+    }
+
+    async updateEstado(id: number, data: { nombre?: string; color?: string; estado?: boolean }) {
+        const [updatedEstado] = await db.update(estados_tickets)
+            .set(data)
+            .where(eq(estados_tickets.id_estado, id))
+            .returning();
+        return updatedEstado;
+    }
+
+    async deleteEstado(id: number) {
+        // Hacemos borrado lógico (estado: false) para no romper tickets ya creados
+        const [deletedEstado] = await db.update(estados_tickets)
+            .set({ estado: false })
+            .where(eq(estados_tickets.id_estado, id))
+            .returning();
+        return deletedEstado;
     }
 }

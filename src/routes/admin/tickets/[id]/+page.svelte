@@ -71,7 +71,7 @@
                     <span class="truncate max-w-[200px] sm:max-w-md">{ticket.titulo}</span>
                 </h1>
                 <div class="flex items-center gap-3 mt-1">
-                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter {getStatusBadge(ticket.estado?.nombre)}">
+                    <span class="px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter {getStatusBadge(ticket.estado?.nombre || '')}">
                         {ticket.estado?.nombre}
                     </span>
                     <span class="text-[10px] font-bold text-slate-400 flex items-center gap-1">
@@ -399,7 +399,7 @@
                                 name="statusId"
                                 aria-label="Cambiar estado del ticket"
                                 class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer"
-                                onchange={(e) => e.target.form.submit()}
+                                onchange={(e) => e.currentTarget.form?.submit()}
                             >
                                 {#each data.estados as estado}
                                     <option value={estado.id_estado} selected={ticket.id_estado === estado.id_estado}>
@@ -433,9 +433,9 @@
                         {:else}
                             <div transition:slide>
                                 <form use:enhance action="?/assignTechnician" method="POST">
-                                    <select name="technicianId" aria-label="Asignar técnico responsable" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer" onchange={(e) => { e.target.form.submit(); isEditingTech = false; }}>
+                                    <select name="technicianId" aria-label="Asignar técnico responsable" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer" onchange={(e) => { e.currentTarget.form?.submit(); isEditingTech = false; }}>
                                         <option value="">SELECCIONAR TÉCNICO...</option>
-                                        {#each technicians as tech}<option value={tech.id_usuario} selected={ticket.id_usuario_asignado === tech.id_usuario}>{tech.nombre.toUpperCase()}</option>{/each}
+                                        {#each technicians as tech}<option value={tech.id_usuario} selected={ticket.id_usuario === tech.id_usuario}>{tech.nombre.toUpperCase()}</option>{/each}
                                     </select>
                                 </form>
                             </div>

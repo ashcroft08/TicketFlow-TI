@@ -39,7 +39,7 @@ export const actions: Actions = {
             id_usuario_asignado: parseInt(data.get('id_usuario_asignado')?.toString() || '0') || null,
             numero_serie: data.get('numero_serie')?.toString() || null,
             codigo_inventario: data.get('codigo_inventario')?.toString() || null,
-            estado: data.get('estado')?.toString() || 'activo',
+            estado: (data.get('estado')?.toString() || 'activo') as 'activo' | 'en_reparacion' | 'bodega' | 'baja',
             observaciones: data.get('observaciones')?.toString() || null,
             fecha_adquisicion: data.get('fecha_adquisicion')?.toString() || null,
         };
@@ -68,7 +68,7 @@ export const actions: Actions = {
             id_usuario_asignado: parseInt(data.get('id_usuario_asignado')?.toString() || '0') || null,
             numero_serie: data.get('numero_serie')?.toString() || null,
             codigo_inventario: data.get('codigo_inventario')?.toString() || null,
-            estado: data.get('estado')?.toString() || 'activo',
+            estado: (data.get('estado')?.toString() || 'activo') as 'activo' | 'en_reparacion' | 'bodega' | 'baja',
             observaciones: data.get('observaciones')?.toString() || null,
             fecha_adquisicion: data.get('fecha_adquisicion')?.toString() || null,
         };

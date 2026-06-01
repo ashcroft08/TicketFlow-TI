@@ -8,7 +8,8 @@ const userRepository = new UserRepository();
 const branchRepository = new BranchRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
-    if (!locals.user || locals.user.cod_rol !== 'ADMIN') {
+    const user = locals.user;
+    if (!user || user.cod_rol !== 'ADMIN') {
         throw redirect(303, '/');
     }
 
@@ -19,11 +20,11 @@ export const load: PageServerLoad = async ({ locals }) => {
     ]);
 
     // Filtrar al usuario logueado por seguridad (que se gestione desde su Perfil)
-    let users = allUsers.filter(u => u.id_usuario !== locals.user.id);
+    let users = allUsers.filter(u => u.id_usuario !== user.id);
 
     // Por seguridad, si el administrador logueado no es el Administrador de Sistema principal (provesa.tec@gmail.com),
     // ocultamos la cuenta principal de la lista para evitar que sea editada o eliminada.
-    if (locals.user.email !== 'provesa.tec@gmail.com') {
+    if (user.email !== 'provesa.tec@gmail.com') {
         users = users.filter(u => u.email !== 'provesa.tec@gmail.com' && u.username !== 'admin');
     }
 
@@ -77,8 +78,7 @@ export const actions: Actions = {
                 email,
                 password: hashedPassword,
                 id_rol,
-                id_sucursal,
-                estado: true
+                id_sucursal
             });
             return { success: true };
         } catch (err: any) {

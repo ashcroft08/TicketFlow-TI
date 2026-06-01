@@ -45,7 +45,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
     const ultimaLecturaTime = userLectura ? new Date(userLectura.ultima_lectura).getTime() : 0;
     
     const unread_count = ticket.comentarios?.filter(
-        (c) => new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== user.id
+        (c) => c.created_at && new Date(c.created_at).getTime() > ultimaLecturaTime && c.id_usuario !== user.id
     ).length || 0;
 
     return {

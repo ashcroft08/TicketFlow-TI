@@ -12,9 +12,9 @@
         if (form && form !== lastProcessedForm) {
             lastProcessedForm = form;
             if (form.success) {
-                toast.success(form.message || '¡Categoría guardada correctamente!');
+                toast.success((form as any).message || '¡Categoría guardada correctamente!');
             } else if (form.error) {
-                toast.error(form.error);
+                toast.error((form as any).error);
             }
         }
     });
