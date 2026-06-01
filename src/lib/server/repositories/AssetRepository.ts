@@ -1,5 +1,5 @@
 import { db } from '../db';
-import { activos_ti, catalogo_articulos } from '../db/schema';
+import { activos_ti, catalogo_articulos, movimientos_inventario } from '../db/schema';
 import { eq, asc, desc, isNull, isNotNull } from 'drizzle-orm';
 import type { CreateAssetInput, UpdateAssetInput } from '../validation/schemas';
 
@@ -15,9 +15,27 @@ export class AssetRepository {
 				},
 				sucursal: true,
 				usuario_asignado: true,
-				caja: true
+				caja: true,
+				movimientos: {
+					with: {
+						tipo: true,
+						ticket: true
+					},
+					orderBy: [desc(movimientos_inventario.created_at)]
+				}
 			},
 			orderBy: [desc(activos_ti.created_at)]
+		});
+	}
+
+	async getById(id: number) {
+		return await db.query.activos_ti.findFirst({
+			where: eq(activos_ti.id_activo, id),
+			with: {
+				sucursal: true,
+				caja: true,
+				catalogo: true
+			}
 		});
 	}
 

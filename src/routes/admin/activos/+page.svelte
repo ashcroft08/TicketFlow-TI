@@ -476,6 +476,38 @@
                     </div>
                 </div>
 
+                {#if editingAsset}
+                    <div class="space-y-2 border-t border-white/5 pt-4">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Historial de Traslados y Movimientos</label>
+                        {#if editingAsset.movimientos && editingAsset.movimientos.length > 0}
+                            <div class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
+                                {#each editingAsset.movimientos as mov}
+                                    <div class="bg-primary/5 dark:bg-white/5 border border-primary/10 dark:border-white/5 rounded-xl p-3 flex flex-col gap-1 text-xs">
+                                        <div class="flex justify-between items-start">
+                                            <span class="font-bold text-primary dark:text-blue-400 uppercase tracking-wide">
+                                                {mov.tipo?.tipo_movimiento || 'Movimiento'}
+                                            </span>
+                                            <span class="text-[10px] text-text-dim">
+                                                {new Date(mov.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </div>
+                                        {#if mov.motivo}
+                                            <p class="text-text-main dark:text-dark-text-main italic font-medium">"{mov.motivo}"</p>
+                                        {/if}
+                                        {#if mov.id_ticket}
+                                            <div class="text-[9px] text-text-dim font-bold uppercase tracking-wider">Ref: Ticket #{mov.id_ticket}</div>
+                                        {/if}
+                                    </div>
+                                {/each}
+                            </div>
+                        {:else}
+                            <div class="p-3 bg-primary/5 dark:bg-white/5 border border-dashed border-primary/10 dark:border-white/5 rounded-xl text-center text-xs text-text-dim italic">
+                                Sin traslados ni movimientos registrados para este activo.
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
+
                 <div class="flex justify-end gap-3 pt-4">
                     <button type="button" onclick={closeModal} class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg">
                         Cancelar

@@ -4,11 +4,13 @@ import { AssetRepository } from '$lib/server/repositories/AssetRepository';
 import { BranchRepository } from '$lib/server/repositories/BranchRepository';
 import { UserRepository } from '$lib/server/repositories/UserRepository';
 import { CajaRepository } from '$lib/server/repositories/CajaRepository';
+import { InventoryRepository } from '$lib/server/repositories/InventoryRepository';
 
 const assetRepository = new AssetRepository();
 const branchRepository = new BranchRepository();
 const userRepository = new UserRepository();
 const cajaRepository = new CajaRepository();
+const inventoryRepository = new InventoryRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || locals.user.cod_rol !== 'ADMIN') {
@@ -84,6 +86,41 @@ export const actions: Actions = {
         }
 
         try {
+            const existingAsset = await assetRepository.getById(id);
+            if (existingAsset) {
+                const branchChanged = existingAsset.id_sucursal !== assetData.id_sucursal;
+                const cajaChanged = existingAsset.id_caja !== assetData.id_caja;
+
+                if (branchChanged || cajaChanged) {
+                    const branches = await branchRepository.getActive();
+                    const cajas = await cajaRepository.getActive();
+                    
+                    const origBranchName = existingAsset.sucursal?.nombre || 'Matriz';
+                    const origCajaName = existingAsset.caja?.nombre ? `[${existingAsset.caja.nombre}]` : '';
+                    
+                    const destBranch = branches.find(b => b.id_sucursal === assetData.id_sucursal);
+                    const destBranchName = destBranch?.nombre || 'Matriz';
+                    const destCaja = cajas.find(c => c.id_caja === assetData.id_caja);
+                    const destCajaName = destCaja?.nombre ? `[${destCaja.nombre}]` : '';
+
+                    const movementTypes = await inventoryRepository.getMovementTypes(false);
+                    let trasladoType = movementTypes.find(m => m.codigo === 'TRASLADO');
+                    if (!trasladoType) {
+                        trasladoType = await inventoryRepository.createMovementType({
+                            tipo_movimiento: 'Traslado a Sucursal / Caja',
+                            codigo: 'TRASLADO'
+                        });
+                    }
+
+                    await inventoryRepository.registerMovement({
+                        id_ticket: null as any,
+                        id_activo: id,
+                        id_tipo_movimiento: trasladoType.id_tipo_movimiento,
+                        motivo: `Traslado de ${origBranchName} ${origCajaName} a ${destBranchName} ${destCajaName}`.replace(/\s+/g, ' ').trim()
+                    });
+                }
+            }
+
             await assetRepository.update(id, assetData);
             return { success: true };
         } catch (err) {
