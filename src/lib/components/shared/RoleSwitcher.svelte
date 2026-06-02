@@ -91,6 +91,4 @@
     </div>
 </div>
 
-<style>
-    @reference "../../../routes/layout.css";
-</style>
+

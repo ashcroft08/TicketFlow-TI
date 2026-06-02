@@ -90,6 +90,7 @@
 
         
         <!-- PANEL IZQUIERDO: Información y Gestión -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
         <div 
             tabindex="0"
             aria-label="Gestión e Información del Ticket"
@@ -405,6 +406,7 @@
             </div>
 
             <!-- Área de Mensajes -->
+            <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
             <div 
                 bind:this={chatContainer} 
                 role="log"

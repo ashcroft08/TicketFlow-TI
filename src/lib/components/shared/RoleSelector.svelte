@@ -67,7 +67,8 @@
                 </button>
 
                 {#if isOpen}
-                    <!-- Dropdown Menu (Opens upward) -->
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
                     <div 
                         transition:scale={{ start: 0.95, duration: 150 }}
                         class="absolute bottom-full left-0 w-full mb-3 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-[0_20px_50px_rgba(0,0,0,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-[100] backdrop-blur-2xl bg-white dark:bg-slate-800"
@@ -132,6 +133,4 @@
     {/if}
 {/if}
 
-<style>
-    @reference "../../../routes/layout.css";
-</style>
+

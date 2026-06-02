@@ -34,12 +34,13 @@
     aria-label="Notificaciones del sistema"
 >
     {#each toast.toasts as t (t.id)}
+        {@const Icon = getIcon(t.type)}
         <div 
             transition:fly={{ x: 100, duration: 250 }}
             class="glass-card flex gap-3 p-4 rounded-xl border pointer-events-auto items-start shadow-2xl backdrop-blur-md transition-all {getStyles(t.type)}"
         >
             <div class="flex-shrink-0 mt-0.5">
-                <svelte:component this={getIcon(t.type)} class="w-5 h-5" />
+                <Icon class="w-5 h-5" />
             </div>
             
             <div class="flex-grow">

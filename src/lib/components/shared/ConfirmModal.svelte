@@ -18,6 +18,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
         role="dialog"
+        tabindex="-1"
         aria-modal="true"
         aria-labelledby="confirm-title"
         aria-describedby="confirm-desc"

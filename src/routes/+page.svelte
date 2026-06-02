@@ -176,28 +176,12 @@
         animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes fade-in-left {
-        0% { opacity: 0; transform: translateX(-30px); }
-        100% { opacity: 1; transform: translateX(0); }
-    }
-    .animate-fade-in-left {
-        animation: fade-in-left 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
     @keyframes fade-in {
         0% { opacity: 0; }
         100% { opacity: 1; }
     }
     .animate-fade-in {
         animation: fade-in 1s ease-out forwards;
-    }
-
-    @keyframes slow-zoom {
-        0% { transform: scale(1.05); }
-        100% { transform: scale(1.15); }
-    }
-    .animate-slow-zoom {
-        animation: slow-zoom 20s infinite alternate ease-in-out;
     }
 
     @keyframes shake {

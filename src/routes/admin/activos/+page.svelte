@@ -208,6 +208,7 @@
 
     <!-- Tabla -->
     <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl">
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
         <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de activos tecnológicos">
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -343,6 +344,7 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div 
         role="dialog"
+        tabindex="-1"
         aria-modal="true"
         aria-labelledby="modal-title"
         class="fixed inset-0 bg-dark-bg-main/80 backdrop-blur-md z-[60] flex items-center justify-center p-4"
@@ -478,7 +480,7 @@
 
                 {#if editingAsset}
                     <div class="space-y-2 border-t border-white/5 pt-4">
-                        <label class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Historial de Traslados y Movimientos</label>
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Historial de Traslados y Movimientos</span>
                         {#if editingAsset.movimientos && editingAsset.movimientos.length > 0}
                             <div class="space-y-2 max-h-40 overflow-y-auto custom-scrollbar pr-2">
                                 {#each editingAsset.movimientos as mov}

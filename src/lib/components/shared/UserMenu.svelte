@@ -43,6 +43,8 @@
     </button>
 
     {#if isOpen}
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div 
             transition:scale={{ start: 0.95, duration: 150 }}
             class="absolute top-full right-0 mt-3 w-72 glass-card rounded-2xl shadow-2xl z-[100] overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-slate-900"
