@@ -85,29 +85,29 @@
         </button>
     </header>
 
-    <!-- Selector de Pestañas Premium (Tab Selector) -->
-    <div class="flex border-b border-slate-200 dark:border-slate-800">
+    <!-- Selector de Pestañas Premium (Tab Selector) Responsivo -->
+    <div class="flex border-b border-slate-200 dark:border-slate-800 overflow-x-auto whitespace-nowrap scroll-smooth custom-scrollbar-h">
         <button 
             onclick={() => activeTab = 'estados'}
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none {activeTab === 'estados' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
+            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'estados' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
         >
             Estados de Tickets
         </button>
         <button 
             onclick={() => activeTab = 'movimientos'}
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none {activeTab === 'movimientos' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
+            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'movimientos' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
         >
             Movimientos de Inventario
         </button>
         <button 
             onclick={() => activeTab = 'cajas'}
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none {activeTab === 'cajas' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
+            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'cajas' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
         >
             Cajas (Puntos de Venta)
         </button>
         <button 
             onclick={() => activeTab = 'categorias_bitacora'}
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none {activeTab === 'categorias_bitacora' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
+            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'categorias_bitacora' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
         >
             Categorías de Bitácora
         </button>
@@ -512,4 +512,13 @@
         to { opacity: 1; transform: translateY(0); }
     }
     .animate-fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    /* Ocultar barra de scroll horizontal en selector de pestañas responsivo */
+    .custom-scrollbar-h {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+    .custom-scrollbar-h::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+    }
 </style>

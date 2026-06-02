@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Monitor, Plus, Edit2, Trash2, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
+    import { Monitor, Plus, Edit2, Trash2, Eye, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import { confirmState } from '$lib/state/confirm.svelte';
@@ -23,17 +23,69 @@
     let showModal = $state(false);
     let editingAsset = $state<any>(null);
 
+    // Historial directo (Icono Ojo)
+    let showHistoryModal = $state(false);
+    let historyAsset = $state<any>(null);
+
+    const openHistory = (asset: any) => {
+        historyAsset = asset;
+        showHistoryModal = true;
+    };
+
+    const closeHistory = () => {
+        showHistoryModal = false;
+        historyAsset = null;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+            if (showModal) closeModal();
+            if (showHistoryModal) closeHistory();
+        }
+    };
+
+    // Filtros de búsqueda avanzados
+    let selectedFilterSucursalId = $state('');
+    let selectedFilterCajaId = $state('');
+
+    // Cajas elegibles reactivamente según la sucursal del filtro
+    const filterableCajas = $derived(
+        data.cajas.filter(c => {
+            if (!selectedFilterSucursalId) return true;
+            return c.id_sucursal?.toString() === selectedFilterSucursalId;
+        })
+    );
+
+    // Resetear caja elegida si ya no pertenece a la sucursal seleccionada en el filtro
+    $effect(() => {
+        if (selectedFilterCajaId && selectedFilterSucursalId) {
+            const isValid = filterableCajas.some(c => c.id_caja.toString() === selectedFilterCajaId);
+            if (!isValid) {
+                selectedFilterCajaId = '';
+            }
+        }
+    });
+
     // Paginación
     let currentPage = $state(1);
     let itemsPerPage = $state(10);
 
     const filteredActivos = $derived(
-        data.activos.filter(a => 
-            a.catalogo?.nombre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.numero_serie?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.codigo_inventario?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            a.sucursal?.nombre?.toLowerCase().includes(searchQuery.toLowerCase())
-        )
+        data.activos.filter(a => {
+            const matchesSearch = !searchQuery || 
+                a.catalogo?.nombre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.numero_serie?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.codigo_inventario?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.sucursal?.nombre?.toLowerCase().includes(searchQuery.toLowerCase());
+
+            const matchesSucursal = !selectedFilterSucursalId || 
+                a.id_sucursal?.toString() === selectedFilterSucursalId;
+
+            const matchesCaja = !selectedFilterCajaId || 
+                a.id_caja?.toString() === selectedFilterCajaId;
+
+            return matchesSearch && matchesSucursal && matchesCaja;
+        })
     );
 
     const totalPages = $derived(Math.ceil(filteredActivos.length / itemsPerPage));
@@ -41,9 +93,11 @@
         filteredActivos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     );
 
-    // Resetear página cuando cambia la búsqueda
+    // Resetear página cuando cambia la búsqueda o los filtros
     $effect(() => {
-        if (searchQuery) currentPage = 1;
+        if (searchQuery || selectedFilterSucursalId || selectedFilterCajaId) {
+            currentPage = 1;
+        }
     });
 
     // --- Estado reactivo del formulario de activos ---
@@ -173,6 +227,8 @@
     <title>Activos TI - TicketFlow TI</title>
 </svelte:head>
 
+<svelte:window onkeydown={handleKeyDown} />
+
 <div class="space-y-6 animate-fade-in-up">
     <!-- Header -->
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -194,16 +250,49 @@
         </button>
     </header>
 
-    <!-- Buscador -->
-    <div class="relative group">
-        <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim group-focus-within:text-primary transition-colors" />
-        <input 
-            type="text" 
-            bind:value={searchQuery}
-            placeholder="Buscar por serie, código, modelo o sede..."
-            aria-label="Buscar activos"
-            class="w-full pl-11 pr-4 py-3 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 transition-all text-sm"
-        />
+    <!-- Buscador y Filtros Avanzados -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Búsqueda General -->
+        <div class="relative group">
+            <Search class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim group-focus-within:text-primary transition-colors" />
+            <input 
+                type="text" 
+                bind:value={searchQuery}
+                placeholder="Buscar por serie, código, modelo..."
+                aria-label="Buscar activos"
+                class="w-full h-12 pl-11 pr-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white"
+            />
+        </div>
+
+        <!-- Filtro por Sucursal -->
+        <div class="relative">
+            <select 
+                bind:value={selectedFilterSucursalId}
+                aria-label="Filtrar por sucursal"
+                class="w-full h-12 px-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white appearance-none bg-[right_1rem_center] bg-no-repeat cursor-pointer"
+                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');"
+            >
+                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">Todas las Sucursales</option>
+                {#each data.branches as branch}
+                    <option value={branch.id_sucursal.toString()} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">{branch.nombre}</option>
+                {/each}
+            </select>
+        </div>
+
+        <!-- Filtro por Caja -->
+        <div class="relative">
+            <select 
+                bind:value={selectedFilterCajaId}
+                aria-label="Filtrar por caja"
+                class="w-full h-12 px-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white appearance-none bg-[right_1rem_center] bg-no-repeat cursor-pointer"
+                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');"
+            >
+                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">Todas las Cajas</option>
+                {#each filterableCajas as caja}
+                    <option value={caja.id_caja.toString()} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">{caja.nombre} ({caja.sucursal?.nombre || 'General'})</option>
+                {/each}
+            </select>
+        </div>
     </div>
 
     <!-- Tabla -->
@@ -266,6 +355,9 @@
                             </td>
                             <td class="px-5 py-3 text-right">
                                 <div class="flex justify-end gap-1">
+                                    <button onclick={() => openHistory(asset)} aria-label={`Ver historial de ${asset.catalogo?.nombre}`} class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <Eye class="w-4 h-4 aria-hidden=true" />
+                                    </button>
                                     <button onclick={() => openEdit(asset)} aria-label={`Editar activo ${asset.catalogo?.nombre}`} class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-primary">
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
@@ -519,6 +611,97 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+{/if}
+
+<!-- Modal de Historial Directo (Icono Ojo) -->
+{#if showHistoryModal}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div 
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="history-modal-title"
+        class="fixed inset-0 bg-dark-bg-main/80 backdrop-blur-md z-[60] flex items-center justify-center p-4"
+        transition:fade
+        onclick={(e) => e.target === e.currentTarget && closeHistory()}
+    >
+        <div 
+            class="glass-card w-full max-w-xl rounded-xl shadow-2xl overflow-hidden border border-white/10"
+            transition:scale={{ start: 0.95, duration: 200 }}
+        >
+            <div class="px-8 py-5 border-b border-white/5 flex justify-between items-center bg-primary/5">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary">
+                        <Activity class="w-5 h-5 animate-pulse" />
+                    </div>
+                    <h2 id="history-modal-title" class="text-lg font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
+                        Historial de Movimientos
+                    </h2>
+                </div>
+                <button onclick={closeHistory} aria-label="Cerrar modal" class="p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                    <X class="w-5 h-5 text-text-dim aria-hidden=true" />
+                </button>
+            </div>
+
+            <div class="p-8 space-y-6 max-h-[65vh] overflow-y-auto custom-scrollbar">
+                {#if historyAsset}
+                    <!-- Resumen del Activo -->
+                    <div class="bg-primary/5 dark:bg-white/5 border border-primary/10 dark:border-white/5 rounded-xl p-4 space-y-2">
+                        <h3 class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{historyAsset.catalogo?.nombre}</h3>
+                        <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{historyAsset.catalogo?.tipo?.tipo}</p>
+                        <div class="grid grid-cols-2 gap-3 text-xs text-text-dim pt-2 border-t border-white/5">
+                            <div><span class="font-semibold text-text-main dark:text-dark-text-main">S/N:</span> {historyAsset.numero_serie || 'N/A'}</div>
+                            <div><span class="font-semibold text-text-main dark:text-dark-text-main">INV:</span> {historyAsset.codigo_inventario || 'N/A'}</div>
+                            <div class="col-span-2"><span class="font-semibold text-text-main dark:text-dark-text-main">Ubicación:</span> {historyAsset.sucursal?.nombre || 'General'}</div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <span class="block text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Línea de Tiempo de Traslados</span>
+                        
+                        {#if historyAsset.movimientos && historyAsset.movimientos.length > 0}
+                            <div class="relative pl-6 border-l border-primary/20 dark:border-white/10 space-y-6">
+                                {#each historyAsset.movimientos as mov}
+                                    <div class="relative">
+                                        <!-- Timeline Dot -->
+                                        <div class="absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full bg-primary ring-4 ring-primary/20 dark:ring-white/5"></div>
+                                        
+                                        <div class="bg-primary/5 dark:bg-white/5 border border-primary/10 dark:border-white/5 rounded-xl p-4 flex flex-col gap-1.5 text-xs shadow-sm">
+                                            <div class="flex justify-between items-start">
+                                                <span class="font-bold text-primary dark:text-blue-400 uppercase tracking-wide">
+                                                    {mov.tipo?.tipo_movimiento || 'Movimiento'}
+                                                </span>
+                                                <span class="text-[10px] text-text-dim">
+                                                    {new Date(mov.created_at).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                                            {#if mov.motivo}
+                                                <p class="text-text-main dark:text-dark-text-main italic font-medium">"{mov.motivo}"</p>
+                                            {/if}
+                                            {#if mov.id_ticket}
+                                                <div class="text-[9px] text-text-dim font-bold uppercase tracking-wider">Ref: Ticket #{mov.id_ticket}</div>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                {/each}
+                            </div>
+                        {:else}
+                            <div class="p-6 bg-primary/5 dark:bg-white/5 border border-dashed border-primary/10 dark:border-white/5 rounded-xl text-center text-xs text-text-dim italic">
+                                Sin traslados ni movimientos registrados para este activo.
+                            </div>
+                        {/if}
+                    </div>
+                {/if}
+            </div>
+
+            <div class="px-8 py-4 bg-primary/5 border-t border-white/5 flex justify-end">
+                <button type="button" onclick={closeHistory} class="px-6 py-2 bg-slate-900 dark:bg-white/10 hover:bg-black dark:hover:bg-white/20 text-white font-bold text-xs uppercase tracking-widest transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg">
+                    Cerrar Historial
+                </button>
+            </div>
         </div>
     </div>
 {/if}

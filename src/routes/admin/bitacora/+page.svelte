@@ -122,7 +122,7 @@
 
     const openEdit = (record: any) => {
         editingRecord = record;
-        fecha = record.fecha;
+        fecha = data.todayStr;
         titulo = record.titulo;
         
         const totalMin = Math.round(parseFloat(record.horas_dedicadas) * 60);
@@ -638,11 +638,11 @@
                         <input 
                             id="fecha" 
                             type="date" 
-                            name="fecha" 
                             bind:value={fecha} 
-                            required 
-                            class="input-compact h-11 w-full dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl focus:border-primary text-sm text-slate-800 dark:text-white" 
+                            disabled 
+                            class="input-compact h-11 w-full dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-xl focus:border-primary text-sm text-slate-800 dark:text-white opacity-60 cursor-not-allowed" 
                         />
+                        <input type="hidden" name="fecha" value={fecha} />
                     </div>
 
                     <div class="space-y-1.5">
