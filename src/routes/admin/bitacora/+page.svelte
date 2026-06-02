@@ -203,7 +203,7 @@
                 <BookOpen class="w-4 h-4 text-primary" />
                 <span class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Operaciones</span>
             </div>
-            <h1 class="text-2xl font-bold text-text-main dark:text-dark-text-main tracking-tight">Bitácora de Administradores</h1>
+            <h1 class="text-2xl font-bold text-text-main dark:text-dark-text-main tracking-tight">Bitácora</h1>
             <p class="text-xs text-text-dim dark:text-dark-text-dim font-medium">Registra, documenta y audita tu esfuerzo y actividades diarias como Administrador de TI.</p>
         </div>
 

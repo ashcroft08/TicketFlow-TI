@@ -41,7 +41,7 @@
                 { name: 'Panel de Control', icon: LayoutDashboard, path: '/admin/dashboard' },
                 { name: 'Tickets / Soporte', icon: Ticket, path: '/admin/tickets' },
                 { name: 'Proyectos de Software', icon: Terminal, path: '/admin/proyectos' },
-                { name: 'Bitácora de Admin', icon: BookOpen, path: '/admin/bitacora' },
+                { name: 'Bitácora', icon: BookOpen, path: '/admin/bitacora' },
             ]
         },
         {
