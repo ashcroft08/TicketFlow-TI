@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, integer, boolean, timestamp, text, date, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, integer, boolean, timestamp, text, date, primaryKey, numeric } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // --- TABLAS DE CONFIGURACIÓN Y ACCESO ---
@@ -281,4 +281,35 @@ export const cajasRelations = relations(cajas, ({ one, many }) => ({
 
 export const proyectosSoftwareRelations = relations(proyectos_software, ({ one }) => ({
 	encargado: one(usuarios, { fields: [proyectos_software.id_encargado], references: [usuarios.id_usuario] })
+}));
+
+export const categorias_bitacora = pgTable('categorias_bitacora', {
+	id_categoria_bitacora: serial('id_categoria_bitacora').primaryKey(),
+	nombre: varchar('nombre', { length: 150 }).notNull(),
+	estado: boolean('estado').default(true),
+	created_at: timestamp('created_at').defaultNow(),
+	updated_at: timestamp('updated_at').defaultNow(),
+	deleted_at: timestamp('deleted_at')
+});
+
+export const categoriasBitacoraRelations = relations(categorias_bitacora, ({ many }) => ({
+	bitacoras: many(bitacora_admin)
+}));
+
+export const bitacora_admin = pgTable('bitacora_admin', {
+	id_bitacora: serial('id_bitacora').primaryKey(),
+	id_usuario: integer('id_usuario').references(() => usuarios.id_usuario).notNull(),
+	id_categoria_bitacora: integer('id_categoria_bitacora').references(() => categorias_bitacora.id_categoria_bitacora),
+	fecha: date('fecha').defaultNow().notNull(),
+	titulo: varchar('titulo', { length: 200 }).notNull(),
+	horas_dedicadas: numeric('horas_dedicadas', { precision: 4, scale: 2 }).notNull(),
+	descripcion: text('descripcion').notNull(),
+	created_at: timestamp('created_at').defaultNow(),
+	updated_at: timestamp('updated_at').defaultNow(),
+	deleted_at: timestamp('deleted_at')
+});
+
+export const bitacoraAdminRelations = relations(bitacora_admin, ({ one }) => ({
+	usuario: one(usuarios, { fields: [bitacora_admin.id_usuario], references: [usuarios.id_usuario] }),
+	categoria: one(categorias_bitacora, { fields: [bitacora_admin.id_categoria_bitacora], references: [categorias_bitacora.id_categoria_bitacora] })
 }));

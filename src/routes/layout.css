@@ -29,6 +29,13 @@
 }
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
     @apply font-sans text-text-main bg-bg-main transition-colors duration-300;
   }
@@ -91,4 +98,9 @@
 }
 ::-webkit-scrollbar-thumb {
   @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+}
+
+/* Oculta el icono nativo de calendario a la derecha en todos los inputs tipo date de la plataforma */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
 }

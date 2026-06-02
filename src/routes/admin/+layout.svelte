@@ -17,7 +17,8 @@
         Package,
         Layers,
         Sliders,
-        Terminal
+        Terminal,
+        BookOpen
     } from 'lucide-svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -40,6 +41,7 @@
                 { name: 'Panel de Control', icon: LayoutDashboard, path: '/admin/dashboard' },
                 { name: 'Tickets / Soporte', icon: Ticket, path: '/admin/tickets' },
                 { name: 'Proyectos de Software', icon: Terminal, path: '/admin/proyectos' },
+                { name: 'Bitácora de Admin', icon: BookOpen, path: '/admin/bitacora' },
             ]
         },
         {
@@ -88,7 +90,7 @@
     <!-- Sidebar Lateral -->
     <aside 
         aria-label="Menú principal de administración"
-        class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
+        class="fixed inset-y-0 left-0 w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 z-50 transform transition-transform duration-300 lg:translate-x-0 {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}"
     >
         <div class="h-full flex flex-col p-5 overflow-hidden">
             <!-- Branding Area -->
@@ -157,7 +159,7 @@
     </aside>
 
     <!-- ÁREA DE CONTENIDO -->
-    <div class="flex-1 flex flex-col min-w-0 relative z-10">
+    <div class="flex-1 flex flex-col min-w-0 relative z-10 lg:pl-64">
         <!-- Mobile Topbar -->
         <header class="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 glass-card !rounded-none !border-t-0 !border-x-0">
             <div class="flex items-center gap-2">

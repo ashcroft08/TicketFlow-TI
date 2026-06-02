@@ -4,29 +4,33 @@ import { ReferenceDataRepository } from '$lib/server/repositories/ReferenceDataR
 import { InventoryRepository } from '$lib/server/repositories/InventoryRepository';
 import { CajaRepository } from '$lib/server/repositories/CajaRepository';
 import { BranchRepository } from '$lib/server/repositories/BranchRepository';
+import { CategoriaBitacoraRepository } from '$lib/server/repositories/CategoriaBitacoraRepository';
 
 const referenceDataRepository = new ReferenceDataRepository();
 const inventoryRepository = new InventoryRepository();
 const cajaRepository = new CajaRepository();
 const branchRepository = new BranchRepository();
+const categoriaBitacoraRepository = new CategoriaBitacoraRepository();
 
 export const load: PageServerLoad = async ({ locals }) => {
     if (!locals.user || locals.user.cod_rol !== 'ADMIN') {
         throw redirect(303, '/');
     }
 
-    const [estados, movimientos, cajas, sucursales] = await Promise.all([
+    const [estados, movimientos, cajas, sucursales, categoriasBitacora] = await Promise.all([
         referenceDataRepository.getEstadosTickets(false),
         inventoryRepository.getMovementTypes(false),
         cajaRepository.getAll(),
-        branchRepository.getActive()
+        branchRepository.getActive(),
+        categoriaBitacoraRepository.getAll()
     ]);
 
     return {
         estados,
         movimientos,
         cajas,
-        sucursales
+        sucursales,
+        categoriasBitacora
     };
 };
 
@@ -208,6 +212,47 @@ export const actions: Actions = {
         } catch (err) {
             console.error('Error al desactivar caja:', err);
             return fail(500, { error: 'Error al desactivar la caja' });
+        }
+    },
+
+    // --- ACCIONES PARA CATEGORÍAS DE BITÁCORA ---
+    createCategoriaBitacora: async ({ request, locals }) => {
+        if (!locals.user || locals.user.cod_rol !== 'ADMIN') return fail(401);
+
+        const data = await request.formData();
+        const nombre = data.get('nombre')?.toString()?.trim();
+
+        if (!nombre) {
+            return fail(400, { error: 'El nombre de la categoría es requerido' });
+        }
+
+        try {
+            await categoriaBitacoraRepository.create({ nombre });
+            return { success: true, message: '¡Categoría de bitácora creada exitosamente!' };
+        } catch (err) {
+            console.error('Error al crear categoría de bitácora:', err);
+            return fail(500, { error: 'Error al crear la categoría' });
+        }
+    },
+
+    updateCategoriaBitacora: async ({ request, locals }) => {
+        if (!locals.user || locals.user.cod_rol !== 'ADMIN') return fail(401);
+
+        const data = await request.formData();
+        const id = parseInt(data.get('id')?.toString() || '0');
+        const nombre = data.get('nombre')?.toString()?.trim();
+        const estado = data.get('estado')?.toString() === 'true';
+
+        if (!id || !nombre) {
+            return fail(400, { error: 'Datos incompletos para actualizar' });
+        }
+
+        try {
+            await categoriaBitacoraRepository.update(id, { nombre, estado });
+            return { success: true, message: '¡Categoría de bitácora actualizada correctamente!' };
+        } catch (err) {
+            console.error('Error al actualizar categoría de bitácora:', err);
+            return fail(500, { error: 'Error al actualizar la categoría' });
         }
     }
 };
