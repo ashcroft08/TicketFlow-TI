@@ -5,7 +5,48 @@
     import { confirmState } from '$lib/state/confirm.svelte';
     import { toast } from '$lib/state/toast.svelte';
 
+    import { onMount } from 'svelte';
+    import { db } from '$lib/client/db';
+    import { enqueueAction } from '$lib/client/offlineManager.svelte';
+
     let { data, form } = $props();
+
+    let localPendingBitacoras = $state<any[]>([]);
+    let editedOfflineBitacoras = $state<Record<number, any>>({});
+    let deletedOfflineBitacoras = $state<Set<number>>(new Set());
+
+    const allBitacoras = $derived([
+        ...localPendingBitacoras,
+        ...data.bitacoras
+            .filter(b => !deletedOfflineBitacoras.has(b.id_bitacora))
+            .map(b => editedOfflineBitacoras[b.id_bitacora] ? { ...b, ...editedOfflineBitacoras[b.id_bitacora], isOfflinePending: true } : b)
+    ]);
+
+    onMount(async () => {
+        try {
+            const pending = await db.offlineQueue.toArray();
+            pending.forEach(action => {
+                if (action.entityType === 'bitacora') {
+                    if (action.actionType === 'create') {
+                        const bitacoraData = action.payload;
+                        localPendingBitacoras.push({
+                            id_bitacora: action.id ? -action.id : -Date.now(),
+                            ...bitacoraData,
+                            isOfflinePending: true,
+                            usuario: data.admins.find((a: any) => a.id_usuario === data.user?.id) || { nombre: data.user?.nombre || 'Administrador' },
+                            categoria: data.categorias.find((c: any) => c.id_categoria_bitacora === bitacoraData.id_categoria_bitacora)
+                        });
+                    } else if (action.actionType === 'update') {
+                        editedOfflineBitacoras[action.payload.id] = action.payload.data;
+                    } else if (action.actionType === 'delete') {
+                        deletedOfflineBitacoras.add(action.payload.id);
+                    }
+                }
+            });
+        } catch (e) {
+            console.error('Error al cargar acciones offline en bitácora:', e);
+        }
+    });
 
     // Estado del Formulario / Modales
     let showModal = $state(false);
@@ -45,7 +86,7 @@
     let itemsPerPage = $state(10);
 
     const filteredBitacoras = $derived(
-        data.bitacoras.filter(b => {
+        allBitacoras.filter(b => {
             const matchesSearch = b.titulo.toLowerCase().includes(searchQuery.toLowerCase()) || 
                                  b.descripcion.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesUser = userFilter === '' || b.id_usuario === parseInt(userFilter);
@@ -430,6 +471,9 @@
                             <td class="px-5 py-4">
                                 <span class="text-sm font-bold text-text-main dark:text-dark-text-main group-hover:text-primary transition-colors block">
                                     {log.titulo}
+                                    {#if log.isOfflinePending}
+                                        <span class="inline-flex items-center ml-2 px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wide animate-pulse">Offline</span>
+                                    {/if}
                                 </span>
                             </td>
 
@@ -457,7 +501,24 @@
                                             <Edit2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                         <form 
-                                            use:enhance 
+                                            use:enhance={({ cancel, formData }) => {
+                                                if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                                                    cancel();
+                                                    const id = parseInt(formData.get('id')?.toString() || '0');
+                                                    if (id > 0) {
+                                                        enqueueAction('bitacora', 'delete', { id });
+                                                        deletedOfflineBitacoras.add(id);
+                                                    } else if (id < 0) {
+                                                        localPendingBitacoras = localPendingBitacoras.filter(b => b.id_bitacora !== id);
+                                                        db.offlineQueue.delete(-id).catch(e => console.error(e));
+                                                    }
+                                                    toast.success('Actividad eliminada localmente');
+                                                    return;
+                                                }
+                                                return async ({ result, update }) => {
+                                                    await update();
+                                                };
+                                            }}
                                             action="?/delete" 
                                             method="POST" 
                                             class="inline-block"
@@ -606,7 +667,46 @@
 
             <!-- Formulario -->
             <form 
-                use:enhance
+                use:enhance={({ cancel, formData }) => {
+                    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                        cancel();
+
+                        const hours = parseInt(formData.get('horas')?.toString() || '0');
+                        const minutes = parseInt(formData.get('minutos')?.toString() || '0');
+                        const effort = hours + minutes / 60;
+
+                        const bitacoraData = {
+                            fecha: formData.get('fecha')?.toString() || new Date().toLocaleDateString('sv'),
+                            titulo: formData.get('titulo')?.toString() || '',
+                            horas_dedicadas: effort.toFixed(2),
+                            descripcion: formData.get('descripcion')?.toString() || '',
+                            id_categoria_bitacora: formData.get('id_categoria_bitacora') ? parseInt(formData.get('id_categoria_bitacora')!.toString()) : null
+                        };
+
+                        if (editingRecord) {
+                            enqueueAction('bitacora', 'update', { id: editingRecord.id_bitacora, data: bitacoraData });
+                            editedOfflineBitacoras[editingRecord.id_bitacora] = bitacoraData;
+                        } else {
+                            enqueueAction('bitacora', 'create', bitacoraData);
+                            const tempId = -Date.now();
+                            localPendingBitacoras.push({
+                                id_bitacora: tempId,
+                                ...bitacoraData,
+                                isOfflinePending: true,
+                                usuario: data.admins.find((a: any) => a.id_usuario === data.user?.id) || { nombre: data.user?.nombre || 'Administrador' },
+                                categoria: data.categorias.find((c: any) => c.id_categoria_bitacora === bitacoraData.id_categoria_bitacora)
+                            });
+                        }
+
+                        closeModal();
+                        return;
+                    }
+
+                    return async ({ result, update }) => {
+                        await update();
+                        if (result.type === 'success') closeModal();
+                    };
+                }}
                 action={editingRecord ? '?/update' : '?/create'}
                 method="POST" 
                 class="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2"

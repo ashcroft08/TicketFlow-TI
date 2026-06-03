@@ -24,6 +24,20 @@
     let showModal = $state(false);
     let editingAsset = $state<any>(null);
 
+    import { db } from '$lib/client/db';
+    import { enqueueAction } from '$lib/client/offlineManager.svelte';
+
+    let localPendingActivos = $state<any[]>([]);
+    let editedOfflineActivos = $state<Record<number, any>>({});
+    let deletedOfflineActivos = $state<Set<number>>(new Set());
+
+    const allActivos = $derived([
+        ...localPendingActivos,
+        ...data.activos
+            .filter(a => !deletedOfflineActivos.has(a.id_activo))
+            .map(a => editedOfflineActivos[a.id_activo] ? { ...a, ...editedOfflineActivos[a.id_activo], isOfflinePending: true } : a)
+    ]);
+
     // --- Configuración del escáner de código de barras ---
     let showScanModal = $state(false);
     let html5QrCodeScanner: any = null;
@@ -37,6 +51,32 @@
         const module = await import('html5-qrcode');
         Html5Qrcode = module.Html5Qrcode;
         Html5QrcodeFormats = module.Html5QrcodeSupportedFormats;
+
+        // Cargar acciones offline pendientes
+        try {
+            const pending = await db.offlineQueue.toArray();
+            pending.forEach(action => {
+                if (action.entityType === 'activo') {
+                    if (action.actionType === 'create') {
+                        const assetData = action.payload;
+                        localPendingActivos.push({
+                            id_activo: action.id ? -action.id : -Date.now(),
+                            ...assetData,
+                            isOfflinePending: true,
+                            catalogo: data.catalogos.find(c => c.id_catalogo === assetData.id_catalogo),
+                            sucursal: data.branches.find(b => b.id_sucursal === assetData.id_sucursal),
+                            caja: data.cajas.find(c => c.id_caja === assetData.id_caja)
+                        });
+                    } else if (action.actionType === 'update') {
+                        editedOfflineActivos[action.payload.id] = action.payload.data;
+                    } else if (action.actionType === 'delete') {
+                        deletedOfflineActivos.add(action.payload.id);
+                    }
+                }
+            });
+        } catch (e) {
+            console.error('Error al cargar acciones offline en activos:', e);
+        }
     });
 
     const startScanner = async () => {
@@ -213,7 +253,7 @@
     let itemsPerPage = $state(10);
 
     const filteredActivos = $derived(
-        data.activos.filter(a => {
+        allActivos.filter(a => {
             const matchesSearch = !searchQuery || 
                 a.catalogo?.nombre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 a.numero_serie?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -503,7 +543,12 @@
                             {/if}
                             <td class="px-5 py-3">
                                 <div>
-                                    <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{asset.catalogo?.nombre}</p>
+                                    <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1 flex items-center gap-1.5">
+                                        {asset.catalogo?.nombre}
+                                        {#if asset.isOfflinePending}
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 uppercase tracking-wide animate-pulse">Offline</span>
+                                        {/if}
+                                    </p>
                                     <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{asset.catalogo?.tipo?.tipo}</p>
                                 </div>
                             </td>
@@ -539,7 +584,23 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance 
+                                        use:enhance={({ cancel }) => {
+                                            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                                                cancel();
+                                                confirmState.ask(
+                                                    '¿Eliminar Activo (Sin Conexión)?',
+                                                    `¿Estás seguro de eliminar el activo "${asset.codigo_inventario || 'este activo'}"? Esta acción se guardará localmente y se sincronizará cuando vuelvas a tener internet.`,
+                                                    () => {
+                                                        enqueueAction('activo', 'delete', { id: asset.id_activo });
+                                                        deletedOfflineActivos.add(asset.id_activo);
+                                                    }
+                                                );
+                                                return;
+                                            }
+                                            return async ({ result, update }) => {
+                                                await update();
+                                            };
+                                        }} 
                                         action="?/delete" 
                                         method="POST" 
                                     >
@@ -639,7 +700,42 @@
             </div>
 
             <form 
-                use:enhance={() => {
+                use:enhance={({ cancel, formData }) => {
+                    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                        cancel();
+
+                        const assetData = {
+                            id_catalogo: parseInt(formData.get('id_catalogo')?.toString() || '0'),
+                            id_sucursal: parseInt(formData.get('id_sucursal')?.toString() || '0'),
+                            id_usuario_asignado: parseInt(formData.get('id_usuario_asignado')?.toString() || '0') || null,
+                            id_caja: parseInt(formData.get('id_caja')?.toString() || '0') || null,
+                            numero_serie: formData.get('numero_serie')?.toString() || null,
+                            codigo_inventario: formData.get('codigo_inventario')?.toString() || null,
+                            estado: formData.get('estado')?.toString() || 'activo',
+                            observaciones: formData.get('observaciones')?.toString() || null,
+                            fecha_adquisicion: formData.get('fecha_adquisicion')?.toString() || null,
+                        };
+
+                        if (editingAsset) {
+                            enqueueAction('activo', 'update', { id: editingAsset.id_activo, data: assetData });
+                            editedOfflineActivos[editingAsset.id_activo] = assetData;
+                        } else {
+                            enqueueAction('activo', 'create', assetData);
+                            const tempId = -Date.now();
+                            localPendingActivos.push({
+                                id_activo: tempId,
+                                ...assetData,
+                                isOfflinePending: true,
+                                catalogo: data.catalogos.find(c => c.id_catalogo === assetData.id_catalogo),
+                                sucursal: data.branches.find(b => b.id_sucursal === assetData.id_sucursal),
+                                caja: data.cajas.find(c => c.id_caja === assetData.id_caja)
+                            });
+                        }
+
+                        closeModal();
+                        return;
+                    }
+
                     return async ({ result, update }) => {
                         await update();
                         if (result.type === 'success') closeModal();

@@ -18,13 +18,16 @@
         Layers,
         Sliders,
         Terminal,
-        BookOpen
+        BookOpen,
+        WifiOff
     } from 'lucide-svelte';
+    import { onMount } from 'svelte';
     import { fade, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import RoleSelector from '$lib/components/shared/RoleSelector.svelte';
     import ToastContainer from '$lib/components/shared/ToastContainer.svelte';
     import ConfirmModal from '$lib/components/shared/ConfirmModal.svelte';
+    import { initOfflineListener, offlineState } from '$lib/client/offlineManager.svelte';
 
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
     import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
@@ -33,6 +36,11 @@
     
     let isSidebarOpen = $state(false);
     let activePath = $derived(page.url.pathname);
+
+    onMount(() => {
+        const cleanup = initOfflineListener();
+        return cleanup;
+    });
 
     const navSections = [
         {
@@ -177,6 +185,32 @@
                 {/if}
             </button>
         </header>
+
+        <!-- Banner de modo offline -->
+        {#if !offlineState.isOnline}
+            <div transition:slide class="bg-error/15 border-b border-error/25 text-error px-6 py-2.5 flex items-center justify-between text-xs font-bold uppercase tracking-wide gap-4 relative z-40">
+                <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rounded-full bg-error animate-ping"></div>
+                    <WifiOff class="w-4 h-4 text-error" />
+                    <span>Trabajando en modo sin conexión — Los cambios se guardarán localmente</span>
+                </div>
+                {#if offlineState.pendingCount > 0}
+                    <div class="px-2 py-0.5 rounded bg-error/10 border border-error/20 text-[10px] animate-pulse">
+                        {offlineState.pendingCount} cambios por sincronizar
+                    </div>
+                {/if}
+            </div>
+        {:else if offlineState.pendingCount > 0}
+            <div transition:slide class="bg-primary/15 border-b border-primary/25 text-primary px-6 py-2.5 flex items-center justify-between text-xs font-bold uppercase tracking-wide gap-4 relative z-40">
+                <div class="flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rounded-full bg-primary animate-ping"></div>
+                    <span>Conexión restablecida — Sincronizando cambios pendientes...</span>
+                </div>
+                <div class="px-2 py-0.5 rounded bg-primary/10 border border-primary/20 text-[10px]">
+                    {offlineState.pendingCount} por subir
+                </div>
+            </div>
+        {/if}
 
         <!-- Main Content Viewport -->
         <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8 w-full mx-auto max-w-7xl pb-8 focus:outline-none" tabindex="-1">

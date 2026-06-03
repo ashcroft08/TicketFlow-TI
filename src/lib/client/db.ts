@@ -15,15 +15,25 @@ export interface ReferenceData {
     tipo: 'estado' | 'categoria' | 'sucursal' | 'nivel';
 }
 
+export interface OfflineAction {
+    id?: number;
+    entityType: 'activo' | 'bitacora';
+    actionType: 'create' | 'update' | 'delete';
+    payload: any;
+    timestamp: number;
+}
+
 export class TicketFlowDB extends Dexie {
     tickets!: Table<LocalTicket>;
     referenceData!: Table<ReferenceData>;
+    offlineQueue!: Table<OfflineAction>;
 
     constructor() {
         super('TicketFlowDB');
-        this.version(1).stores({
+        this.version(2).stores({
             tickets: '++id_ticket, sync_status, created_at',
-            referenceData: '++id, tipo, nombre'
+            referenceData: '++id, tipo, nombre',
+            offlineQueue: '++id, entityType, actionType, timestamp'
         });
     }
 }
