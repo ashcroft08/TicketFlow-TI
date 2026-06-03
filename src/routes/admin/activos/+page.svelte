@@ -31,10 +31,12 @@
     let selectedDeviceId = $state('');
     let isScannerRunning = $state(false);
     let Html5Qrcode: any;
+    let Html5QrcodeFormats: any;
 
     onMount(async () => {
         const module = await import('html5-qrcode');
         Html5Qrcode = module.Html5Qrcode;
+        Html5QrcodeFormats = module.Html5QrcodeSupportedFormats;
     });
 
     const startScanner = async () => {
@@ -72,13 +74,32 @@
                 html5QrCodeScanner.clear();
             } catch (e) {}
         }
-        html5QrCodeScanner = new Html5Qrcode("reader");
+
+        // Restringir formatos soportados para optimizar el rendimiento y velocidad de escaneo
+        const supportedFormats = Html5QrcodeFormats ? [
+            Html5QrcodeFormats.CODE_128,
+            Html5QrcodeFormats.CODE_39,
+            Html5QrcodeFormats.EAN_13,
+            Html5QrcodeFormats.EAN_8,
+            Html5QrcodeFormats.UPC_A,
+            Html5QrcodeFormats.UPC_E,
+            Html5QrcodeFormats.QR_CODE
+        ] : [];
+
+        html5QrCodeScanner = new Html5Qrcode("reader", {
+            formatsToSupport: supportedFormats
+        });
+
         html5QrCodeScanner.start(
             selectedDeviceId,
             {
-                fps: 15,
+                fps: 20, // Mayor frecuencia de cuadros para respuestas instantáneas
                 qrbox: (width: number, height: number) => {
-                    return { width: Math.min(width * 0.8, 300), height: Math.min(height * 0.3, 100) };
+                    // Área de escaneo más grande y holgada para no requerir precisión milimétrica
+                    return { 
+                        width: Math.min(width * 0.9, 450), 
+                        height: Math.min(height * 0.55, 180) 
+                    };
                 },
                 aspectRatio: 1.0
             },
