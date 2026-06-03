@@ -171,10 +171,7 @@
                                         </button>
                                     </form>
                                 {:else}
-                                    <div class="flex items-center gap-3">
-                                        <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                            <Activity class="w-4 h-4" />
-                                        </div>
+                                    <div>
                                         <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{cat.nombre_tecnico}</span>
                                     </div>
                                 {/if}

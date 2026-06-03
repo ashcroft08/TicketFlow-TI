@@ -129,13 +129,11 @@
                             </td>
                             <td class="px-5 py-3">
                                 <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-[9px] font-bold uppercase tracking-widest text-primary border border-primary/20">
-                                    <Shield class="w-3 h-3" />
                                     {user.rol?.rol || 'N/A'}
                                 </span>
                             </td>
                             <td class="px-5 py-3">
                                 <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-dim dark:text-dark-text-dim">
-                                    <MapPin class="w-3 h-3 opacity-50" />
                                     {user.sucursal?.nombre || 'Sede Central'}
                                 </div>
                             </td>

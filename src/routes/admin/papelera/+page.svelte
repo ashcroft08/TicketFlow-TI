@@ -197,12 +197,7 @@
                             {#each filteredBranches as branch (branch.id_sucursal)}
                                 <tr class="group hover:bg-primary/5 transition-colors" transition:fade>
                                     <td class="px-6 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                                <MapPin class="w-4 h-4" />
-                                            </div>
-                                            <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{branch.nombre}</span>
-                                        </div>
+                                        <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{branch.nombre}</span>
                                     </td>
                                     <td class="px-6 py-3">
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(branch.deleted_at)}</span>
@@ -249,12 +244,7 @@
                             {#each filteredCategories as cat (cat.id_categoria)}
                                 <tr class="group hover:bg-primary/5 transition-colors" transition:fade>
                                     <td class="px-6 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                                <Tags class="w-4 h-4" />
-                                            </div>
-                                            <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{cat.nombre_tecnico}</span>
-                                        </div>
+                                        <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{cat.nombre_tecnico}</span>
                                     </td>
                                     <td class="px-6 py-3">
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(cat.deleted_at)}</span>
@@ -303,14 +293,9 @@
                             {#each filteredAssets as asset (asset.id_activo)}
                                 <tr class="group hover:bg-primary/5 transition-colors" transition:fade>
                                     <td class="px-5 py-3">
-                                        <div class="flex items-center gap-3">
-                                            <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                                <Monitor class="w-4 h-4" />
-                                            </div>
-                                            <div>
-                                                <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{asset.catalogo?.nombre}</p>
-                                                <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{asset.catalogo?.tipo?.tipo}</p>
-                                            </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{asset.catalogo?.nombre}</p>
+                                            <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{asset.catalogo?.tipo?.tipo}</p>
                                         </div>
                                     </td>
                                     <td class="px-5 py-3">

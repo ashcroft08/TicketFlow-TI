@@ -166,26 +166,20 @@
                     {#each paginatedProyectos as proyecto (proyecto.id_proyecto)}
                         <tr class="group hover:bg-primary/5 transition-colors">
                             <td class="px-5 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                        <Terminal class="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{proyecto.nombre}</p>
-                                        {#if proyecto.descripcion}
-                                            <p class="text-[10px] text-text-dim max-w-xs truncate">{proyecto.descripcion}</p>
-                                        {:else}
-                                            <p class="text-[10px] text-text-dim italic">Sin descripción</p>
-                                        {/if}
-                                    </div>
+                                <div>
+                                    <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{proyecto.nombre}</p>
+                                    {#if proyecto.descripcion}
+                                        <p class="text-[10px] text-text-dim max-w-xs truncate">{proyecto.descripcion}</p>
+                                    {:else}
+                                        <p class="text-[10px] text-text-dim italic">Sin descripción</p>
+                                    {/if}
                                 </div>
                             </td>
                             <td class="px-5 py-3">
                                 {#if proyecto.encargado}
-                                    <div class="flex items-center gap-1.5 text-xs font-semibold text-text-main dark:text-dark-text-main">
-                                        <User class="w-3.5 h-3.5 text-text-dim" />
+                                    <span class="text-xs font-semibold text-text-main dark:text-dark-text-main">
                                         {proyecto.encargado.nombre}
-                                    </div>
+                                    </span>
                                 {:else}
                                     <span class="text-xs text-text-dim italic">Sin asignar</span>
                                 {/if}

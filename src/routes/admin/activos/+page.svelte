@@ -360,34 +360,25 @@
                                 </td>
                             {/if}
                             <td class="px-5 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                        <Monitor class="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{asset.catalogo?.nombre}</p>
-                                        <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{asset.catalogo?.tipo?.tipo}</p>
-                                    </div>
+                                <div>
+                                    <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{asset.catalogo?.nombre}</p>
+                                    <p class="text-[9px] uppercase tracking-widest text-primary font-bold">{asset.catalogo?.tipo?.tipo}</p>
                                 </div>
                             </td>
                             <td class="px-5 py-3 space-y-1">
-                                <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-main dark:text-dark-text-main">
-                                    <Hash class="w-3 h-3 text-text-dim" />
-                                    {asset.numero_serie || 'S/N'}
+                                <div class="text-[10px] font-medium text-text-main dark:text-dark-text-main">
+                                    <span class="text-text-dim text-[9px] font-bold tracking-wider uppercase mr-1">S/N:</span>{asset.numero_serie || 'S/N'}
                                 </div>
-                                <div class="flex items-center gap-1.5 text-[9px] text-text-dim font-bold uppercase">
-                                    <Tag class="w-3 h-3 opacity-50" />
-                                    {asset.codigo_inventario || 'No Cod.'}
+                                <div class="text-[9px] text-text-dim font-bold uppercase">
+                                    <span class="opacity-50 text-[8px] mr-1">COD:</span>{asset.codigo_inventario || 'No Cod.'}
                                 </div>
                             </td>
                             <td class="px-5 py-3">
                                 <div class="space-y-1">
-                                    <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-main dark:text-dark-text-main flex-wrap">
-                                        <MapPin class="w-3 h-3 text-text-dim" />
+                                    <div class="text-[10px] font-medium text-text-main dark:text-dark-text-main flex-wrap">
                                         {asset.sucursal?.nombre}
                                     </div>
-                                    <div class="flex items-center gap-1.5 text-[10px] italic text-text-dim">
-                                        <UserIcon class="w-3 h-3 opacity-50" />
+                                    <div class="text-[10px] italic text-text-dim">
                                         {asset.usuario_asignado?.nombre || 'Stock Disponible'}
                                     </div>
                                 </div>

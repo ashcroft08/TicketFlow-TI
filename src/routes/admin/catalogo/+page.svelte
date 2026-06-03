@@ -124,24 +124,16 @@
                     {#each paginatedCatalogos as item (item.id_catalogo)}
                         <tr class="group hover:bg-primary/5 transition-colors">
                             <td class="px-5 py-3">
-                                <div class="flex items-center gap-3">
-                                    <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
-                                        <Monitor class="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{item.nombre}</p>
-                                        {#if item.modelo}
-                                            <p class="text-[9px] uppercase tracking-widest text-text-dim font-medium">{item.modelo}</p>
-                                        {/if}
-                                    </div>
+                                <div>
+                                    <p class="text-sm font-bold text-text-main dark:text-dark-text-main leading-none mb-1">{item.nombre}</p>
+                                    {#if item.modelo}
+                                        <p class="text-[9px] uppercase tracking-widest text-text-dim font-medium">{item.modelo}</p>
+                                    {/if}
                                 </div>
                             </td>
                             <td class="px-5 py-3">
                                 {#if item.marca}
-                                    <div class="flex items-center gap-1.5">
-                                        <Tag class="w-3 h-3 text-text-dim opacity-50" />
-                                        <span class="text-xs font-medium text-text-main dark:text-dark-text-main">{item.marca}</span>
-                                    </div>
+                                    <span class="text-xs font-medium text-text-main dark:text-dark-text-main">{item.marca}</span>
                                 {:else}
                                     <span class="text-[10px] text-text-dim italic">Sin marca</span>
                                 {/if}

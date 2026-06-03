@@ -403,20 +403,16 @@
                         <tr class="group hover:bg-primary/5 transition-colors">
                             <!-- Fecha -->
                             <td class="px-5 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-2">
-                                    <Calendar class="w-4 h-4 text-text-dim" />
-                                    <span class="text-xs font-bold text-text-main dark:text-dark-text-main">
-                                        {formatDate(log.fecha)}
-                                    </span>
-                                </div>
+                                <span class="text-xs font-bold text-text-main dark:text-dark-text-main">
+                                    {formatDate(log.fecha)}
+                                </span>
                             </td>
 
                             <!-- Administrador -->
                             <td class="px-5 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-1.5 text-xs font-semibold text-text-main dark:text-dark-text-main">
-                                    <User class="w-3.5 h-3.5 text-text-dim" />
+                                <span class="text-xs font-semibold text-text-main dark:text-dark-text-main">
                                     {log.usuario?.nombre || 'Administrador'}
-                                </div>
+                                </span>
                             </td>
 
                             <!-- Categoría -->
@@ -439,10 +435,7 @@
 
                             <!-- Horas -->
                             <td class="px-5 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-1 text-xs font-mono text-text-main dark:text-dark-text-main">
-                                    <Clock class="w-3.5 h-3.5 text-primary/70" />
-                                    <span>{formatEsfuerzo(log.horas_dedicadas)}</span>
-                                </div>
+                                <span class="text-xs font-mono text-text-main dark:text-dark-text-main">{formatEsfuerzo(log.horas_dedicadas)}</span>
                             </td>
 
                             <!-- Descripción -->
