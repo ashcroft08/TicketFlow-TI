@@ -79,6 +79,9 @@
         const supportedFormats = Html5QrcodeFormats ? [
             Html5QrcodeFormats.CODE_128,
             Html5QrcodeFormats.CODE_39,
+            Html5QrcodeFormats.CODE_93,
+            Html5QrcodeFormats.ITF,
+            Html5QrcodeFormats.CODABAR,
             Html5QrcodeFormats.EAN_13,
             Html5QrcodeFormats.EAN_8,
             Html5QrcodeFormats.UPC_A,
@@ -93,14 +96,7 @@
         html5QrCodeScanner.start(
             selectedDeviceId,
             {
-                fps: 25, // Mayor tasa de fotogramas para un escaneo más fluido
-                qrbox: (width: number, height: number) => {
-                    // Rectángulo horizontal adaptado a códigos de barras largos
-                    return { 
-                        width: Math.min(width * 0.85, 420), 
-                        height: Math.min(height * 0.35, 120) 
-                    };
-                },
+                fps: 30, // Máxima tasa de fotogramas para detección instantánea
                 aspectRatio: 1.777778, // Relación de aspecto panorámica 16:9 para capturar todo el ancho
                 videoConstraints: {
                     facingMode: "environment",
