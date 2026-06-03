@@ -93,15 +93,20 @@
         html5QrCodeScanner.start(
             selectedDeviceId,
             {
-                fps: 20, // Mayor frecuencia de cuadros para respuestas instantáneas
+                fps: 25, // Mayor tasa de fotogramas para un escaneo más fluido
                 qrbox: (width: number, height: number) => {
-                    // Área de escaneo más grande y holgada para no requerir precisión milimétrica
+                    // Rectángulo horizontal adaptado a códigos de barras largos
                     return { 
-                        width: Math.min(width * 0.9, 450), 
-                        height: Math.min(height * 0.55, 180) 
+                        width: Math.min(width * 0.85, 420), 
+                        height: Math.min(height * 0.35, 120) 
                     };
                 },
-                aspectRatio: 1.0
+                aspectRatio: 1.777778, // Relación de aspecto panorámica 16:9 para capturar todo el ancho
+                videoConstraints: {
+                    facingMode: "environment",
+                    width: { min: 640, ideal: 1280, max: 1920 },
+                    height: { min: 480, ideal: 720, max: 1080 }
+                }
             },
             (decodedText: string) => {
                 numeroSerie = decodedText;
@@ -848,17 +853,6 @@
 
                 <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black/45 border border-white/5 flex items-center justify-center">
                     <div id="reader" class="w-full h-full object-cover"></div>
-                    <div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-6">
-                        <div class="flex justify-between">
-                            <div class="w-4 h-4 border-t-2 border-l-2 border-primary"></div>
-                            <div class="w-4 h-4 border-t-2 border-r-2 border-primary"></div>
-                        </div>
-                        <div class="w-full h-0.5 bg-error/50 animate-bounce"></div>
-                        <div class="flex justify-between">
-                            <div class="w-4 h-4 border-b-2 border-l-2 border-primary"></div>
-                            <div class="w-4 h-4 border-b-2 border-r-2 border-primary"></div>
-                        </div>
-                    </div>
                 </div>
 
                 <p class="text-[10px] text-center text-text-dim dark:text-dark-text-dim font-medium italic">
