@@ -8,11 +8,11 @@
     let { data, form } = $props();
 
     // Pestañas
-    let activeTab = $state<'estados' | 'movimientos' | 'cajas' | 'categorias_bitacora'>('estados');
+    let activeTab = $state<'estados' | 'movimientos' | 'cajas'>('estados');
 
     // Estado del Formulario / Modales
     let showModal = $state(false);
-    let modalType = $state<'estado' | 'movimiento' | 'caja' | 'categoria_bitacora'>('estado');
+    let modalType = $state<'estado' | 'movimiento' | 'caja'>('estado');
     let editingItem = $state<any>(null);
 
     let formError = $derived(form?.error);
@@ -31,13 +31,13 @@
         }
     });
 
-    const openCreate = (type: 'estado' | 'movimiento' | 'caja' | 'categoria_bitacora') => {
+    const openCreate = (type: 'estado' | 'movimiento' | 'caja') => {
         modalType = type;
         editingItem = null;
         showModal = true;
     };
 
-    const openEdit = (type: 'estado' | 'movimiento' | 'caja' | 'categoria_bitacora', item: any) => {
+    const openEdit = (type: 'estado' | 'movimiento' | 'caja', item: any) => {
         modalType = type;
         editingItem = item;
         showModal = true;
@@ -73,14 +73,13 @@
             onclick={() => {
                 if (activeTab === 'estados') openCreate('estado');
                 else if (activeTab === 'movimientos') openCreate('movimiento');
-                else if (activeTab === 'cajas') openCreate('caja');
-                else openCreate('categoria_bitacora');
+                else openCreate('caja');
             }}
             class="btn-primary flex items-center gap-2"
         >
             <Plus class="w-4 h-4" />
             <span class="uppercase tracking-tighter text-xs">
-                {activeTab === 'estados' ? 'Nuevo Estado' : activeTab === 'movimientos' ? 'Nuevo Movimiento' : activeTab === 'cajas' ? 'Nueva Caja' : 'Nueva Categoría'}
+                {activeTab === 'estados' ? 'Nuevo Estado' : activeTab === 'movimientos' ? 'Nuevo Movimiento' : 'Nueva Caja'}
             </span>
         </button>
     </header>
@@ -104,12 +103,6 @@
             class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'cajas' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
         >
             Cajas (Puntos de Venta)
-        </button>
-        <button 
-            onclick={() => activeTab = 'categorias_bitacora'}
-            class="px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 outline-none shrink-0 {activeTab === 'categorias_bitacora' ? 'border-primary text-primary dark:border-blue-500 dark:text-blue-400' : 'border-transparent text-text-dim hover:text-text-main'}"
-        >
-            Categorías de Bitácora
         </button>
     </div>
 
@@ -257,7 +250,7 @@
         </div>
 
     <!-- PESTAÑA 3: CAJAS -->
-    {:else if activeTab === 'cajas'}
+    {:else}
         <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl" transition:fade>
             <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de cajas / puntos de venta">
                 <table class="w-full text-left border-collapse">
@@ -325,47 +318,6 @@
                 </table>
             </div>
         </div>
-
-    <!-- PESTAÑA 4: CATEGORÍAS DE BITÁCORA -->
-    {:else}
-        <div class="glass-card rounded-lg overflow-hidden border-none shadow-2xl" transition:fade>
-            <div class="overflow-x-auto" tabindex="0" aria-label="Tabla de categorías de bitácora">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-primary/5 border-b border-white/5">
-                            <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Nombre de la Categoría</th>
-                            <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Estado</th>
-                            <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim text-right">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        {#each data.categoriasBitacora as cat}
-                            <tr class="group hover:bg-primary/5 transition-colors">
-                                <td class="px-5 py-3">
-                                    <span class="text-sm font-bold text-text-main dark:text-dark-text-main">{cat.nombre}</span>
-                                </td>
-                                <td class="px-5 py-3">
-                                    <span class="px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border {cat.estado ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/20'}">
-                                        {cat.estado ? 'Activo' : 'Inactivo'}
-                                    </span>
-                                </td>
-                                <td class="px-5 py-3 text-right">
-                                    <div class="flex justify-end gap-1">
-                                        <button 
-                                            onclick={() => openEdit('categoria_bitacora', cat)}
-                                            class="p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none"
-                                            title="Editar Categoría"
-                                        >
-                                            <Edit2 class="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     {/if}
 </div>
 
@@ -408,9 +360,7 @@
                     ? (editingItem ? '?/updateEstado' : '?/createEstado') 
                     : modalType === 'movimiento'
                         ? (editingItem ? '?/updateMovementType' : '?/createMovementType')
-                        : modalType === 'caja'
-                            ? (editingItem ? '?/updateCaja' : '?/createCaja')
-                            : (editingItem ? '?/updateCategoriaBitacora' : '?/createCategoriaBitacora')}
+                        : (editingItem ? '?/updateCaja' : '?/createCaja')}
                 method="POST" 
                 class="space-y-5"
             >
@@ -422,7 +372,7 @@
                 {/if}
 
                 {#if editingItem}
-                    <input type="hidden" name="id" value={modalType === 'estado' ? editingItem.id_estado : modalType === 'movimiento' ? editingItem.id_tipo_movimiento : modalType === 'caja' ? editingItem.id_caja : editingItem.id_categoria_bitacora} />
+                    <input type="hidden" name="id" value={modalType === 'estado' ? editingItem.id_estado : modalType === 'movimiento' ? editingItem.id_tipo_movimiento : editingItem.id_caja} />
                 {/if}
 
                 <!-- CAMPOS PARA ESTADO DE TICKETS -->
@@ -451,7 +401,7 @@
                     </div>
 
                 <!-- CAMPOS PARA CAJAS -->
-                {:else if modalType === 'caja'}
+                {:else}
                     <div class="space-y-2">
                         <label for="nombre_caja" class="text-[10px] font-bold uppercase tracking-widest text-text-dim px-1">Nombre / Identificador de la Caja</label>
                         <input id="nombre_caja" type="text" name="nombre" value={editingItem?.nombre || ''} required placeholder="Ej: Caja 1, Caja Rápida, Caja 2..." class="input-compact h-12 w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 text-sm focus:ring-2 focus:ring-blue-500/20 text-slate-800 dark:text-white focus:outline-none" />
@@ -464,13 +414,6 @@
                                 <option value={suc.id_sucursal} selected={editingItem?.id_sucursal === suc.id_sucursal}>{suc.nombre}</option>
                             {/each}
                         </select>
-                    </div>
-
-                <!-- CAMPOS PARA CATEGORÍAS DE BITÁCORA -->
-                {:else}
-                    <div class="space-y-2">
-                        <label for="nombre_categoria" class="text-[10px] font-bold uppercase tracking-widest text-text-dim px-1">Nombre de la Categoría</label>
-                        <input id="nombre_categoria" type="text" name="nombre" value={editingItem?.nombre || ''} required placeholder="Ej: Soporte de Redes, Mantenimiento..." class="input-compact h-12 w-full" />
                     </div>
                 {/if}
 

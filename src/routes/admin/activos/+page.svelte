@@ -51,7 +51,7 @@
     // Cajas elegibles reactivamente según la sucursal del filtro
     const filterableCajas = $derived(
         data.cajas.filter(c => {
-            if (!selectedFilterSucursalId) return true;
+            if (!selectedFilterSucursalId) return false;
             return c.id_sucursal?.toString() === selectedFilterSucursalId;
         })
     );
@@ -85,6 +85,11 @@
                 a.id_caja?.toString() === selectedFilterCajaId;
 
             return matchesSearch && matchesSucursal && matchesCaja;
+        }).sort((a, b) => {
+            if (!a.id_caja && !b.id_caja) return 0;
+            if (!a.id_caja) return 1;
+            if (!b.id_caja) return -1;
+            return (a.caja?.nombre || '').localeCompare(b.caja?.nombre || '');
         })
     );
 
@@ -92,6 +97,28 @@
     const paginatedActivos = $derived(
         filteredActivos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     );
+
+    const groupedRows = $derived.by(() => {
+        const rows = paginatedActivos.map(asset => ({
+            asset,
+            cajaSpan: 1
+        }));
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].cajaSpan === 0) continue;
+            const currentCajaId = rows[i].asset.id_caja;
+            let span = 1;
+            for (let j = i + 1; j < rows.length; j++) {
+                if (rows[j].asset.id_caja === currentCajaId) {
+                    span++;
+                    rows[j].cajaSpan = 0;
+                } else {
+                    break;
+                }
+            }
+            rows[i].cajaSpan = span;
+        }
+        return rows;
+    });
 
     // Resetear página cuando cambia la búsqueda o los filtros
     $effect(() => {
@@ -270,7 +297,7 @@
                 bind:value={selectedFilterSucursalId}
                 aria-label="Filtrar por sucursal"
                 class="w-full h-12 px-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white appearance-none bg-[right_1rem_center] bg-no-repeat cursor-pointer"
-                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');"
+                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m4 6 4 4 4-4%22/%3E%3C/svg%3E');"
             >
                 <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">Todas las Sucursales</option>
                 {#each data.branches as branch}
@@ -283,13 +310,16 @@
         <div class="relative">
             <select 
                 bind:value={selectedFilterCajaId}
+                disabled={!selectedFilterSucursalId}
                 aria-label="Filtrar por caja"
-                class="w-full h-12 px-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white appearance-none bg-[right_1rem_center] bg-no-repeat cursor-pointer"
-                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');"
+                class="w-full h-12 px-4 glass-card rounded-lg outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-white appearance-none bg-[right_1rem_center] bg-no-repeat cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 fill=%22none%22 stroke=%22%2364748b%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22%3E%3Cpath d=%22m4 6 4 4 4-4%22/%3E%3C/svg%3E');"
             >
-                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">Todas las Cajas</option>
+                <option value="" class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">
+                    {selectedFilterSucursalId ? 'Todas las Cajas' : 'Selecciona una Sucursal...'}
+                </option>
                 {#each filterableCajas as caja}
-                    <option value={caja.id_caja.toString()} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">{caja.nombre} ({caja.sucursal?.nombre || 'General'})</option>
+                    <option value={caja.id_caja.toString()} class="bg-white dark:bg-slate-900 text-slate-800 dark:text-white">{caja.nombre}</option>
                 {/each}
             </select>
         </div>
@@ -302,6 +332,7 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-primary/5 border-b border-white/5">
+                        <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Caja</th>
                         <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Equipo / Tipo</th>
                         <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Identificación</th>
                         <th scope="col" class="px-5 py-3 text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim">Ubicación / Usuario</th>
@@ -310,8 +341,24 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
-                    {#each paginatedActivos as asset (asset.id_activo)}
+                    {#each groupedRows as row (row.asset.id_activo)}
+                        {@const asset = row.asset}
                         <tr class="group hover:bg-primary/5 transition-colors">
+                            {#if row.cajaSpan > 0}
+                                <td rowspan={row.cajaSpan} class="px-5 py-4 border-r border-slate-200/10 dark:border-slate-800/50 bg-slate-500/5 dark:bg-slate-900/40 align-middle text-center min-w-[130px]">
+                                    {#if asset.caja}
+                                        <div class="flex flex-col items-center justify-center gap-0.5 animate-scale-in">
+                                            <span class="text-[9px] font-black uppercase tracking-widest text-primary/70">Caja</span>
+                                            <span class="text-sm font-extrabold text-slate-800 dark:text-white">{asset.caja.nombre}</span>
+                                        </div>
+                                    {:else}
+                                        <div class="flex flex-col items-center justify-center gap-0.5">
+                                            <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">Sin Caja</span>
+                                            <span class="text-[10px] font-semibold italic text-text-dim">Disponible</span>
+                                        </div>
+                                    {/if}
+                                </td>
+                            {/if}
                             <td class="px-5 py-3">
                                 <div class="flex items-center gap-3">
                                     <div class="p-2 bg-primary/5 rounded-lg text-primary/50 group-hover:text-primary transition-colors">
@@ -338,9 +385,6 @@
                                     <div class="flex items-center gap-1.5 text-[10px] font-medium text-text-main dark:text-dark-text-main flex-wrap">
                                         <MapPin class="w-3 h-3 text-text-dim" />
                                         {asset.sucursal?.nombre}
-                                        {#if asset.caja}
-                                            <span class="ml-1.5 px-1.5 py-0.2 bg-blue-500/10 text-blue-500 dark:text-blue-400 text-[8px] font-black uppercase rounded tracking-wider border border-blue-500/20">{asset.caja.nombre}</span>
-                                        {/if}
                                     </div>
                                     <div class="flex items-center gap-1.5 text-[10px] italic text-text-dim">
                                         <UserIcon class="w-3 h-3 opacity-50" />
@@ -392,7 +436,7 @@
 
                     {#if filteredActivos.length === 0}
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-text-dim italic text-sm">
+                            <td colspan="6" class="px-6 py-12 text-center text-text-dim italic text-sm">
                                 No se encontraron activos en el inventario maestro.
                             </td>
                         </tr>
