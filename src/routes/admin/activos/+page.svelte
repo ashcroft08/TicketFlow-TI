@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Monitor, Plus, Edit2, Trash2, Eye, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
+    import { onMount, onDestroy } from 'svelte';
+    import { Monitor, Plus, Edit2, Trash2, Eye, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight, Scan } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
     import { confirmState } from '$lib/state/confirm.svelte';
@@ -22,6 +23,125 @@
     let searchQuery = $state('');
     let showModal = $state(false);
     let editingAsset = $state<any>(null);
+
+    // --- Configuración del escáner de código de barras ---
+    let showScanModal = $state(false);
+    let html5QrCodeScanner: any = null;
+    let cameraDevices = $state<any[]>([]);
+    let selectedDeviceId = $state('');
+    let isScannerRunning = $state(false);
+    let Html5Qrcode: any;
+
+    onMount(async () => {
+        const module = await import('html5-qrcode');
+        Html5Qrcode = module.Html5Qrcode;
+    });
+
+    const startScanner = async () => {
+        if (!Html5Qrcode) {
+            toast.error('El módulo de escaneo aún no se ha cargado.');
+            return;
+        }
+        try {
+            const devices = await Html5Qrcode.getCameras();
+            if (devices && devices.length > 0) {
+                cameraDevices = devices;
+                const backCamera = devices.find((device: any) => 
+                    device.label.toLowerCase().includes('back') || 
+                    device.label.toLowerCase().includes('trasera') || 
+                    device.label.toLowerCase().includes('environment')
+                );
+                selectedDeviceId = backCamera ? backCamera.id : devices[0].id;
+                
+                showScanModal = true;
+                setTimeout(() => {
+                    initScannerInstance();
+                }, 100);
+            } else {
+                toast.error('No se encontraron cámaras disponibles en este dispositivo.');
+            }
+        } catch (err: any) {
+            console.error(err);
+            toast.error('Error al acceder a la cámara. Asegúrate de dar los permisos correspondientes.');
+        }
+    };
+
+    const initScannerInstance = () => {
+        if (html5QrCodeScanner) {
+            try {
+                html5QrCodeScanner.clear();
+            } catch (e) {}
+        }
+        html5QrCodeScanner = new Html5Qrcode("reader");
+        html5QrCodeScanner.start(
+            selectedDeviceId,
+            {
+                fps: 15,
+                qrbox: (width: number, height: number) => {
+                    return { width: Math.min(width * 0.8, 300), height: Math.min(height * 0.3, 100) };
+                },
+                aspectRatio: 1.0
+            },
+            (decodedText: string) => {
+                numeroSerie = decodedText;
+                toast.success('¡Código escaneado correctamente!');
+                
+                try {
+                    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1);
+                } catch (e) {}
+
+                closeScanner();
+            },
+            (errorMessage: string) => {}
+        ).then(() => {
+            isScannerRunning = true;
+        }).catch((err: any) => {
+            console.error("No se pudo iniciar el escáner: ", err);
+            toast.error("Error al iniciar la cámara.");
+        });
+    };
+
+    const handleCameraChange = () => {
+        if (isScannerRunning && html5QrCodeScanner) {
+            html5QrCodeScanner.stop().then(() => {
+                initScannerInstance();
+            });
+        }
+    };
+
+    const closeScanner = () => {
+        showScanModal = false;
+        isScannerRunning = false;
+        if (html5QrCodeScanner) {
+            try {
+                html5QrCodeScanner.stop().then(() => {
+                    html5QrCodeScanner.clear();
+                    html5QrCodeScanner = null;
+                }).catch((e: any) => {
+                    console.error("Error deteniendo escáner:", e);
+                    html5QrCodeScanner = null;
+                });
+            } catch (e) {
+                html5QrCodeScanner = null;
+            }
+        }
+    };
+
+    onDestroy(() => {
+        if (html5QrCodeScanner) {
+            try {
+                html5QrCodeScanner.stop().catch(() => {});
+            } catch(e) {}
+        }
+    });
 
     // Historial directo (Icono Ojo)
     let showHistoryModal = $state(false);
@@ -536,9 +656,18 @@
 
                     <div class="space-y-1.5">
                         <label for="numero_serie" class="text-[10px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Número de Serie</label>
-                        <div class="relative">
-                            <Hash class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-dim opacity-50" />
-                            <input id="numero_serie" type="text" name="numero_serie" bind:value={numeroSerie} placeholder="Ej: S/N 123456" class="input-compact w-full pl-10" />
+                        <div class="relative flex items-center">
+                            <Hash class="absolute left-3 w-4 h-4 text-text-dim opacity-50 pointer-events-none" />
+                            <input id="numero_serie" type="text" name="numero_serie" bind:value={numeroSerie} placeholder="Ej: S/N 123456" class="input-compact w-full pl-10 pr-10" />
+                            <button 
+                                type="button" 
+                                onclick={startScanner} 
+                                class="absolute right-2 p-1.5 text-text-dim hover:text-primary hover:bg-primary/10 rounded-md transition-all focus:outline-none"
+                                title="Escanear Código de Barras"
+                                aria-label="Escanear código de barras con la cámara"
+                            >
+                                <Scan class="w-4 h-4" />
+                            </button>
                         </div>
                     </div>
 
@@ -646,6 +775,85 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+{/if}
+{#if showScanModal}
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div 
+        role="dialog"
+        tabindex="-1"
+        aria-modal="true"
+        aria-labelledby="scan-modal-title"
+        class="fixed inset-0 bg-dark-bg-main/90 backdrop-blur-md z-[70] flex items-center justify-center p-4"
+        transition:fade
+        onclick={(e) => e.target === e.currentTarget && closeScanner()}
+    >
+        <div 
+            class="glass-card w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-white/10"
+            transition:scale={{ start: 0.95, duration: 200 }}
+        >
+            <div class="px-6 py-4 border-b border-white/5 flex justify-between items-center bg-primary/5">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-primary/10 rounded-lg text-primary animate-pulse">
+                        <Scan class="w-5 h-5" />
+                    </div>
+                    <h2 id="scan-modal-title" class="text-sm font-bold text-text-main dark:text-dark-text-main uppercase tracking-tight">
+                        Escanear Código de Barras
+                    </h2>
+                </div>
+                <button onclick={closeScanner} aria-label="Cerrar escáner" class="p-2 hover:bg-white/10 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary">
+                    <X class="w-5 h-5 text-text-dim aria-hidden=true" />
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                {#if cameraDevices.length > 1}
+                    <div class="space-y-1">
+                        <label for="camera-select" class="text-[9px] font-bold uppercase tracking-widest text-text-dim dark:text-dark-text-dim px-1">Seleccionar Cámara</label>
+                        <select 
+                            id="camera-select" 
+                            bind:value={selectedDeviceId} 
+                            onchange={handleCameraChange}
+                            class="input-compact w-full text-xs"
+                        >
+                            {#each cameraDevices as device}
+                                <option value={device.id}>{device.label || `Cámara ${device.id}`}</option>
+                            {/each}
+                        </select>
+                    </div>
+                {/if}
+
+                <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black/45 border border-white/5 flex items-center justify-center">
+                    <div id="reader" class="w-full h-full object-cover"></div>
+                    <div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-6">
+                        <div class="flex justify-between">
+                            <div class="w-4 h-4 border-t-2 border-l-2 border-primary"></div>
+                            <div class="w-4 h-4 border-t-2 border-r-2 border-primary"></div>
+                        </div>
+                        <div class="w-full h-0.5 bg-error/50 animate-bounce"></div>
+                        <div class="flex justify-between">
+                            <div class="w-4 h-4 border-b-2 border-l-2 border-primary"></div>
+                            <div class="w-4 h-4 border-b-2 border-r-2 border-primary"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-[10px] text-center text-text-dim dark:text-dark-text-dim font-medium italic">
+                    Apunta con la cámara trasera al código de barras del equipo.
+                </p>
+
+                <div class="flex justify-center pt-2">
+                    <button 
+                        type="button" 
+                        onclick={closeScanner} 
+                        class="px-6 py-2 text-xs font-bold uppercase tracking-widest text-text-dim hover:text-text-main transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 rounded-lg"
+                    >
+                        Cancelar y escribir a mano
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 {/if}

@@ -55,6 +55,7 @@
 		"bcryptjs": "^3.0.3",
 		"cloudinary": "^2.10.0",
 		"dexie": "^4.4.2",
+		"html5-qrcode": "^2.3.8",
 		"jsonwebtoken": "^9.0.3",
 		"lucide-svelte": "^1.0.1",
 		"nodemailer": "^8.0.7",
