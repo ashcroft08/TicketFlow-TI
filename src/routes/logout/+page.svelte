@@ -3,6 +3,8 @@
     import { goto } from '$app/navigation';
     
     onMount(() => {
+        // Limpiar rol offline
+        localStorage.removeItem('ticketflow_offline_role');
         // Fallback en caso de que la acción falle o se acceda por GET
         goto('/');
     });

@@ -3,12 +3,26 @@
     import type { ActionData } from './$types';
     import logoClaro from '$lib/assets/img/TicketFlow_logo_modo_claro.webp';
     import logoOscuro from '$lib/assets/img/TicketFlow_logo_modo_oscuro.webp';
+    import { onMount } from 'svelte';
+    import { goto } from '$app/navigation';
 
     let { form }: { form: ActionData } = $props();
 
     // Estado para animar los iconos cuando el input tiene el foco
     let focusedField = $state<string | null>(null);
     let showPassword = $state(false);
+
+    onMount(() => {
+        if (!navigator.onLine) {
+            const savedRole = localStorage.getItem('ticketflow_offline_role');
+            if (savedRole) {
+                if (savedRole === 'ADMIN') goto('/admin/dashboard');
+                else if (savedRole === 'TECH') goto('/tecnico/dashboard');
+                else if (savedRole === 'STORE_MANAGER') goto('/encargado/dashboard');
+                else goto('/dashboard');
+            }
+        }
+    });
 </script>
 
 <svelte:head>

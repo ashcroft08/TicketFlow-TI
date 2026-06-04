@@ -6,7 +6,13 @@
 	import ToastContainer from '$lib/components/shared/ToastContainer.svelte';
 	import PwaInstallPrompt from '$lib/components/shared/PwaInstallPrompt.svelte';
 
-	let { children } = $props();
+	let { data, children } = $props();
+
+	$effect(() => {
+		if (data?.user) {
+			localStorage.setItem('ticketflow_offline_role', data.user.cod_rol);
+		}
+	});
 
 	onMount(() => {
 		syncReferenceData();
