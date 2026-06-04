@@ -52,19 +52,22 @@ self.addEventListener('fetch', (event) => {
             return response;
         } catch {
             const url = new URL(event.request.url);
+
+            // 1. Buscar en caché ignorando parámetros de búsqueda (SvelteKit suele agregar hashes o timestamps a las peticiones)
+            const cachedResponse = await cache.match(event.request, { ignoreSearch: true });
+            if (cachedResponse) return cachedResponse;
             
-            // Si es navegación y estamos offline, redirigimos limpiamente a /offline
-            // Esto evita errores de hidratación de SvelteKit al no mezclar URLs con HTMLs
+            // 2. Si no hay caché y es navegación, devolvemos el HTML de la página offline
+            // El navegador mantendrá la URL, SvelteKit puede mostrar error de hidratación interno pero no romperá el navegador.
             if (event.request.mode === 'navigate') {
-                if (url.pathname !== '/offline') {
-                    return Response.redirect('/offline', 302);
-                }
-                // Si ya estamos pidiendo /offline y falla la red, devolvemos su HTML en caché
                 const offlinePage = await cache.match('/offline');
                 if (offlinePage) return offlinePage;
             }
 
-            return cache.match(event.request);
+            return new Response('Sin conexión', {
+                status: 503,
+                statusText: 'Service Unavailable'
+            });
         }
     }
 
