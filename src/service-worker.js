@@ -5,7 +5,8 @@ const CACHE = `cache-${version}`;
 
 const ASSETS = [
     ...build, // the app itself
-    ...files  // everything in `static`
+    ...files, // everything in `static`
+    '/offline' // página de arranque offline
 ];
 
 self.addEventListener('install', (event) => {
@@ -50,6 +51,19 @@ self.addEventListener('fetch', (event) => {
 
             return response;
         } catch {
+            const url = new URL(event.request.url);
+            
+            // Si es navegación y estamos offline, redirigimos limpiamente a /offline
+            // Esto evita errores de hidratación de SvelteKit al no mezclar URLs con HTMLs
+            if (event.request.mode === 'navigate') {
+                if (url.pathname !== '/offline') {
+                    return Response.redirect('/offline', 302);
+                }
+                // Si ya estamos pidiendo /offline y falla la red, devolvemos su HTML en caché
+                const offlinePage = await cache.match('/offline');
+                if (offlinePage) return offlinePage;
+            }
+
             return cache.match(event.request);
         }
     }
