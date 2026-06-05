@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { fade, scale, slide } from 'svelte/transition';
     import { MessageSquare, X, User, Send } from 'lucide-svelte';
     import { enhance } from '$app/forms';
@@ -61,7 +62,7 @@
                 {/if}
             </div>
             <div class="p-6 border-t border-slate-100 dark:border-slate-800">
-                <form use:enhance={() => { return async ({ result }) => { if (result.type === 'success') commentContent = ''; }; }} action="?/addComment" method="POST" class="flex gap-2">
+                <form use:offlineEnhance={() => { return async ({ result }) => { if (result.type === 'success') commentContent = ''; }; }} action="?/addComment" method="POST" class="flex gap-2">
                     <input bind:value={commentContent} name="content" placeholder="Escribe un mensaje..." aria-label="Escribir mensaje de chat" class="flex-grow p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-indigo-500/20" />
                     <button type="submit" disabled={!commentContent.trim()} aria-label="Enviar mensaje" class="p-4 bg-indigo-600 text-white rounded-2xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-600"><Send class="w-5 h-5 aria-hidden=true" /></button>
                 </form>

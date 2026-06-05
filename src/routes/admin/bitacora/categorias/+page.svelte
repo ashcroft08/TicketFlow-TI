@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { ChevronLeft, Plus, Edit2, Trash2, Tag, ArrowRight, X, AlertCircle } from 'lucide-svelte';
     import { fade, scale, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -110,7 +111,7 @@
             <form 
                 action={editingCategory ? '?/update' : '?/create'} 
                 method="POST" 
-                use:enhance
+                use:offlineEnhance
                 class="space-y-4"
             >
                 {#if editingCategory}

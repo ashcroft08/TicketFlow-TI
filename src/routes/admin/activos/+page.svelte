@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { onMount, onDestroy } from 'svelte';
     import { Monitor, Plus, Edit2, Trash2, Eye, Search, X, Check, MapPin, User as UserIcon, Tag, Hash, Calendar, Info, Activity, ChevronLeft, ChevronRight, Scan } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
@@ -584,7 +585,7 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance={({ cancel }) => {
+                                        use:offlineEnhance={({ cancel }) => {
                                             if (typeof navigator !== 'undefined' && !navigator.onLine) {
                                                 cancel();
                                                 confirmState.ask(
@@ -700,7 +701,7 @@
             </div>
 
             <form 
-                use:enhance={({ cancel, formData }) => {
+                use:offlineEnhance={({ cancel, formData }) => {
                     if (typeof navigator !== 'undefined' && !navigator.onLine) {
                         cancel();
 

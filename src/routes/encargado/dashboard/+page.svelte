@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { enhance } from '$app/forms';
     import { Ticket, Plus, X, Monitor, Calendar, Clock, AlertCircle, CheckCircle2, HelpCircle, ArrowRight, LogOut } from 'lucide-svelte';
     import type { ActionData, PageData } from './$types';
@@ -188,7 +189,7 @@
                 method="POST" 
                 action="?/createTicket"
                 enctype="multipart/form-data"
-                use:enhance={() => {
+                use:offlineEnhance={() => {
                     isSubmitting = true;
                     return async ({ update }) => {
                         await update();

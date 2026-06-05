@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Trash2, RotateCcw, Users, MapPin, Tags, Monitor, Search, AlertCircle, PackageOpen } from 'lucide-svelte';
     import { fade, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -156,7 +157,7 @@
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(user.deleted_at)}</span>
                                     </td>
                                     <td class="px-5 py-3 text-right">
-                                        <form use:enhance={() => {
+                                        <form use:offlineEnhance={() => {
                                             return async ({ update }) => { await update(); };
                                         }} action="?/restoreUser" method="POST">
                                             <input type="hidden" name="id" value={user.id_usuario} />
@@ -203,7 +204,7 @@
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(branch.deleted_at)}</span>
                                     </td>
                                     <td class="px-6 py-3 text-right">
-                                        <form use:enhance={() => {
+                                        <form use:offlineEnhance={() => {
                                             return async ({ update }) => { await update(); };
                                         }} action="?/restoreBranch" method="POST">
                                             <input type="hidden" name="id" value={branch.id_sucursal} />
@@ -250,7 +251,7 @@
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(cat.deleted_at)}</span>
                                     </td>
                                     <td class="px-6 py-3 text-right">
-                                        <form use:enhance={() => {
+                                        <form use:offlineEnhance={() => {
                                             return async ({ update }) => { await update(); };
                                         }} action="?/restoreCategory" method="POST">
                                             <input type="hidden" name="id" value={cat.id_categoria} />
@@ -309,7 +310,7 @@
                                         <span class="text-[10px] text-text-dim font-medium">{formatDate(asset.deleted_at)}</span>
                                     </td>
                                     <td class="px-5 py-3 text-right">
-                                        <form use:enhance={() => {
+                                        <form use:offlineEnhance={() => {
                                             return async ({ update }) => { await update(); };
                                         }} action="?/restoreAsset" method="POST">
                                             <input type="hidden" name="id" value={asset.id_activo} />

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Ticket, User, Calendar, Clock, MapPin, Tag, Monitor, MessageSquare, Send, ChevronLeft, UserPlus, CheckCircle2, AlertCircle, History, Info, UserCircle, X, ShieldCheck, LayoutDashboard, ChevronRight, Paperclip, ExternalLink, Settings2, Package, Save, Wrench, FileText, Activity } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -193,7 +194,7 @@
                                 </div>
                             {:else}
                                 <!-- Modo Edición -->
-                                <form method="POST" action="?/updateDetails" class="space-y-6" use:enhance={() => {
+                                <form method="POST" action="?/updateDetails" class="space-y-6" use:offlineEnhance={() => {
                                     isSubmitting = true;
                                     return async ({ result, update }) => { 
                                         await update({ reset: false }); 
@@ -394,7 +395,7 @@
                             <Activity class="w-4 h-4 text-indigo-500" aria-hidden="true" />
                             <span class="text-xs font-black uppercase tracking-widest text-slate-400">Estado del Ticket</span>
                         </div>
-                        <form use:enhance action="?/updateStatus" method="POST">
+                        <form use:offlineEnhance action="?/updateStatus" method="POST">
                             <select 
                                 name="statusId"
                                 aria-label="Cambiar estado del ticket"
@@ -432,7 +433,7 @@
                             </div>
                         {:else}
                             <div transition:slide>
-                                <form use:enhance action="?/assignTechnician" method="POST">
+                                <form use:offlineEnhance action="?/assignTechnician" method="POST">
                                     <select name="technicianId" aria-label="Asignar técnico responsable" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl py-3 px-4 text-xs font-black text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-indigo-600 appearance-none cursor-pointer" onchange={(e) => { e.currentTarget.form?.submit(); isEditingTech = false; }}>
                                         <option value="">SELECCIONAR TÉCNICO...</option>
                                         {#each technicians as tech}<option value={tech.id_usuario} selected={ticket.id_usuario === tech.id_usuario}>{tech.nombre.toUpperCase()}</option>{/each}

@@ -3,6 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { syncReferenceData } from '$lib/client/db';
+	import { processOfflineQueue } from '$lib/client/syncEngine';
 	import ToastContainer from '$lib/components/shared/ToastContainer.svelte';
 	import PwaInstallPrompt from '$lib/components/shared/PwaInstallPrompt.svelte';
 
@@ -16,6 +17,12 @@
 
 	onMount(() => {
 		syncReferenceData();
+		
+		window.addEventListener('online', processOfflineQueue);
+		
+		if (navigator.onLine) {
+			processOfflineQueue();
+		}
 	});
 </script>
 

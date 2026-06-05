@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { fade, scale } from 'svelte/transition';
     import { Wrench, X, Save } from 'lucide-svelte';
     import { enhance } from '$app/forms';
@@ -34,7 +35,7 @@
                 </div>
                 <button onclick={() => isOpen = false} aria-label="Cerrar modal" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-600"><X class="w-6 h-6 text-slate-400 aria-hidden=true" /></button>
             </div>
-            <form method="POST" action="?/registerAssetMovement" class="p-8 space-y-6" use:enhance={() => { 
+            <form method="POST" action="?/registerAssetMovement" class="p-8 space-y-6" use:offlineEnhance={() => { 
                 isSubmitting = true; 
                 return async ({ result, update }) => { 
                     await update({ reset: false }); 

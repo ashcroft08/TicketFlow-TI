@@ -2,6 +2,7 @@
     import { Sliders, Plus, Edit2, Trash2, Shield, Settings2, X, AlertCircle, Palette, Hash, Tag, Activity, MapPin } from 'lucide-svelte';
     import { fade, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
+    import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { confirmState } from '$lib/state/confirm.svelte';
     import { toast } from '$lib/state/toast.svelte';
 
@@ -146,7 +147,7 @@
                                             <Edit2 class="w-4 h-4" />
                                         </button>
                                         {#if est.estado}
-                                            <form use:enhance action="?/deleteEstado" method="POST" class="inline-block">
+                                            <form use:offlineEnhance action="?/deleteEstado" method="POST" class="inline-block">
                                                 <input type="hidden" name="id" value={est.id_estado} />
                                                 <button 
                                                     type="button" 
@@ -219,7 +220,7 @@
                                             <Edit2 class="w-4 h-4" />
                                         </button>
                                         {#if mov.estado}
-                                            <form use:enhance action="?/deleteMovementType" method="POST" class="inline-block">
+                                            <form use:offlineEnhance action="?/deleteMovementType" method="POST" class="inline-block">
                                                 <input type="hidden" name="id" value={mov.id_tipo_movimiento} />
                                                 <button 
                                                     type="button" 
@@ -289,7 +290,7 @@
                                             <Edit2 class="w-4 h-4" />
                                         </button>
                                         {#if cj.estado}
-                                            <form use:enhance action="?/deleteCaja" method="POST" class="inline-block">
+                                            <form use:offlineEnhance action="?/deleteCaja" method="POST" class="inline-block">
                                                 <input type="hidden" name="id" value={cj.id_caja} />
                                                 <button 
                                                     type="button" 
@@ -355,7 +356,8 @@
             </div>
 
             <form 
-                use:enhance
+                use:offlineEnhance
+                onofflinesuccess={closeModal}
                 action={modalType === 'estado' 
                     ? (editingItem ? '?/updateEstado' : '?/createEstado') 
                     : modalType === 'movimiento'

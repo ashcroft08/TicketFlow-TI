@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Users, Plus, Edit2, Trash2, Search, X, Check, Shield, MapPin, Mail, User as UserIcon, Lock, Activity, ChevronLeft, ChevronRight, AlertCircle, Eye, EyeOff } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -155,7 +156,7 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance 
+                                        use:offlineEnhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >
@@ -254,7 +255,7 @@
             </div>
 
             <form 
-                use:enhance={() => {
+                use:offlineEnhance={() => {
                     return async ({ result, update }) => {
                         await update();
                         if (result.type === 'success') closeModal();

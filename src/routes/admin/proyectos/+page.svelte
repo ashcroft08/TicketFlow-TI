@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Terminal, Plus, Edit2, Trash2, Search, X, ChevronLeft, ChevronRight, AlertCircle, Settings2, ExternalLink, Code, User } from 'lucide-svelte';
     import { fade, scale, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -218,7 +219,7 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance 
+                                        use:offlineEnhance 
                                         action="?/delete" 
                                         method="POST" 
                                         class="inline-block"
@@ -320,7 +321,7 @@
             </div>
 
             <form 
-                use:enhance
+                use:offlineEnhance
                 action={editingProject ? '?/update' : '?/create'}
                 method="POST" 
                 class="space-y-4 max-h-[70vh] overflow-y-auto custom-scrollbar pr-2"

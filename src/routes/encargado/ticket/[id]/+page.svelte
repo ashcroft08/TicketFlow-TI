@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import {
@@ -319,7 +320,7 @@
 					method="POST"
 					action="?/sendComment"
 					class="flex gap-2"
-					use:enhance={() => {
+					use:offlineEnhance={() => {
 						isSubmitting = true;
 						return async ({ update }) => {
 							await update({ reset: true });

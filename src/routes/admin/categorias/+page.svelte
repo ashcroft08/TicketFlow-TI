@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Tags, Plus, Edit2, Trash2, Search, Check, X, Activity, ChevronLeft, ChevronRight } from 'lucide-svelte';
     import { slide, fade } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -86,7 +87,7 @@
         {#if isCreating}
             <div transition:slide class="glass-card p-6 rounded-lg border-primary/20 shadow-2xl shadow-primary/10">
                 <form 
-                    use:enhance={() => {
+                    use:offlineEnhance={() => {
                         return async ({ result, update }) => {
                             await update();
                             if (result.type === 'success') isCreating = false;
@@ -148,7 +149,7 @@
                         <tr class="group hover:bg-primary/5 transition-colors">
                             <td class="px-6 py-3">
                                 {#if editingId === cat.id_categoria}
-                                    <form use:enhance={() => {
+                                    <form use:offlineEnhance={() => {
                                         return async ({ result, update }) => {
                                             await update();
                                             if (result.type === 'success') cancelEdit();
@@ -177,7 +178,7 @@
                                 {/if}
                             </td>
                             <td class="px-6 py-3">
-                                <form use:enhance action="?/update" method="POST">
+                                <form use:offlineEnhance action="?/update" method="POST">
                                     <input type="hidden" name="id" value={cat.id_categoria} />
                                     <input type="hidden" name="nombre" value={cat.nombre_tecnico} />
                                     <input type="hidden" name="estado" value={!cat.estado} />
@@ -203,7 +204,7 @@
                                         <Edit2 class="w-4 h-4 aria-hidden=true" />
                                     </button>
                                     <form 
-                                        use:enhance 
+                                        use:offlineEnhance 
                                         action="?/delete" 
                                         method="POST" 
                                     >

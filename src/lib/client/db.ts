@@ -17,8 +17,7 @@ export interface ReferenceData {
 
 export interface OfflineAction {
     id?: number;
-    entityType: 'activo' | 'bitacora';
-    actionType: 'create' | 'update' | 'delete';
+    actionUrl: string;
     payload: any;
     timestamp: number;
 }
@@ -34,6 +33,14 @@ export class TicketFlowDB extends Dexie {
             tickets: '++id_ticket, sync_status, created_at',
             referenceData: '++id, tipo, nombre',
             offlineQueue: '++id, entityType, actionType, timestamp'
+        });
+
+        this.version(3).stores({
+            tickets: '++id_ticket, sync_status, created_at',
+            referenceData: '++id, tipo, nombre',
+            offlineQueue: '++id, actionUrl, timestamp'
+        }).upgrade(tx => {
+            return tx.table('offlineQueue').clear();
         });
     }
 }

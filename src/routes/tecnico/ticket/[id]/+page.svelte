@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { enhance } from '$app/forms';
     import { invalidateAll } from '$app/navigation';
     import { ArrowLeft, Calendar, Monitor, Send, Paperclip, AlertCircle, Clock, CheckCircle2, HelpCircle, Save, FileText, Settings2, ChevronDown, ChevronUp, UserPlus, Package, Wrench, History, MessageSquare } from 'lucide-svelte';
@@ -172,7 +173,7 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 max-w-xs">
                                 Debes tomar este ticket antes de poder realizar diagnósticos o contactar al encargado.
                             </p>
-                            <form method="POST" action="?/claim" use:enhance={() => {
+                            <form method="POST" action="?/claim" use:offlineEnhance={() => {
                                 isSubmittingDetails = true;
                                 return async ({ update }) => {
                                     await update();
@@ -193,7 +194,7 @@
                     {:else if activeDetailTab === 'gestion'}
                         <!-- Formulario de Gestión Técnica -->
                         <div role="tabpanel" id="panel-gestion" tabindex="0" aria-labelledby="tab-gestion" class="focus:outline-none focus:ring-2 focus:ring-blue-600 rounded-2xl p-1">
-                            <form method="POST" action="?/updateDetails" class="flex flex-col gap-5" use:enhance={() => {
+                            <form method="POST" action="?/updateDetails" class="flex flex-col gap-5" use:offlineEnhance={() => {
                                 isSubmittingDetails = true;
                                 return async ({ update }) => {
                                     await update({ reset: false });
@@ -316,7 +317,7 @@
                             </div>
 
                             <!-- Formulario de Movimiento -->
-                            <form method="POST" action="?/registerAssetMovement" class="flex flex-col gap-4 bg-white/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/50" use:enhance={() => {
+                            <form method="POST" action="?/registerAssetMovement" class="flex flex-col gap-4 bg-white/50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/50" use:offlineEnhance={() => {
                                 isSubmittingDetails = true;
                                 return async ({ update }) => {
                                     await update({ reset: false });
@@ -453,7 +454,7 @@
                     method="POST" 
                     action="?/sendComment"
                     class="flex gap-2"
-                    use:enhance={() => {
+                    use:offlineEnhance={() => {
                         isSubmittingChat = true;
                         return async ({ update }) => {
                             await update({ reset: true });

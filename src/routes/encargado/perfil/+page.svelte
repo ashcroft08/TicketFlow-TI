@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { User, Mail, Lock, Shield, Save, CheckCircle2, AlertCircle, MapPin, Briefcase, Activity, Camera, LogOut } from 'lucide-svelte';
     import { enhance } from '$app/forms';
     import { fade, slide } from 'svelte/transition';
@@ -82,7 +83,7 @@
                         Sesión Verificada
                     </span>
 
-                    <form action="/?/logout" method="POST" use:enhance class="w-full lg:hidden">
+                    <form action="/?/logout" method="POST" use:offlineEnhance class="w-full lg:hidden">
                         <button 
                             type="submit"
                             class="w-full flex items-center justify-center gap-2 px-3 py-2.5 mt-2 text-red-500/80 hover:text-red-500 hover:bg-red-500/10 rounded-xl transition-all font-bold text-[10px] uppercase tracking-widest border border-red-500/10 hover:border-red-500/30 focus:outline-none focus:ring-2 focus:ring-red-500"
@@ -101,7 +102,7 @@
             <form 
                 action="?/updateProfile" 
                 method="POST" 
-                use:enhance={() => {
+                use:offlineEnhance={() => {
                     loading = true;
                     return async ({ update }) => {
                         loading = false;

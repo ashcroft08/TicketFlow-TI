@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { Ticket, Search, Filter, Calendar, User, MapPin, Tag, Trash2, ExternalLink, ChevronRight, AlertCircle, Clock, CheckCircle2, RotateCcw, Trash, X, Monitor, UserCircle, MessageSquare, ArchiveX, Activity, ChevronLeft } from 'lucide-svelte';
     import { fade, slide, scale } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -224,7 +225,7 @@
                         <div class="flex items-center gap-2">
                             {#if data.includeDeleted && ticket.deleted_at}
                                 <form 
-                                    use:enhance 
+                                    use:offlineEnhance 
                                     action="?/restore" 
                                     method="POST"
                                 >
@@ -259,7 +260,7 @@
                                 </button>
                                 
                                 <form 
-                                    use:enhance 
+                                    use:offlineEnhance 
                                     action="?/delete" 
                                     method="POST" 
                                 >

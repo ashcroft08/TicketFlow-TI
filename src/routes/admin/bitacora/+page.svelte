@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { BookOpen, Plus, Edit2, Trash2, Search, X, ChevronLeft, ChevronRight, AlertCircle, Settings2, Calendar, Clock, FileText, User, Tag } from 'lucide-svelte';
     import { fade, scale, slide } from 'svelte/transition';
     import { enhance } from '$app/forms';
@@ -501,7 +502,7 @@
                                             <Edit2 class="w-4 h-4 aria-hidden=true" />
                                         </button>
                                         <form 
-                                            use:enhance={({ cancel, formData }) => {
+                                            use:offlineEnhance={({ cancel, formData }) => {
                                                 if (typeof navigator !== 'undefined' && !navigator.onLine) {
                                                     cancel();
                                                     const id = parseInt(formData.get('id')?.toString() || '0');
@@ -667,7 +668,7 @@
 
             <!-- Formulario -->
             <form 
-                use:enhance={({ cancel, formData }) => {
+                use:offlineEnhance={({ cancel, formData }) => {
                     if (typeof navigator !== 'undefined' && !navigator.onLine) {
                         cancel();
 

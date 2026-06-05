@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { page } from '$app/state';
     import { 
         LayoutDashboard, 
@@ -153,7 +154,7 @@
                 <!-- Centro de Conmutación de Vistas -->
                 <RoleSelector variant="full" />
 
-                <form action="/?/logout" method="POST" use:enhance>
+                <form action="/?/logout" method="POST" use:offlineEnhance>
                     <button 
                         type="submit"
                         class="w-full flex items-center gap-3 px-3 py-2.5 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all font-bold text-[10px] uppercase tracking-widest border border-transparent hover:border-red-500/20"

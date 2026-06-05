@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { offlineEnhance } from '$lib/client/offlineEnhance';
     import { User, Mail, Lock, Shield, Save, CheckCircle2, AlertCircle, MapPin, Briefcase, Activity, Camera } from 'lucide-svelte';
     import { enhance } from '$app/forms';
     import { fade, slide } from 'svelte/transition';
@@ -91,7 +92,7 @@
             <form 
                 action="?/updateProfile" 
                 method="POST" 
-                use:enhance={() => {
+                use:offlineEnhance={() => {
                     loading = true;
                     return async ({ update }) => {
                         loading = false;
