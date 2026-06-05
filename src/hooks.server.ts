@@ -5,6 +5,11 @@ import { redirect, type Handle } from "@sveltejs/kit";
 const userRepository = new UserRepository();
 
 export const handle: Handle = async ({ event, resolve }) => {
+    // Evitar errores de prerenderizado para la página offline y assets
+    if (event.url.pathname === '/offline' || event.url.pathname.startsWith('/manifest.json')) {
+        return resolve(event);
+    }
+
     // 1. Leer la cookie de sesión
     const token = event.cookies.get(SESSION_COOKIE);
 
