@@ -30,7 +30,7 @@
     });
 </script>
 
-<div class="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-body p-6 text-center transition-colors duration-500">
+<div id="main-content" class="min-h-screen flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-body p-6 text-center transition-colors duration-500">
     <WifiOff size={64} class="text-slate-400 dark:text-slate-500 mb-6" />
     <h1 class="text-2xl font-bold mb-2">Modo Sin Conexión</h1>
     
