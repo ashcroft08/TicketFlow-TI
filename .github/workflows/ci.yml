@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Instalación y build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      # `$env/static/private` se resuelve en tiempo de build, así que esas
+      # variables tienen que existir. Son valores de relleno, no secretos.
+      - name: Crear variables de entorno de relleno
+        run: |
+          cat > .env <<'EOF'
+          JWT_SECRET=ci-placeholder-secret-value-000000000000
+          GMAIL_USER=ci@example.com
+          GMAIL_APP_PASSWORD=ci-placeholder
+          DATABASE_URL=postgresql://user:pass@localhost:5432/ticketflow
+          EOF
+
+      - name: Build
+        run: pnpm build

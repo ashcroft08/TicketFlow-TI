@@ -25,6 +25,11 @@
   <img src="https://img.shields.io/badge/PWA-Offline_Sync-5A0FC8?logo=pwa&logoColor=white" alt="PWA">
 </p>
 
+<p align="center">
+  <a href="https://github.com/ashcroft08/TicketFlow-TI/actions/workflows/ci.yml"><img src="https://github.com/ashcroft08/TicketFlow-TI/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-green.svg" alt="Licencia MIT"></a>
+</p>
+
 ## ¿Qué es?
 
 TicketFlow TI es un ERP interno de soporte técnico. Centraliza el ciclo completo de atención: los encargados de tienda crean tickets con evidencia fotográfica, los técnicos los atienden desde su bandeja, y la administración controla inventario, personal y sucursales desde un panel central. Funciona como **PWA instalable con modo offline**: los técnicos pueden escanear activos y registrar movimientos sin conexión, y todo se sincroniza automáticamente al recuperar la red.
@@ -182,3 +187,8 @@ pnpm dev
 - ✅ Bitácora de movimientos de inventario
 - ✅ PWA con CRUD offline y sincronización automática
 - ✅ Desplegado en producción en [Vercel](https://ticket-flow-ti.vercel.app)
+
+## 📄 Licencia
+
+Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
